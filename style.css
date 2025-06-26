@@ -3,6 +3,7 @@
   padding: 0;
   box-sizing: border-box;
 }
+
 body {
   position: relative;
   font-family: "Open Sans", sans-serif;
@@ -20,14 +21,17 @@ body::before {
   inset: 0;
   z-index: -1;
   background: url("images/bg-icons.jpeg") center center/cover no-repeat;
-  opacity: 0.45; /* ajuste aqui a transparência da imagem! */
+  opacity: 0.45;
   pointer-events: none;
 }
+
+/* Estilos originais mantidos */
 .main-header {
   text-align: center;
   padding: 60px 20px 40px;
   color: white;
 }
+
 .header-content h1 {
   font-size: 3.5em;
   font-style: italic;
@@ -35,18 +39,21 @@ body::before {
   margin-bottom: 5px;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
+
 .header-content .university-name {
   font-size: 1.1em;
   font-weight: 400;
   margin-bottom: 10px;
   letter-spacing: 1px;
 }
+
 .uniunica-logo {
   width: 200px;
   height: auto;
   margin-top: 10px;
   filter: brightness(1.2);
 }
+
 .main-content {
   flex-grow: 1;
   display: flex;
@@ -54,6 +61,7 @@ body::before {
   align-items: center;
   padding: 20px;
 }
+
 .card {
   background-color: white;
   border-radius: 15px;
@@ -63,7 +71,9 @@ body::before {
   max-width: 900px;
   width: 100%;
   overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
+
 .card-left {
   flex: 1;
   padding: 30px;
@@ -72,6 +82,7 @@ body::before {
   flex-direction: column;
   justify-content: center;
 }
+
 .card-left h2 {
   font-size: 1.6em;
   font-style: italic;
@@ -79,12 +90,14 @@ body::before {
   margin-bottom: 10px;
   color: #444;
 }
+
 .card-left .course-type {
   font-size: 1.1em;
   font-weight: 700;
   margin-bottom: 20px;
   color: #555;
 }
+
 .enrollment-info {
   display: flex;
   align-items: center;
@@ -92,16 +105,19 @@ body::before {
   color: #666;
   font-size: 0.95em;
 }
+
 .enrollment-info i {
   margin-right: 8px;
   color: #7c4dff;
   font-size: 1.1em;
 }
+
 .buttons {
   display: flex;
   gap: 15px;
   flex-wrap: wrap;
 }
+
 .btn {
   padding: 12px 25px;
   border: none;
@@ -115,27 +131,44 @@ body::before {
   justify-content: center;
   text-decoration: none;
 }
+
 .btn i {
   margin-right: 8px;
 }
+
 .btn-primary {
   background-color: white;
   border: 2px solid #28a745;
   color: #28a745;
 }
+
 .btn-primary:hover {
   background-color: #28a745;
   color: white;
 }
+
 .btn-secondary {
   background-color: #343a40;
   color: white;
   border: 2px solid #343a40;
 }
+
 .btn-secondary:hover {
   background-color: #495057;
   border-color: #495057;
 }
+
+.btn-success {
+  background-color: #28a745;
+  color: white;
+  border: 2px solid #28a745;
+}
+
+.btn-success:hover {
+  background-color: #218838;
+  border-color: #218838;
+}
+
 .card-right {
   flex: 1;
   display: flex;
@@ -144,6 +177,7 @@ body::before {
   background-color: #f8f9fa;
   min-width: 300px;
 }
+
 .card-image {
   width: 100%;
   height: 100%;
@@ -152,21 +186,7 @@ body::before {
   border-top-right-radius: 15px;
   border-bottom-right-radius: 15px;
 }
-@media (max-width: 768px) {
-  .card {
-    flex-direction: column;
-  }
-  .card-image {
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
-    border-top-left-radius: 15px;
-    border-top-right-radius: 15px;
-    height: 250px;
-  }
-  .card-left {
-    padding: 25px;
-  }
-}
+
 .main-footer {
   text-align: center;
   padding: 30px 20px;
@@ -174,56 +194,392 @@ body::before {
   font-size: 0.9em;
   opacity: 0.8;
 }
+
 .pincel-logo {
   width: 150px;
   height: auto;
   filter: invert(100%) brightness(1.2);
 }
+
+/* NOVOS ESTILOS PARA O TUTORIAL */
+
+/* Modal de Boas-vindas */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 15px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  animation: slideIn 0.4s ease;
+}
+
+.modal-header {
+  background: linear-gradient(135deg, #7c4dff, #a081ff);
+  color: white;
+  padding: 20px;
+  text-align: center;
+  border-radius: 15px 15px 0 0;
+}
+
+.modal-header i {
+  font-size: 2em;
+  margin-bottom: 10px;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.5em;
+}
+
+.modal-body {
+  padding: 25px;
+}
+
+.modal-body p {
+  margin-bottom: 15px;
+  line-height: 1.6;
+}
+
+.modal-body ul {
+  margin: 15px 0;
+  padding-left: 20px;
+}
+
+.modal-body li {
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+}
+
+.modal-body li i {
+  margin-right: 10px;
+  color: #7c4dff;
+  width: 20px;
+}
+
+.modal-footer {
+  padding: 20px;
+  text-align: center;
+  border-top: 1px solid #eee;
+}
+
+/* Tutorial Overlay */
+.tutorial-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.tutorial-box {
+  background: white;
+  border-radius: 15px;
+  max-width: 400px;
+  width: 90%;
+  animation: slideIn 0.4s ease;
+}
+
+.tutorial-content {
+  padding: 25px;
+}
+
+.tutorial-content h3 {
+  color: #7c4dff;
+  margin-bottom: 15px;
+  font-size: 1.3em;
+}
+
+.tutorial-content p {
+  line-height: 1.6;
+  margin-bottom: 15px;
+}
+
+.tutorial-progress {
+  background: #f8f9fa;
+  padding: 10px;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: 600;
+  color: #666;
+}
+
+.tutorial-actions {
+  padding: 20px;
+  border-top: 1px solid #eee;
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+/* Cursor Animado */
+.animated-cursor {
+  position: fixed;
+  z-index: 998;
+  color: #ff4444;
+  font-size: 24px;
+  pointer-events: none;
+  transition: all 0.8s ease;
+  animation: pulse 1.5s infinite;
+}
+
+/* Highlight */
+.highlight {
+  position: fixed;
+  border: 3px solid #ff4444;
+  border-radius: 8px;
+  background-color: rgba(255, 68, 68, 0.1);
+  z-index: 997;
+  pointer-events: none;
+  transition: all 0.5s ease;
+  animation: glow 2s infinite alternate;
+}
+
+/* Painel de Progresso */
+.progress-panel {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  z-index: 996;
+  min-width: 250px;
+}
+
+.progress-panel h4 {
+  color: #7c4dff;
+  margin-bottom: 15px;
+  font-size: 1.1em;
+}
+
+.progress-panel h4 i {
+  margin-right: 8px;
+}
+
+.progress-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 0.9em;
+}
+
+.progress-item i {
+  margin-right: 10px;
+  color: #ccc;
+  transition: color 0.3s ease;
+}
+
+.progress-item.completed i {
+  color: #28a745;
+}
+
+.progress-item.current i {
+  color: #7c4dff;
+  animation: spin 2s linear infinite;
+}
+
+/* Botão Reiniciar Tutorial */
+.restart-tutorial-btn {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  background: #7c4dff;
+  color: white;
+  border: none;
+  border-radius: 50px;
+  padding: 12px 20px;
+  cursor: pointer;
+  font-size: 0.9em;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  z-index: 995;
+}
+
+.restart-tutorial-btn:hover {
+  background: #6c3ce6;
+  transform: translateY(-2px);
+}
+
+.restart-tutorial-btn i {
+  margin-right: 8px;
+}
+
+/* Utilitários */
+.hidden {
+  display: none !important;
+}
+
+/* Animações */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+@keyframes glow {
+  from {
+    box-shadow: 0 0 5px #ff4444;
+  }
+  to {
+    box-shadow: 0 0 20px #ff4444, 0 0 30px #ff4444;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .card {
+    flex-direction: column;
+  }
+
+  .card-image {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    height: 250px;
+  }
+
+  .card-left {
+    padding: 25px;
+  }
+
+  .progress-panel {
+    position: relative;
+    top: auto;
+    right: auto;
+    margin: 20px;
+    width: calc(100% - 40px);
+  }
+
+  .tutorial-actions {
+    flex-direction: column;
+  }
+
+  .tutorial-actions .btn {
+    width: 100%;
+  }
+}
+
 @media (max-width: 600px) {
   .main-header h1 {
     font-size: 2.5em;
   }
+
   .main-header .university-name {
     font-size: 0.9em;
   }
+
   .uniunica-logo {
     width: 150px;
   }
+
   .card-left {
     min-width: unset;
     padding: 20px;
   }
+
   .card-left h2 {
     font-size: 1.3em;
   }
+
   .card-left .course-type {
     font-size: 0.9em;
   }
+
   .enrollment-info {
     font-size: 0.85em;
     flex-direction: column;
     align-items: flex-start;
     gap: 5px;
   }
+
   .enrollment-info i {
     margin-right: 0;
   }
+
   .buttons {
     flex-direction: column;
     gap: 10px;
   }
+
   .btn {
     width: 100%;
     padding: 10px 15px;
     font-size: 0.9em;
   }
+
   .card-right {
     min-width: unset;
   }
+
   .main-footer {
     padding: 20px 10px;
   }
+
   .pincel-logo {
     width: 120px;
+  }
+
+  .modal-content {
+    width: 95%;
+  }
+
+  .tutorial-box {
+    width: 95%;
   }
 }
