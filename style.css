@@ -1,0 +1,229 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  position: relative;
+  font-family: "Open Sans", sans-serif;
+  background: linear-gradient(135deg, #7c4dff, #a081ff);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  color: #333;
+  overflow: hidden;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: url("images/bg-icons.jpeg") center center/cover no-repeat;
+  opacity: 0.45; /* ajuste aqui a transparência da imagem! */
+  pointer-events: none;
+}
+.main-header {
+  text-align: center;
+  padding: 60px 20px 40px;
+  color: white;
+}
+.header-content h1 {
+  font-size: 3.5em;
+  font-style: italic;
+  font-weight: 700;
+  margin-bottom: 5px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+.header-content .university-name {
+  font-size: 1.1em;
+  font-weight: 400;
+  margin-bottom: 10px;
+  letter-spacing: 1px;
+}
+.uniunica-logo {
+  width: 200px;
+  height: auto;
+  margin-top: 10px;
+  filter: brightness(1.2);
+}
+.main-content {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+.card {
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 900px;
+  width: 100%;
+  overflow: hidden;
+}
+.card-left {
+  flex: 1;
+  padding: 30px;
+  min-width: 350px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.card-left h2 {
+  font-size: 1.6em;
+  font-style: italic;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #444;
+}
+.card-left .course-type {
+  font-size: 1.1em;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: #555;
+}
+.enrollment-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
+  color: #666;
+  font-size: 0.95em;
+}
+.enrollment-info i {
+  margin-right: 8px;
+  color: #7c4dff;
+  font-size: 1.1em;
+}
+.buttons {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+.btn {
+  padding: 12px 25px;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+.btn i {
+  margin-right: 8px;
+}
+.btn-primary {
+  background-color: white;
+  border: 2px solid #28a745;
+  color: #28a745;
+}
+.btn-primary:hover {
+  background-color: #28a745;
+  color: white;
+}
+.btn-secondary {
+  background-color: #343a40;
+  color: white;
+  border: 2px solid #343a40;
+}
+.btn-secondary:hover {
+  background-color: #495057;
+  border-color: #495057;
+}
+.card-right {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f8f9fa;
+  min-width: 300px;
+}
+.card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-top-right-radius: 15px;
+  border-bottom-right-radius: 15px;
+}
+@media (max-width: 768px) {
+  .card {
+    flex-direction: column;
+  }
+  .card-image {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    height: 250px;
+  }
+  .card-left {
+    padding: 25px;
+  }
+}
+.main-footer {
+  text-align: center;
+  padding: 30px 20px;
+  color: white;
+  font-size: 0.9em;
+  opacity: 0.8;
+}
+.pincel-logo {
+  width: 150px;
+  height: auto;
+  filter: invert(100%) brightness(1.2);
+}
+@media (max-width: 600px) {
+  .main-header h1 {
+    font-size: 2.5em;
+  }
+  .main-header .university-name {
+    font-size: 0.9em;
+  }
+  .uniunica-logo {
+    width: 150px;
+  }
+  .card-left {
+    min-width: unset;
+    padding: 20px;
+  }
+  .card-left h2 {
+    font-size: 1.3em;
+  }
+  .card-left .course-type {
+    font-size: 0.9em;
+  }
+  .enrollment-info {
+    font-size: 0.85em;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+  .enrollment-info i {
+    margin-right: 0;
+  }
+  .buttons {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .btn {
+    width: 100%;
+    padding: 10px 15px;
+    font-size: 0.9em;
+  }
+  .card-right {
+    min-width: unset;
+  }
+  .main-footer {
+    padding: 20px 10px;
+  }
+  .pincel-logo {
+    width: 120px;
+  }
+}
