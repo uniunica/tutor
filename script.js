@@ -31,7 +31,7 @@ class TutorialManager {
       },
       {
         title: "Fazer Inscrição",
-        text: "Este é o botão principal! Clique aqui para iniciar uma nova inscrição no processo seletivo.",
+        text: "Este é o botão principal! Clique aqui para iniciar uma nova inscrição no processo seletivo. Vamos experimentar!",
         target: "#enrollButton",
         position: "top",
       },
@@ -284,10 +284,8 @@ document.addEventListener("DOMContentLoaded", () => {
     );
   });
 
-  // Simular ação do botão Fazer Inscrição
+  // Redirecionar para página de inscrição
   document.getElementById("enrollButton").addEventListener("click", () => {
-    alert(
-      "📝 Fazer Inscrição\n\nEm um site real, este botão iniciaria:\n• Formulário de inscrição\n• Seleção de curso\n• Upload de documentos\n• Pagamento da taxa de inscrição"
-    );
+    window.location.href = "inscricao.html";
   });
 });

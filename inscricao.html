@@ -16,6 +16,129 @@
     <link rel="stylesheet" href="inscricao.css" />
   </head>
   <body>
+    <!-- Modal de Boas-vindas -->
+    <div id="welcomeModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <i class="fas fa-clipboard-list"></i>
+          <h2>Tutorial: Formulário de Inscrição</h2>
+        </div>
+        <div class="modal-body">
+          <p>
+            Agora você aprenderá como
+            <strong>preencher o formulário de inscrição</strong> de forma
+            eficiente!
+          </p>
+          <p>Este tutorial cobrirá:</p>
+          <ul>
+            <li>
+              <i class="fas fa-user-check"></i> Modalidades de ingresso
+              disponíveis
+            </li>
+            <li>
+              <i class="fas fa-user-edit"></i> Preenchimento dos dados do
+              candidato
+            </li>
+            <li>
+              <i class="fas fa-graduation-cap"></i> Seleção de curso e unidade
+            </li>
+            <li>
+              <i class="fas fa-lightbulb"></i> Dicas importantes para parceiros
+            </li>
+            <li>
+              <i class="fas fa-money-bill-wave"></i> Informações sobre pagamento
+            </li>
+          </ul>
+          <div class="info-box">
+            <i class="fas fa-exclamation-triangle"></i>
+            <strong>IMPORTANTE:</strong> Sempre insira seu nome no campo
+            "Indicação" para vincular a venda!
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="startTutorial" class="btn btn-primary">
+            <i class="fas fa-play"></i> Iniciar Tutorial
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Overlay do Tutorial -->
+    <div id="tutorialOverlay" class="tutorial-overlay hidden">
+      <div class="tutorial-box">
+        <div class="tutorial-content">
+          <h3 id="tutorialTitle">Título do Passo</h3>
+          <p id="tutorialText">Descrição do passo atual</p>
+          <div id="tutorialTip" class="tutorial-tip hidden">
+            <i class="fas fa-lightbulb"></i>
+            <span id="tutorialTipText">Dica adicional</span>
+          </div>
+          <div class="tutorial-progress">
+            <span id="tutorialStep">1</span> de
+            <span id="tutorialTotal">8</span>
+          </div>
+        </div>
+        <div class="tutorial-actions">
+          <button id="prevStep" class="btn btn-secondary" disabled>
+            <i class="fas fa-arrow-left"></i> Anterior
+          </button>
+          <button id="nextStep" class="btn btn-primary">
+            Próximo <i class="fas fa-arrow-right"></i>
+          </button>
+          <button id="finishTutorial" class="btn btn-success hidden">
+            <i class="fas fa-check"></i> Finalizar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cursor Animado -->
+    <div id="animatedCursor" class="animated-cursor hidden">
+      <i class="fas fa-mouse-pointer"></i>
+    </div>
+
+    <!-- Highlight para elementos -->
+    <div id="highlight" class="highlight hidden"></div>
+
+    <!-- Painel de Progresso -->
+    <div id="progressPanel" class="progress-panel hidden">
+      <h4><i class="fas fa-tasks"></i> Progresso da Inscrição</h4>
+      <div class="progress-items">
+        <div class="progress-item" data-step="1">
+          <i class="fas fa-circle-notch"></i>
+          <span>Modalidades de ingresso</span>
+        </div>
+        <div class="progress-item" data-step="2">
+          <i class="fas fa-circle-notch"></i>
+          <span>Navegação por abas</span>
+        </div>
+        <div class="progress-item" data-step="3">
+          <i class="fas fa-circle-notch"></i>
+          <span>Dados pessoais</span>
+        </div>
+        <div class="progress-item" data-step="4">
+          <i class="fas fa-circle-notch"></i>
+          <span>Dados de contato</span>
+        </div>
+        <div class="progress-item" data-step="5">
+          <i class="fas fa-circle-notch"></i>
+          <span>Campo indicação (importante!)</span>
+        </div>
+        <div class="progress-item" data-step="6">
+          <i class="fas fa-circle-notch"></i>
+          <span>Endereço completo</span>
+        </div>
+        <div class="progress-item" data-step="7">
+          <i class="fas fa-circle-notch"></i>
+          <span>Seleção de curso</span>
+        </div>
+        <div class="progress-item" data-step="8">
+          <i class="fas fa-circle-notch"></i>
+          <span>Finalização</span>
+        </div>
+      </div>
+    </div>
+
     <div class="background-overlay"></div>
     <div class="container">
       <header>
@@ -32,27 +155,33 @@
           <p>CURSOS EAD - Processo Seletivo II 2025/2</p>
         </div>
         <div class="back-link">
-          <a href="#"> <i class="fas fa-arrow-left"></i> Voltar Informações </a>
+          <a href="index.html" id="backLink">
+            <i class="fas fa-arrow-left"></i> Voltar Informações
+          </a>
         </div>
       </header>
 
       <main>
         <div class="form-box">
-          <section class="modality-section">
+          <section class="modality-section" id="modalitySection">
             <h2><i class="far fa-calendar-alt"></i> Modalidade de Ingresso</h2>
-            <div class="modality-options">
-              <label
+            <div class="modality-options" id="modalityOptions">
+              <label id="provaAgendada"
                 ><input type="radio" name="modality" checked /> Prova
                 Agendada</label
               >
-              <label><input type="radio" name="modality" /> ENEM</label>
-              <label><input type="radio" name="modality" /> Novo Título</label>
-              <label
+              <label id="enem"
+                ><input type="radio" name="modality" /> ENEM</label
+              >
+              <label id="novoTitulo"
+                ><input type="radio" name="modality" /> Novo Título</label
+              >
+              <label id="transferencia"
                 ><input type="radio" name="modality" /> Transferência</label
               >
             </div>
           </section>
-          <div class="tabs">
+          <div class="tabs" id="tabsContainer">
             <div class="tab active" id="tabCandidato">
               <i class="fas fa-user"></i> Dados do Candidato
             </div>
@@ -64,22 +193,22 @@
             <!-- Conteúdo da primeira aba - Dados do Candidato -->
             <div id="contentCandidato" class="tab-content">
               <div class="row">
-                <div class="field">
+                <div class="field" id="cpfField">
                   <label>CPF <span class="req">*</span></label>
                   <input type="text" title="Digite o CPF" required />
                 </div>
-                <div class="field flex2">
+                <div class="field flex2" id="nomeField">
                   <label>Nome Completo <span class="req">*</span></label>
                   <input type="text" title="Digite o Nome Completo" required />
                 </div>
-                <div class="field">
+                <div class="field" id="sexoField">
                   <label>Sexo <span class="req">*</span></label>
-                  <selec title="Selecione o sexo" required>
+                  <select title="Selecione o sexo" required>
                     <option value="">Escolha</option>
                     <option value="M">Masculino</option>
                     <option value="F">Feminino</option>
                     <option value="O">Outro</option>
-                  </selec>
+                  </select>
                 </div>
               </div>
 
@@ -92,11 +221,11 @@
                   <label>Data de Nascimento <span class="req">*</span></label>
                   <input type="date" title="Data de Nascimento" required />
                 </div>
-                <div class="field">
+                <div class="field" id="emailField">
                   <label>E-mail <span class="req">*</span></label>
                   <input type="email" title="Digite o Email" required />
                 </div>
-                <div class="field">
+                <div class="field" id="celularField">
                   <label>Celular <span class="req">*</span></label>
                   <input type="tel" title="Digite o Celular" required />
                 </div>
@@ -104,22 +233,25 @@
 
               <div class="row">
                 <div class="field">
-                  <label>Necessidade Educacional? <span class="req">*</span></label>
+                  <label
+                    >Necessidade Educacional? <span class="req">*</span></label
+                  >
                   <select title="Necessidade" required>
                     <option>Não</option>
                     <option>Sim</option>
                   </select>
                 </div>
-                <div class="field">
-                  <label>Indicação</label>
+                <div class="field" id="indicacaoField">
+                  <label>Indicação <span class="req important">*</span></label>
                   <select title="Indicação" required>
-                    <option value="">Escolha</option>
-                    <option>Parceiro 1</option>
-                    <option>Parceiro 2</option>
+                    <option value="">Escolha quem te indicou</option>
+                    <option>João Silva - Parceiro</option>
+                    <option>Maria Santos - Parceiro</option>
+                    <option>Pedro Costa - Parceiro</option>
                   </select>
                 </div>
               </div>
-              <div class="row">
+              <div class="row" id="enderecoRow">
                 <div class="field">
                   <label>CEP <span class="req">*</span></label>
                   <input type="text" title="Digite o CEP" required />
@@ -165,13 +297,15 @@
             </div>
 
             <!-- Conteúdo da segunda aba - Dados do Curso [INICIALMENTE OCULTO] -->
-            <div id="contentCurso" class="tab-content" style="display: none;">
+            <div id="contentCurso" class="tab-content" style="display: none">
               <div class="row">
-                <div class="field full">
+                <div class="field full" id="cursoField">
                   <label>Curso de Interesse <span class="req">*</span></label>
                   <select required>
                     <option value="">Selecione um curso</option>
-                    <option value="ads">Análise e Desenvolvimento de Sistemas</option>
+                    <option value="ads">
+                      Análise e Desenvolvimento de Sistemas
+                    </option>
                     <option value="pedagogia">Pedagogia</option>
                     <option value="administracao">Administração</option>
                     <option value="enfermagem">Enfermagem</option>
@@ -180,8 +314,11 @@
                 </div>
               </div>
               <div class="row">
-                <div class="field full">
-                  <label>Unidade Interesse / Local da Prova <span class="req">*</span></label>
+                <div class="field full" id="unidadeField">
+                  <label
+                    >Unidade Interesse / Local da Prova
+                    <span class="req">*</span></label
+                  >
                   <select required>
                     <option value="">Selecione Unidade / Local</option>
                     <option value="unidade1">São Paulo - SP</option>
@@ -192,32 +329,39 @@
               </div>
             </div>
             <div class="submit-area">
-              <button type="submit">CONTINUAR</button>
+              <button type="submit" id="submitButton">CONTINUAR</button>
             </div>
           </form>
         </div>
       </main>
     </div>
-    <!-- Troca de abas via JavaScript -->
-    <script>
-      document.addEventListener('DOMContentLoaded', () => {
-        const tabCandidato = document.getElementById('tabCandidato');
-        const tabCurso = document.getElementById('tabCurso');
-        const contentCandidato = document.getElementById('contentCandidato');
-        const contentCurso = document.getElementById('contentCurso');
 
-        tabCandidato.addEventListener('click', () => {
-          tabCandidato.classList.add('active');
-          tabCurso.classList.remove('active');
-          contentCandidato.style.display = 'block';
-          contentCurso.style.display = 'none';
+    <!-- Botão para reiniciar tutorial -->
+    <button id="restartTutorial" class="restart-tutorial-btn">
+      <i class="fas fa-redo"></i> Reiniciar Tutorial
+    </button>
+
+    <!-- Scripts -->
+    <script src="inscricao-tutorial.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const tabCandidato = document.getElementById("tabCandidato");
+        const tabCurso = document.getElementById("tabCurso");
+        const contentCandidato = document.getElementById("contentCandidato");
+        const contentCurso = document.getElementById("contentCurso");
+
+        tabCandidato.addEventListener("click", () => {
+          tabCandidato.classList.add("active");
+          tabCurso.classList.remove("active");
+          contentCandidato.style.display = "block";
+          contentCurso.style.display = "none";
         });
 
-        tabCurso.addEventListener('click', () => {
-          tabCurso.classList.add('active');
-          tabCandidato.classList.remove('active');
-          contentCurso.style.display = 'block';
-          contentCandidato.style.display = 'none';
+        tabCurso.addEventListener("click", () => {
+          tabCurso.classList.add("active");
+          tabCandidato.classList.remove("active");
+          contentCurso.style.display = "block";
+          contentCandidato.style.display = "none";
         });
       });
     </script>
