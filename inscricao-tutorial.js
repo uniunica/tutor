@@ -60,7 +60,7 @@ class InscricaoTutorialManager {
         title: "Finalização e Pagamento",
         text: "Após preencher todos os dados, clique em CONTINUAR. A taxa de matrícula é de até R$ 250,00.",
         tip: "O pagamento da taxa de matrícula dá acesso ao portal e materiais didáticos. Valor pode ser alterado pela equipe.",
-                target: "#submitButton",
+        target: "#submitButton",
         position: "top",
       },
     ];
@@ -120,10 +120,18 @@ class InscricaoTutorialManager {
       }
     });
 
-    // Simular envio do formulário
+    // CORRIGIDO - Redirecionamento direto para centralcandidato.html
     document.querySelector("form").addEventListener("submit", (e) => {
       e.preventDefault();
-      this.showPaymentInfo();
+
+      // Verificar se o tutorial está ativo
+      if (this.isActive) {
+        // Se estiver no tutorial, mostrar modal explicativo
+        this.showPaymentInfo();
+      } else {
+        // Se não estiver no tutorial, redirecionar diretamente
+        window.location.href = "centralcandidato.html";
+      }
     });
   }
 
@@ -177,7 +185,9 @@ class InscricaoTutorialManager {
     if (step.important) {
       tutorialBox.style.border = "3px solid #ff6b35";
       document.querySelector(".tutorial-content h3").style.color = "#ff6b35";
-      const iconElement = document.querySelector(".tutorial-content h3::before");
+      const iconElement = document.querySelector(
+        ".tutorial-content h3::before"
+      );
       if (iconElement) {
         iconElement.textContent = "⚠️";
       }
@@ -249,7 +259,7 @@ class InscricaoTutorialManager {
     // Remover classes de posição anteriores
     tutorialBox.classList.remove(
       "position-top",
-      "position-bottom", 
+      "position-bottom",
       "position-left",
       "position-right"
     );
@@ -276,27 +286,27 @@ class InscricaoTutorialManager {
       switch (position) {
         case "top":
           top = elementRect.top - boxRect.height - 20;
-          left = elementRect.left + (elementRect.width / 2) - (boxRect.width / 2);
+          left = elementRect.left + elementRect.width / 2 - boxRect.width / 2;
           break;
 
         case "bottom":
           top = elementRect.bottom + 20;
-          left = elementRect.left + (elementRect.width / 2) - (boxRect.width / 2);
+          left = elementRect.left + elementRect.width / 2 - boxRect.width / 2;
           break;
 
         case "left":
-          top = elementRect.top + (elementRect.height / 2) - (boxRect.height / 2);
+          top = elementRect.top + elementRect.height / 2 - boxRect.height / 2;
           left = elementRect.left - boxRect.width - 20;
           break;
 
         case "right":
-          top = elementRect.top + (elementRect.height / 2) - (boxRect.height / 2);
+          top = elementRect.top + elementRect.height / 2 - boxRect.height / 2;
           left = elementRect.right + 20;
           break;
 
         default:
           top = elementRect.bottom + 20;
-          left = elementRect.left + (elementRect.width / 2) - (boxRect.width / 2);
+          left = elementRect.left + elementRect.width / 2 - boxRect.width / 2;
           finalPosition = "bottom";
           break;
       }
@@ -325,7 +335,9 @@ class InscricaoTutorialManager {
       tutorialBox.style.left = `${Math.max(20, left)}px`;
       tutorialBox.style.visibility = "visible";
 
-      console.log(`Tutorial box posicionado em: top=${top}, left=${left}, position=${finalPosition}`);
+      console.log(
+        `Tutorial box posicionado em: top=${top}, left=${left}, position=${finalPosition}`
+      );
     });
   }
 
@@ -335,10 +347,10 @@ class InscricaoTutorialManager {
 
     if (element) {
       const rect = element.getBoundingClientRect();
-      highlight.style.top = (rect.top - 8) + "px";
-      highlight.style.left = (rect.left - 8) + "px";
-      highlight.style.width = (rect.width + 16) + "px";
-      highlight.style.height = (rect.height + 16) + "px";
+      highlight.style.top = rect.top - 8 + "px";
+      highlight.style.left = rect.left - 8 + "px";
+      highlight.style.width = rect.width + 16 + "px";
+      highlight.style.height = rect.height + 16 + "px";
       highlight.classList.remove("hidden");
 
       // Scroll suave para o elemento
@@ -356,8 +368,8 @@ class InscricaoTutorialManager {
 
     if (element) {
       const rect = element.getBoundingClientRect();
-      const centerX = rect.left + (rect.width / 2);
-      const centerY = rect.top + (rect.height / 2);
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
 
       cursor.style.left = centerX + "px";
       cursor.style.top = centerY + "px";
@@ -400,15 +412,19 @@ class InscricaoTutorialManager {
 
   // FUNÇÃO CORRIGIDA DE ATUALIZAÇÃO DE PROGRESSO
   updateProgress() {
-    console.log(`Atualizando progresso para passo: ${this.currentStep + 1} de ${this.totalSteps}`);
-    
+    console.log(
+      `Atualizando progresso para passo: ${this.currentStep + 1} de ${
+        this.totalSteps
+      }`
+    );
+
     const progressItems = document.querySelectorAll(".progress-item");
-    
+
     console.log(`Encontrados ${progressItems.length} itens de progresso`);
 
     progressItems.forEach((item, index) => {
       const icon = item.querySelector("i");
-      
+
       if (!icon) {
         console.error(`Ícone não encontrado para item ${index}`);
         return;
@@ -416,7 +432,7 @@ class InscricaoTutorialManager {
 
       // Limpar todas as classes primeiro
       item.classList.remove("completed", "current");
-      
+
       if (index < this.currentStep) {
         // Passos já concluídos
         item.classList.add("completed");
@@ -447,7 +463,7 @@ class InscricaoTutorialManager {
     if (this.currentStep > 0) {
       this.currentStep--;
       console.log(`Voltando para passo: ${this.currentStep + 1}`);
-      
+
       // Se voltar para o passo 7 (seleção de curso), garantir que a aba correta esteja ativa
       if (this.currentStep === 6) {
         document.getElementById("tabCurso").click();
@@ -456,7 +472,7 @@ class InscricaoTutorialManager {
       else if (this.currentStep < 6) {
         document.getElementById("tabCandidato").click();
       }
-      
+
       this.showStep();
     }
   }
@@ -797,7 +813,9 @@ class FormValidation {
       });
     }
 
-    const phoneInput = document.querySelector('input[title="Digite o Celular"]');
+    const phoneInput = document.querySelector(
+      'input[title="Digite o Celular"]'
+    );
     if (phoneInput) {
       phoneInput.addEventListener("input", (e) => {
         this.applyPhoneMask(e.target);
@@ -990,11 +1008,13 @@ document.addEventListener("DOMContentLoaded", () => {
 class ContextualHelp {
   constructor() {
     this.tips = {
-      "Digite o CPF": "Apenas números. A formatação será aplicada automaticamente.",
+      "Digite o CPF":
+        "Apenas números. A formatação será aplicada automaticamente.",
       "Digite o Nome Completo": "Nome completo sem abreviações.",
       "Digite o Email": "Email válido para receber comunicações importantes.",
       "Digite o Celular": "Número com DDD para contato.",
-      "Escolha quem te indicou": "⚠️ IMPORTANTE: Selecione seu nome para receber comissão!",
+      "Escolha quem te indicou":
+        "⚠️ IMPORTANTE: Selecione seu nome para receber comissão!",
       "Digite o CEP": "CEP válido para preenchimento automático do endereço.",
     };
     this.init();
@@ -1002,7 +1022,9 @@ class ContextualHelp {
 
   init() {
     Object.keys(this.tips).forEach((title) => {
-      const input = document.querySelector(`input[title="${title}"], select[title="${title}"]`);
+      const input = document.querySelector(
+        `input[title="${title}"], select[title="${title}"]`
+      );
       if (input) {
         this.addContextualTip(input, this.tips[title]);
       }
@@ -1078,7 +1100,7 @@ contextualHelpStyles.textContent = `
     from { opacity: 0; transform: translateX(-10px) scale(0.9); }
     to { opacity: 1; transform: translateX(0) scale(1); }
   }
-  
+
   @keyframes tipSlideOut {
     from { opacity: 1; transform: translateX(0) scale(1); }
     to { opacity: 0; transform: translateX(-10px) scale(0.9); }
@@ -1120,4 +1142,9 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   });
+});
+
+document.getElementById("submitButton").addEventListener("click", function (e) {
+  e.preventDefault(); // Previne o envio do formulário
+  window.location.href = "centralcandidato.html"; // Redireciona para a página
 });
