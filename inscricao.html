@@ -53,113 +53,142 @@
             </div>
           </section>
           <div class="tabs">
-            <div class="tab active">
+            <div class="tab active" id="tabCandidato">
               <i class="fas fa-user"></i> Dados do Candidato
             </div>
-            <div class="tab">
+            <div class="tab" id="tabCurso">
               <i class="fas fa-graduation-cap"></i> Dados do Curso
             </div>
           </div>
           <form>
-            <div class="row">
-              <div class="field">
-                <label>CPF <span class="req">*</span></label>
-                <input type="text" required />
+            <!-- Conteúdo da primeira aba - Dados do Candidato -->
+            <div id="contentCandidato" class="tab-content">
+              <div class="row">
+                <div class="field">
+                  <label>CPF <span class="req">*</span></label>
+                  <input type="text" title="Digite o CPF" required />
+                </div>
+                <div class="field flex2">
+                  <label>Nome Completo <span class="req">*</span></label>
+                  <input type="text" title="Digite o Nome Completo" required />
+                </div>
+                <div class="field">
+                  <label>Sexo <span class="req">*</span></label>
+                  <selec title="Selecione o sexo" required>
+                    <option value="">Escolha</option>
+                    <option value="M">Masculino</option>
+                    <option value="F">Feminino</option>
+                    <option value="O">Outro</option>
+                  </selec>
+                </div>
               </div>
-              <div class="field flex2">
-                <label>Nome Completo <span class="req">*</span></label>
-                <input type="text" required />
+
+              <div class="row">
+                <div class="field">
+                  <label>Identidade <span class="req">*</span></label>
+                  <input type="text" title="Digite o RG" required />
+                </div>
+                <div class="field">
+                  <label>Data de Nascimento <span class="req">*</span></label>
+                  <input type="date" title="Data de Nascimento" required />
+                </div>
+                <div class="field">
+                  <label>E-mail <span class="req">*</span></label>
+                  <input type="email" title="Digite o Email" required />
+                </div>
+                <div class="field">
+                  <label>Celular <span class="req">*</span></label>
+                  <input type="tel" title="Digite o Celular" required />
+                </div>
               </div>
-              <div class="field">
-                <label>Sexo <span class="req">*</span></label>
-                <select required>
-                  <option value="">Escolha</option>
-                  <option value="M">Masculino</option>
-                  <option value="F">Feminino</option>
-                  <option value="O">Outro</option>
-                </select>
+
+              <div class="row">
+                <div class="field">
+                  <label>Necessidade Educacional? <span class="req">*</span></label>
+                  <select title="Necessidade" required>
+                    <option>Não</option>
+                    <option>Sim</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label>Indicação</label>
+                  <select title="Indicação" required>
+                    <option value="">Escolha</option>
+                    <option>Parceiro 1</option>
+                    <option>Parceiro 2</option>
+                  </select>
+                </div>
+              </div>
+              <div class="row">
+                <div class="field">
+                  <label>CEP <span class="req">*</span></label>
+                  <input type="text" title="Digite o CEP" required />
+                </div>
+                <div class="field small">
+                  <label>Estado <span class="req">*</span></label>
+                  <select title="Estado" required>
+                    <option>MG</option>
+                    <option>SP</option>
+                    <option>RJ</option>
+                  </select>
+                </div>
+                <div class="field flex2">
+                  <label>Cidade <span class="req">*</span></label>
+                  <select title="Cidade" required>
+                    <option value="">Selecione</option>
+                    <option>Belo Horizonte</option>
+                    <option>São Paulo</option>
+                    <option>Rio de Janeiro</option>
+                  </select>
+                </div>
+              </div>
+              <div class="row">
+                <div class="field flex2">
+                  <label>Bairro <span class="req">*</span></label>
+                  <input title="Bairro" type="text" required />
+                </div>
+                <div class="field flex2">
+                  <label>Endereço <span class="req">*</span></label>
+                  <input title="Endereço" type="text" required />
+                </div>
+                <div class="field small">
+                  <label>Nº <span class="req">*</span></label>
+                  <input title="Número" type="text" required />
+                </div>
+              </div>
+              <div class="row">
+                <div class="field full">
+                  <label>Complemento</label>
+                  <input title="Complemento" type="text" />
+                </div>
               </div>
             </div>
 
-            <div class="row">
-              <div class="field">
-                <label>Identidade <span class="req">*</span></label>
-                <input type="text" required />
+            <!-- Conteúdo da segunda aba - Dados do Curso [INICIALMENTE OCULTO] -->
+            <div id="contentCurso" class="tab-content" style="display: none;">
+              <div class="row">
+                <div class="field full">
+                  <label>Curso de Interesse <span class="req">*</span></label>
+                  <select required>
+                    <option value="">Selecione um curso</option>
+                    <option value="ads">Análise e Desenvolvimento de Sistemas</option>
+                    <option value="pedagogia">Pedagogia</option>
+                    <option value="administracao">Administração</option>
+                    <option value="enfermagem">Enfermagem</option>
+                    <option value="direito">Direito</option>
+                  </select>
+                </div>
               </div>
-              <div class="field">
-                <label>Data de Nascimento <span class="req">*</span></label>
-                <input type="date" required />
-              </div>
-              <div class="field">
-                <label>E-mail <span class="req">*</span></label>
-                <input type="email" required />
-              </div>
-              <div class="field">
-                <label>Celular <span class="req">*</span></label>
-                <input type="tel" required />
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="field">
-                <label
-                  >Necessidade Educacional? <span class="req">*</span></label
-                >
-                <select required>
-                  <option>Não</option>
-                  <option>Sim</option>
-                </select>
-              </div>
-              <div class="field">
-                <label>Indicação</label>
-                <select>
-                  <option value="">Escolha</option>
-                  <option>Parceiro 1</option>
-                  <option>Parceiro 2</option>
-                </select>
-              </div>
-            </div>
-            <div class="row">
-              <div class="field">
-                <label>CEP <span class="req">*</span></label>
-                <input type="text" required />
-              </div>
-              <div class="field small">
-                <label>Estado <span class="req">*</span></label>
-                <select required>
-                  <option>MG</option>
-                  <option>SP</option>
-                  <option>RJ</option>
-                </select>
-              </div>
-              <div class="field flex2">
-                <label>Cidade <span class="req">*</span></label>
-                <select required>
-                  <option value="">Selecione</option>
-                  <option>Belo Horizonte</option>
-                  <option>São Paulo</option>
-                  <option>Rio de Janeiro</option>
-                </select>
-              </div>
-            </div>
-            <div class="row">
-              <div class="field flex2">
-                <label>Bairro <span class="req">*</span></label>
-                <input type="text" required />
-              </div>
-              <div class="field flex2">
-                <label>Endereço <span class="req">*</span></label>
-                <input type="text" required />
-              </div>
-              <div class="field small">
-                <label>Nº <span class="req">*</span></label>
-                <input type="text" required />
-              </div>
-            </div>
-            <div class="row">
-              <div class="field full">
-                <label>Complemento</label>
-                <input type="text" />
+              <div class="row">
+                <div class="field full">
+                  <label>Unidade Interesse / Local da Prova <span class="req">*</span></label>
+                  <select required>
+                    <option value="">Selecione Unidade / Local</option>
+                    <option value="unidade1">São Paulo - SP</option>
+                    <option value="unidade2">Rio de Janeiro - RJ</option>
+                    <option value="unidade3">Goiânia - Goiás</option>
+                  </select>
+                </div>
               </div>
             </div>
             <div class="submit-area">
@@ -169,5 +198,28 @@
         </div>
       </main>
     </div>
+    <!-- Troca de abas via JavaScript -->
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const tabCandidato = document.getElementById('tabCandidato');
+        const tabCurso = document.getElementById('tabCurso');
+        const contentCandidato = document.getElementById('contentCandidato');
+        const contentCurso = document.getElementById('contentCurso');
+
+        tabCandidato.addEventListener('click', () => {
+          tabCandidato.classList.add('active');
+          tabCurso.classList.remove('active');
+          contentCandidato.style.display = 'block';
+          contentCurso.style.display = 'none';
+        });
+
+        tabCurso.addEventListener('click', () => {
+          tabCurso.classList.add('active');
+          tabCandidato.classList.remove('active');
+          contentCurso.style.display = 'block';
+          contentCandidato.style.display = 'none';
+        });
+      });
+    </script>
   </body>
 </html>
