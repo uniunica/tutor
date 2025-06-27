@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Portal do Parceiro</title>
+    <link rel="stylesheet" href="portalparceiro.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <header>
+      <div class="top-bar">
+        <img src="images/logo-grupo.png" alt="Logo Prominas" id="logo-grupo" />
+        <input type="text" placeholder="Pesquise seus alunos (CPF ou NOME)" />
+        <button class="link-btn">
+          Link para matricular alunos <i class="fa fa-copy"></i>
+        </button>
+        <div class="icons">
+          <i class="fa fa-bell"></i>
+          <i class="fa fa-cog"></i>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <aside>
+        <div class="perfil">
+          <img src="images/perfil.jpg" alt="Felipe Toledo" id="perfil" />
+          <p>
+            <strong>Fulano Ciclano</strong><br /><span class="status"
+              >Parceiro Autorizado</span
+            >
+          </p>
+        </div>
+        <nav class="menu-lateral">
+          <button class="nova-matricula">Nova Matrícula</button>
+          <ul>
+            <li>Banco Digital</li>
+            <li>Leads</li>
+            <li>Treinamentos</li>
+            <li>Administrativo</li>
+            <li>Alunos</li>
+            <li>Ferramentas</li>
+            <li>Relatórios</li>
+            <li>Vestibular</li>
+            <li>Suporte</li>
+          </ul>
+        </nav>
+      </aside>
+
+      <section class="conteudo">
+        <h2>BEM-VINDO À SUA PLATAFORMA DE VENDAS!</h2>
+        <p>No formulário abaixo você realiza a matrícula dos seus alunos:</p>
+
+        <form class="formulario">
+          <h3>ESCOLHA A INSTITUIÇÃO E O CURSO DESEJADO</h3>
+          <hr />
+          <div class="opcoes">
+            <p id="titulo-label">Tipo de Venda</p>
+            <label
+              ><input type="radio" name="tipo-venda" checked /> Único
+              curso</label
+            >
+            <label><input type="radio" name="tipo-venda" /> Combo</label>
+          </div>
+
+          <div class="instituicoes">
+            <p id="titulo-label">INSTITUIÇÃO DE ENSINO</p>
+            <label
+              ><input type="radio" name="instituicao" /><img src="images/logo-uniunica.png" alt="Logo UniUnica" id="logo-uniunica-label"> Centro Universitário
+              Única</label
+            >
+            <label
+              ><input type="radio" name="instituicao" checked /><img src="images/logo-prominas.png" alt="Logo UniUnica" id="logo-prominas-label"> Faculdade
+              Prominas</label
+            >
+            <label
+              ><input type="radio" name="instituicao" /><img src="images/logo-conexao.png" alt="Logo UniUnica" id="logo-conexao-label"> Faculdade
+              Conexão</label
+            >
+          </div>
+
+          <div class="modalidade">
+            <p id="titulo-label">MODALIDADE DE ENSINO</p>
+            <label
+              ><input type="radio" name="modalidade" checked />
+              Pós-Graduação</label
+            >
+            <label
+              ><input type="radio" name="modalidade" /> Aperfeiçoamento</label
+            >
+            <label><input type="radio" name="modalidade" /> Extensão</label>
+            <label
+              ><input type="radio" name="modalidade" /> Ensino Médio
+              (EJA)</label
+            >
+          </div>
+
+          <div class="areas">
+            <p id="titulo-label">ÁREAS DO CURSO</p>
+            <label><input type="radio" name="area" checked /> Todas</label>
+            <label><input type="radio" name="area" /> Engenharias</label>
+            <label
+              ><input type="radio" name="area" /> Empresarial, TI e
+              Negócios</label
+            >
+            <label><input type="radio" name="area" /> Meio Ambiente</label>
+            <label><input type="radio" name="area" /> Serviço Social</label>
+            <label><input type="radio" name="area" /> Estética</label>
+            <label><input type="radio" name="area" /> Jurídica</label>
+            <label><input type="radio" name="area" /> Ciências da Saúde</label>
+            <label><input type="radio" name="area" /> Psicologia</label>
+            <label><input type="radio" name="area" /> MBA Executivo</label>
+            <label><input type="radio" name="area" /> Educação</label>
+            <label><input type="radio" name="area" /> Gastronomia</label>
+          </div>
+
+          <div class="buscar-curso">
+            <p id="titulo-label">ENCONTRA O CURSO</p>
+            <label for="curso">Digite o nome do curso</label>
+            <input
+              id="curso"
+              type="text"
+              placeholder="*Selecione a instituição de ensino"
+            />
+          </div>
+
+          <div class="botoes-form">
+            <button type="button" class="voltar">Voltar</button>
+            <button type="submit" class="avancar">Avançar</button>
+          </div>
+        </form>
+      </section>
+    </main>
+  </body>
+</html>

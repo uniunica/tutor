@@ -1,0 +1,426 @@
+/* General Body Styles */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f5f7fa;
+  color: #333;
+  font-size: 14px;
+}
+
+/* Header - Top Bar */
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  background: #002f5f;
+  color: white;
+  min-height: 50px;
+}
+
+#logo-grupo {
+  width: 160px;
+  height: auto;
+  margin-right: 20px;
+}
+
+/* Search Input in Top Bar */
+.top-bar input[type="text"] {
+  flex-grow: 1;
+  max-width: 400px;
+  margin: 0 20px;
+  padding: 10px 15px;
+  border-radius: 20px;
+  border: none;
+  background: #00254c;
+  color: #bbb;
+  font-size: 14px;
+  outline: none;
+}
+
+.top-bar input[type="text"]::placeholder {
+  color: #999;
+}
+
+/* Link Button */
+.link-btn {
+  background: white;
+  color: #002f5f;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  margin-left: 20px;
+  font-size: 13px;
+}
+
+.link-btn i {
+  margin-left: 8px;
+  font-size: 0.9em;
+}
+
+/* Icons on the Right */
+.icons {
+  display: flex;
+  align-items: center;
+  margin-left: 20px;
+}
+
+.icons i {
+  margin-left: 15px;
+  cursor: pointer;
+  font-size: 1.2em;
+}
+
+/* Main Content Area */
+main {
+  display: flex;
+  height: calc(100vh - 74px);
+}
+
+/* Aside - Sidebar */
+aside {
+  width: 280px;
+  background: white;
+  border-right: 1px solid #eee;
+  padding: 0;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Profile Section in Sidebar */
+.perfil {
+  padding: 20px 0 0;
+  text-align: center;
+  background-color: #fff;
+}
+
+.perfil img {
+  border-radius: 50%;
+  width: 90px;
+  height: 90px;
+  object-fit: cover;
+  border: 3px solid #002f5f;
+  margin-bottom: 10px;
+}
+
+/* Profile Name and Status Block (Dark Blue) */
+.perfil p {
+  text-align: center;
+  background-color: #002f5f;
+  color: white;
+  padding: 15px 10px;
+  margin-top: 10px;
+  margin-bottom: 0;
+  font-size: 1.1em;
+  line-height: 1.4;
+}
+
+.perfil p strong {
+  display: block;
+}
+
+/* Status (e.g., "Parceiro Autorizado") */
+.status {
+  color: white;
+  font-size: 0.85em;
+  position: relative;
+  padding-left: 15px;
+  display: inline-block;
+}
+
+.status::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 8px;
+  background-color: #4caf50;
+  border-radius: 50%;
+}
+
+/* New Enrollment Button */
+.nova-matricula {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e53935;
+  color: white;
+  padding: 12px 25px;
+  margin: 20px auto;
+  border: none;
+  border-radius: 25px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 1.1em;
+  width: calc(100% - 40px);
+  box-sizing: border-box;
+  text-decoration: none;
+}
+
+/* Side Menu */
+.menu-lateral {
+  flex-grow: 1;
+  padding-top: 10px;
+}
+
+.menu-lateral ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menu-lateral li {
+  padding: 12px 20px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  color: #333;
+  font-size: 1.05em;
+  display: flex;
+  align-items: center;
+}
+
+.menu-lateral li:hover {
+  background-color: #f0f0f0;
+  color: #002f5f;
+}
+
+/* Content Section (Right Side) */
+.conteudo {
+  flex-grow: 1;
+  padding: 30px;
+  background: #fff;
+  overflow-y: auto;
+}
+
+.conteudo h2 {
+  font-size: 1.6em;
+  color: #002f5f;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.conteudo > p {
+  font-size: 1.1em;
+  color: #555;
+  margin-bottom: 25px;
+}
+
+/* Form Section */
+.formulario h3 {
+  margin-top: 20px;
+  margin-bottom: 15px;
+  color: #002f5f;
+  font-size: 1.4em;
+  font-weight: bold;
+}
+
+.formulario hr {
+  border: none;
+  border-top: 1px solid #eee;
+  margin: 15px 0 25px 0;
+}
+
+/* Common style for group titles */
+#titulo-label {
+  font-weight: bold;
+  margin-bottom: 10px;
+  display: block;
+  font-size: 1.1em;
+  color: #555;
+}
+
+/* Containers for Radio Button Groups */
+.opcoes,
+.instituicoes,
+.modalidade,
+.areas {
+  margin-top: 15px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 25px;
+}
+
+/* Specific Layouts for Groups */
+.opcoes label {
+  flex-basis: calc(50% - 5px);
+}
+
+.instituicoes label {
+  flex-basis: calc(33.33% - 7px);
+}
+
+.modalidade label {
+  flex-basis: calc(25% - 7.5px);
+}
+
+.areas label {
+  flex-basis: calc(33.33% - 7px);
+}
+
+/* Custom Radio Button Styling */
+label {
+  background: #f0f0f0;
+  padding: 12px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  border: 2px solid transparent;
+  transition: all 0.2s ease;
+  font-size: 14px;
+}
+
+/* Style for the input itself (hidden visual) */
+label input[type="radio"] {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #ccc;
+  border-radius: 50%;
+  position: relative;
+  margin-right: 10px;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+
+/* Inner dot for custom radio button when checked */
+label input[type="radio"]::before {
+  content: '';
+  display: block;
+  width: 10px;
+  height: 10px;
+  background-color: #002f5f;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.2s ease-in-out;
+}
+
+/* When radio button is checked */
+label input[type="radio"]:checked {
+  border-color: #002f5f;
+}
+
+label input[type="radio"]:checked::before {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* Style the LABEL when its contained input is checked */
+label:has(input[type="radio"]:checked) {
+  background: #002f5f;
+  color: white;
+  border-color: #002f5f;
+}
+
+/* Focus state for accessibility */
+label input[type="radio"]:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 47, 95, 0.3);
+}
+
+/* Institution Logos inside labels */
+label img {
+  width: 24px;
+  height: auto;
+  margin-right: 8px;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+/* Logo adjustments */
+#logo-uniunica-label,
+#logo-prominas-label,
+#logo-conexao-label {
+  width: 24px;
+  height: auto;
+}
+
+/* "Encontre o Curso" section */
+.buscar-curso {
+  margin-top: 30px;
+}
+
+.buscar-curso label {
+  background: none;
+  padding: 0;
+  border-radius: 0;
+  display: block;
+  margin-bottom: 8px;
+  font-weight: normal;
+  font-size: 1em;
+  color: #555;
+  cursor: default;
+  border: none;
+}
+
+.buscar-curso input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1.1em;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.buscar-curso input:focus {
+  border-color: #002f5f;
+  box-shadow: 0 0 0 2px rgba(0, 47, 95, 0.2);
+}
+
+.buscar-curso input::placeholder {
+  color: #999;
+}
+
+/* Form Buttons */
+.botoes-form {
+  margin-top: 40px;
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 20px;
+}
+
+button.voltar,
+button.avancar {
+  padding: 12px 30px;
+  border: none;
+  border-radius: 25px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 1.1em;
+  transition: all 0.2s ease;
+}
+
+button.voltar {
+  background: #e0e0e0;
+  color: #555;
+}
+
+button.voltar:hover {
+  background: #d0d0d0;
+}
+
+button.avancar {
+  background: #002f5f;
+  color: white;
+}
+
+button.avancar:hover {
+  background: #001f40;
+}
