@@ -857,6 +857,72 @@ button.avancar:hover {
   display: none !important;
 }
 
+/* NOVA SEÇÃO: Seleção de Cursos */
+.course-selection-section {
+  margin-top: 30px;
+  margin-bottom: 25px;
+}
+
+.course-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Duas colunas */
+  gap: 10px; /* Espaçamento entre os itens */
+}
+
+.course-item {
+  background: #f0f0f0;
+  padding: 12px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  border: 2px solid transparent;
+  transition: all 0.2s ease;
+  font-size: 14px;
+}
+
+.course-item:hover {
+  border-color: #002f5f;
+  background: #e8f0f7;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 47, 95, 0.1);
+}
+
+.course-item span {
+  flex-grow: 1;
+  margin-right: 10px;
+  color: #333;
+  font-weight: 500;
+}
+
+.add-course-btn {
+  background: #002f5f;
+  color: white;
+  border: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  font-size: 1.2em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.2s;
+  flex-shrink: 0;
+}
+
+.add-course-btn:hover {
+  background-color: #001f40;
+  transform: scale(1.1);
+}
+
+/* Utilitários */
+.hidden {
+  display: none !important;
+}
+
 /* Animações Aprimoradas */
 @keyframes fadeIn {
   from { opacity: 0; }

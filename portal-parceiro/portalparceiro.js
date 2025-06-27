@@ -1,7 +1,7 @@
 class PortalParceiroTutorialManager {
   constructor() {
     this.currentStep = 0;
-    this.totalSteps = 12;
+    this.totalSteps = 13;
     this.isActive = false;
 
     this.steps = [
@@ -85,10 +85,33 @@ class PortalParceiroTutorialManager {
       },
       {
         title: "Busca de Curso",
-        text: "Digite o nome específico do curso desejado. O sistema filtrará automaticamente as opções disponíveis.",
-        tip: "Use palavras-chave como 'gestão', 'educação', 'saúde' para encontrar cursos relacionados.",
+        text: "Use este campo para digitar palavras-chave e refinar a busca, ou navegue pela lista de cursos disponíveis.",
+        tip: "O campo é útil para encontrar cursos específicos, ou você pode explorar as opções geradas abaixo.",
         target: "#buscarCursoSection",
         position: "top",
+      },
+      {
+        title: "Seleção de Cursos",
+        text: "Após selecionar a modalidade e área, os cursos disponíveis são listados aqui. Clique no '+' para adicionar o curso à matrícula.",
+        tip: "A lista de cursos é dinâmica e se atualiza com base nas suas seleções acima.",
+        target: "#courseSelectionSection",
+        position: "top",
+        action: () => {
+          // Simular uma seleção para garantir que a seção de cursos esteja visível
+          const modalidadeRadio = document.querySelector(
+            'input[name="modalidade"][value="Pós-Graduação"]'
+          );
+          const areaRadio = document.querySelector(
+            'input[name="area"][value="Engenharias"]'
+          );
+
+          if (modalidadeRadio) modalidadeRadio.checked = true;
+          if (areaRadio) areaRadio.checked = true;
+
+          if (window.portalApp) {
+            window.portalApp.updateCourseList();
+          }
+        },
       },
     ];
 
@@ -226,6 +249,11 @@ class PortalParceiroTutorialManager {
     const tipElement = document.getElementById("tutorialTip");
 
     console.log(`Mostrando passo ${this.currentStep + 1}: ${step.title}`);
+
+    // Executar ação especial se existir
+    if (step.action && typeof step.action === "function") {
+      step.action();
+    }
 
     // Mostrar overlay
     overlay.classList.remove("hidden");
@@ -507,6 +535,7 @@ class PortalParceiroTutorialManager {
               <li>Seleção de instituições e cursos</li>
               <li>Navegação no menu lateral</li>
               <li>Filtros por modalidade e área</li>
+              <li><i class="fas fa-check-circle"></i> Novo: Seleção de cursos por modalidade e área</li>
             </ul>
           </div>
 
@@ -640,10 +669,276 @@ class PortalParceiroTutorialManager {
   }
 }
 
-// Inicializar quando a página carregar
-document.addEventListener("DOMContentLoaded", () => {
-  new PortalParceiroTutorialManager();
-});
+// ====================================================================================
+// LÓGICA PARA A EXIBIÇÃO DINÂMICA DOS CURSOS
+// ====================================================================================
+
+class PortalAppLogic {
+  constructor() {
+    this.coursesData = {
+      "Pós-Graduação": {
+        Todas: [
+          "Pós em Gestão de Projetos - 360H",
+          "MBA em Liderança - 400H",
+          "Pós em Marketing Digital - 360H",
+          "Pós em Direito Civil - 400H",
+          "Pós em Educação Inclusiva - 360H",
+          "MBA em Finanças - 400H",
+          "Pós em Saúde Pública - 360H",
+          "Pós em Tecnologia da Informação - 400H",
+        ],
+        Engenharias: [
+          "Automação Industrial - 500H",
+          "Engenharia Ambiental - 500H",
+          "Engenharia da Qualidade - 500H",
+          "Engenharia de Produção - 500H",
+          "Engenharia de Controle e Automação Indus - 500H",
+          "Engenharia de Materiais - 720H",
+          "Design de Interiores - 500H",
+          "Engenharia de Estruturas de Concreto Arm - 500H",
+          "Engenharia de Pavimentação Asfáltica - 500H",
+          "Engenharia de Produção e Gerenciamento D - 500H",
+          "Engenharia de Segurança do Trabalho - 600H",
+          "Engenharia de Software - 500H",
+        ],
+        "Empresarial, TI e Negócios": [
+          "MBA em Gestão Estratégica - 400H",
+          "Análise de Dados e Big Data - 360H",
+          "Gestão de Pessoas e Liderança - 360H",
+          "Finanças Corporativas - 400H",
+          "Marketing e Vendas - 360H",
+          "Cibersegurança e Proteção de Dados - 400H",
+        ],
+        "Meio Ambiente": [
+          "Gestão Ambiental e Sustentabilidade - 360H",
+          "Auditoria Ambiental - 360H",
+        ],
+        "Serviço Social": [
+          "Serviço Social e Saúde Mental - 360H",
+          "Perícia Social - 360H",
+        ],
+        Estética: [
+          "Estética Avançada e Cosmetologia - 360H",
+          "Tricologia e Terapias Capilares - 360H",
+        ],
+        Jurídica: [
+          "Direito Penal e Processual Penal - 400H",
+          "Direito do Trabalho e Previdenciário - 400H",
+        ],
+        "Ciências da Saúde": [
+          "Enfermagem em UTI - 360H",
+          "Farmacologia Clínica - 360H",
+          "Nutrição Clínica e Esportiva - 360H",
+          "Fisioterapia Ortopédica - 360H",
+        ],
+        Psicologia: [
+          "Psicologia Organizacional - 360H",
+          "Terapia Cognitivo-Comportamental - 360H",
+        ],
+        "MBA Executivo": [
+          "MBA em Gestão Empresarial - 400H",
+          "MBA em Liderança e Coaching - 400H",
+        ],
+        Educação: [
+          "Docência no Ensino Superior - 360H",
+          "Psicopedagogia Clínica e Institucional - 360H",
+        ],
+        Gastronomia: ["Gastronomia e Segurança Alimentar - 360H"],
+      },
+      Aperfeiçoamento: {
+        Todas: [
+          "Excel Avançado para Negócios - 120H",
+          "Comunicação Empresarial - 80H",
+        ],
+        Educação: ["Metodologias Ativas - 80H", "Educação a Distância - 80H"],
+      },
+      Extensão: {
+        Todas: [
+          "Introdução ao Marketing Digital - 40H",
+          "Noções de Empreendedorismo - 40H",
+        ],
+      },
+      "Ensino Médio (EJA)": {
+        Todas: ["Ensino Médio (EJA) - 1200H"],
+      },
+    };
+
+    this.courseListContainer = document.getElementById("courseList");
+    this.courseSelectionSection = document.getElementById(
+      "courseSelectionSection"
+    );
+    this.noCoursesMessage = document.getElementById("noCoursesMessage");
+
+    this.initLogic();
+  }
+
+  initLogic() {
+    // Adicionar valores aos inputs de rádio
+    document
+      .querySelectorAll('input[name="modalidade"]')
+      .forEach((radio, index) => {
+        const modalidades = [
+          "Pós-Graduação",
+          "Aperfeiçoamento",
+          "Extensão",
+          "Ensino Médio (EJA)",
+        ];
+        radio.value = modalidades[index];
+      });
+
+    document.querySelectorAll('input[name="area"]').forEach((radio, index) => {
+      const areas = [
+        "Todas",
+        "Engenharias",
+        "Empresarial, TI e Negócios",
+        "Meio Ambiente",
+        "Serviço Social",
+        "Estética",
+        "Jurídica",
+        "Ciências da Saúde",
+        "Psicologia",
+        "MBA Executivo",
+        "Educação",
+        "Gastronomia",
+      ];
+      if (index < areas.length) {
+        radio.value = areas[index];
+      }
+    });
+
+    // Adicionar listeners para os botões de rádio
+    document.querySelectorAll('input[name="modalidade"]').forEach((radio) => {
+      radio.addEventListener("change", () => this.updateCourseList());
+    });
+
+    document.querySelectorAll('input[name="area"]').forEach((radio) => {
+      radio.addEventListener("change", () => this.updateCourseList());
+    });
+
+    // Adicionar listener para o campo de busca
+    document.getElementById("curso").addEventListener("input", (e) => {
+      this.filterCourseList(e.target.value);
+    });
+
+    this.updateCourseList(); // Inicializa a lista de cursos ao carregar a página
+  }
+
+  getSelectedValues() {
+    const selectedModalidade = document.querySelector(
+      'input[name="modalidade"]:checked'
+    )?.value;
+    const selectedArea = document.querySelector(
+      'input[name="area"]:checked'
+    )?.value;
+    return { selectedModalidade, selectedArea };
+  }
+
+  updateCourseList() {
+    const { selectedModalidade, selectedArea } = this.getSelectedValues();
+    let coursesToShow = [];
+
+    if (selectedModalidade && selectedArea) {
+      if (this.coursesData[selectedModalidade]) {
+        if (
+          selectedArea === "Todas" &&
+          this.coursesData[selectedModalidade]["Todas"]
+        ) {
+          // Se "Todas" as áreas forem selecionadas, combine todos os cursos daquela modalidade
+          for (const area in this.coursesData[selectedModalidade]) {
+            coursesToShow = coursesToShow.concat(
+              this.coursesData[selectedModalidade][area]
+            );
+          }
+          // Remover duplicatas caso um curso apareça em "Todas" e em uma área específica
+          coursesToShow = [...new Set(coursesToShow)];
+        } else if (this.coursesData[selectedModalidade][selectedArea]) {
+          coursesToShow = this.coursesData[selectedModalidade][selectedArea];
+        }
+      }
+    }
+
+    this.renderCourseList(coursesToShow);
+  }
+
+  renderCourseList(courses) {
+    if (!this.courseListContainer) return;
+
+    this.courseListContainer.innerHTML = ""; // Limpa a lista atual
+
+    if (courses.length > 0) {
+      courses.forEach((course) => {
+        const courseItem = document.createElement("div");
+        courseItem.className = "course-item";
+        courseItem.innerHTML = `
+          <span>${course}</span>
+          <button class="add-course-btn" data-course="${course}"><i class="fas fa-plus"></i></button>
+        `;
+        this.courseListContainer.appendChild(courseItem);
+
+        courseItem
+          .querySelector(".add-course-btn")
+          .addEventListener("click", (e) => {
+            const courseName = e.currentTarget.dataset.course;
+            if (window.portalTutorial) {
+              window.portalTutorial.showNotification(
+                `"${courseName}" adicionado para matrícula!`,
+                "success"
+              );
+            }
+          });
+      });
+
+      if (this.courseSelectionSection) {
+        this.courseSelectionSection.classList.remove("hidden");
+      }
+      if (this.noCoursesMessage) {
+        this.noCoursesMessage.classList.add("hidden");
+      }
+    } else {
+      if (this.courseSelectionSection) {
+        this.courseSelectionSection.classList.remove("hidden");
+      }
+      this.courseListContainer.innerHTML = ""; // Limpa a lista
+      if (this.noCoursesMessage) {
+        this.noCoursesMessage.classList.remove("hidden"); // Mostra mensagem de "nenhum curso"
+      }
+    }
+  }
+
+  // Filtrar cursos existentes na lista por texto digitado
+  filterCourseList(searchText) {
+    if (!this.courseListContainer) return;
+
+    const allCourseItems =
+      this.courseListContainer.querySelectorAll(".course-item");
+    let foundCount = 0;
+
+    if (allCourseItems.length === 0) {
+      // Se não houver itens, atualizar a lista primeiro
+      this.updateCourseList();
+    }
+
+    allCourseItems.forEach((item) => {
+      const courseName = item.querySelector("span").textContent.toLowerCase();
+      if (courseName.includes(searchText.toLowerCase())) {
+        item.classList.remove("hidden");
+        foundCount++;
+      } else {
+        item.classList.add("hidden");
+      }
+    });
+
+    if (foundCount === 0 && searchText.length > 0) {
+      if (this.noCoursesMessage) {
+        this.noCoursesMessage.classList.remove("hidden");
+      }
+    } else {
+      if (this.noCoursesMessage) {
+        this.noCoursesMessage.classList.add("hidden");
+      }
+    }
+  }
+}
 
 // Sistema de validação e máscaras para formulários
 class PortalFormValidator {
@@ -652,38 +947,34 @@ class PortalFormValidator {
   }
 
   init() {
-    // Adicionar validação em tempo real
     this.addFormValidation();
     this.addInteractiveFeatures();
   }
 
   addFormValidation() {
-    // Validar seleção de instituição antes de buscar curso
     const cursoInput = document.getElementById("curso");
-    const instituicaoInputs = document.querySelectorAll(
-      'input[name="instituicao"]'
-    );
+    if (cursoInput) {
+      cursoInput.addEventListener("focus", () => {
+        const instituicaoSelecionada = document.querySelector(
+          'input[name="instituicao"]:checked'
+        );
+        if (!instituicaoSelecionada) {
+          this.showFieldError(cursoInput, "Selecione uma instituição primeiro");
+          cursoInput.blur();
+        }
+      });
+    }
 
-    cursoInput.addEventListener("focus", () => {
-      const instituicaoSelecionada = document.querySelector(
-        'input[name="instituicao"]:checked'
-      );
-      if (!instituicaoSelecionada) {
-        this.showFieldError(cursoInput, "Selecione uma instituição primeiro");
-        cursoInput.blur();
-      }
-    });
-
-    // Validar preenchimento obrigatório
     const form = document.getElementById("enrollmentForm");
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
-      this.validateForm();
-    });
+    if (form) {
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        this.validateForm();
+      });
+    }
   }
 
   addInteractiveFeatures() {
-    // Efeitos visuais nos radio buttons
     const radioInputs = document.querySelectorAll('input[type="radio"]');
     radioInputs.forEach((radio) => {
       radio.addEventListener("change", () => {
@@ -691,7 +982,6 @@ class PortalFormValidator {
       });
     });
 
-    // Efeitos nos botões do menu lateral
     const menuItems = document.querySelectorAll(".menu-lateral li");
     menuItems.forEach((item) => {
       item.addEventListener("click", () => {
@@ -699,7 +989,6 @@ class PortalFormValidator {
       });
     });
 
-    // Efeito hover aprimorado nos elementos
     this.addHoverEffects();
   }
 
@@ -710,12 +999,13 @@ class PortalFormValidator {
       label.style.transform = "scale(1)";
     }, 150);
 
-    // Mostrar feedback da seleção
-    const groupName = radio.name;
     const selectedText = label.textContent.trim();
-
-    const notification = new PortalParceiroTutorialManager();
-    notification.showNotification(`✅ ${selectedText} selecionado`, "success");
+    if (window.portalTutorial) {
+      window.portalTutorial.showNotification(
+        `✅ ${selectedText} selecionado`,
+        "success"
+      );
+    }
   }
 
   simulateMenuAction(menuItem) {
@@ -732,15 +1022,14 @@ class PortalFormValidator {
     };
 
     const message = actions[menuItem] || `📂 Acessando ${menuItem}...`;
-
-    const notification = new PortalParceiroTutorialManager();
-    notification.showNotification(message, "info");
+    if (window.portalTutorial) {
+      window.portalTutorial.showNotification(message, "info");
+    }
   }
 
   validateForm() {
     const errors = [];
 
-    // Verificar instituição
     const instituicao = document.querySelector(
       'input[name="instituicao"]:checked'
     );
@@ -748,7 +1037,6 @@ class PortalFormValidator {
       errors.push("Selecione uma instituição de ensino");
     }
 
-    // Verificar modalidade
     const modalidade = document.querySelector(
       'input[name="modalidade"]:checked'
     );
@@ -756,13 +1044,11 @@ class PortalFormValidator {
       errors.push("Selecione uma modalidade de ensino");
     }
 
-    // Verificar área
     const area = document.querySelector('input[name="area"]:checked');
     if (!area) {
       errors.push("Selecione uma área do curso");
     }
 
-    // Verificar curso
     const curso = document.getElementById("curso").value.trim();
     if (!curso) {
       errors.push("Digite o nome do curso desejado");
@@ -836,11 +1122,9 @@ class PortalFormValidator {
   }
 
   showFieldError(field, message) {
-    // Remover erro anterior
     const existingError = field.parentNode.querySelector(".field-error");
     if (existingError) existingError.remove();
 
-    // Adicionar novo erro
     const errorDiv = document.createElement("div");
     errorDiv.className = "field-error";
     errorDiv.textContent = message;
@@ -852,8 +1136,6 @@ class PortalFormValidator {
     `;
 
     field.parentNode.appendChild(errorDiv);
-
-    // Destacar campo com erro
     field.style.borderColor = "#dc3545";
     field.style.background = "#fdf2f2";
 
@@ -867,7 +1149,6 @@ class PortalFormValidator {
   }
 
   addHoverEffects() {
-    // Efeitos nos labels de radio
     const labels = document.querySelectorAll("label");
     labels.forEach((label) => {
       if (label.querySelector('input[type="radio"]')) {
@@ -887,7 +1168,6 @@ class PortalFormValidator {
       }
     });
 
-    // Efeitos nos botões
     const buttons = document.querySelectorAll("button");
     buttons.forEach((button) => {
       if (!button.classList.contains("btn")) {
@@ -904,11 +1184,6 @@ class PortalFormValidator {
     });
   }
 }
-
-// Inicializar validador
-document.addEventListener("DOMContentLoaded", () => {
-  new PortalFormValidator();
-});
 
 // Sistema de dicas contextuais
 class ContextualHelp {
@@ -975,11 +1250,6 @@ class ContextualHelp {
   }
 }
 
-// Inicializar sistema de dicas
-document.addEventListener("DOMContentLoaded", () => {
-  new ContextualHelp();
-});
-
 // Adicionar estilos para animações
 const additionalStyles = document.createElement("style");
 additionalStyles.textContent = `
@@ -1040,9 +1310,28 @@ function demonstrateAdvancedFeatures() {
   console.log("✅ Efeitos visuais aprimorados");
   console.log("✅ Navegação por teclado");
   console.log("✅ Posicionamento inteligente de modais");
+  console.log("✅ Seleção dinâmica de cursos");
 }
 
-// Executar demonstração
+// INICIALIZAÇÃO ÚNICA E CORRETA
+// Variáveis globais para acesso entre classes
+window.portalTutorial = null;
+window.portalApp = null;
+window.portalValidator = null;
+window.contextualHelp = null;
+
+// Inicializar quando a página carregar - APENAS UMA VEZ
 document.addEventListener("DOMContentLoaded", () => {
+  console.log("🚀 Inicializando Portal do Parceiro...");
+
+  // Inicializar todas as classes na ordem correta
+  window.portalTutorial = new PortalParceiroTutorialManager();
+  window.portalApp = new PortalAppLogic();
+  window.portalValidator = new PortalFormValidator();
+  window.contextualHelp = new ContextualHelp();
+
+  // Executar demonstração após um delay
   setTimeout(demonstrateAdvancedFeatures, 1000);
+
+  console.log("✅ Portal do Parceiro inicializado com sucesso!");
 });
