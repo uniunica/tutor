@@ -327,44 +327,39 @@ class InscricaoTutorialManager {
     }, 15000);
   }
 
+  // Atualizar a função showPaymentInfo para redirecionar
   showPaymentInfo() {
     const modal = document.createElement("div");
     modal.className = "modal";
     modal.innerHTML = `
-      <div class="modal-content">
-        <div class="modal-header">
-          <i class="fas fa-credit-card"></i>
-          <h2>Informações de Pagamento</h2>
-        </div>
-        <div class="modal-body">
-          <p>✅ <strong>Inscrição realizada com sucesso!</strong></p>
-          <p>O candidato agora pode efetuar o pagamento da taxa de matrícula.</p>
-
-          <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; margin: 15px 0;">
-            <h4 style="margin: 0 0 10px 0; color: #28a745;">💰 Informações de Pagamento:</h4>
-            <ul style="margin: 0; padding-left: 20px;">
-              <li><strong>Valor máximo:</strong> R$ 250,00</li>
-              <li><strong>Gerado automaticamente</strong> no sistema</li>
-              <li><strong>Para alterar:</strong> Contate Expansão e Negócios</li>
-              <li><strong>Após pagamento:</strong> Acesso ao portal e materiais</li>
-            </ul>
-          </div>
-
-          <p><strong>Próximos passos do candidato:</strong></p>
-          <ol>
-            <li>Receber e-mail com dados de acesso</li>
-            <li>Efetuar pagamento da taxa</li>
-            <li>Acessar portal do aluno</li>
-            <li>Baixar materiais didáticos</li>
-          </ol>
-        </div>
-        <div class="modal-footer">
-          <button class="btn btn-primary" onclick="this.closest('.modal').remove()">
-            <i class="fas fa-check"></i> Perfeito!
-          </button>
-        </div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <i class="fas fa-check-circle"></i>
+        <h2>Inscrição Finalizada!</h2>
       </div>
-    `;
+      <div class="modal-body">
+        <p>✅ <strong>Parabéns! Inscrição realizada com sucesso!</strong></p>
+        <p>Agora você será direcionado para a página de pagamento onde o candidato poderá:</p>
+
+        <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; margin: 15px 0;">
+          <h4 style="margin: 0 0 10px 0; color: #28a745;">📋 Próximos Passos:</h4>
+          <ul style="margin: 0; padding-left: 20px;">
+            <li>Ver resumo da inscrição</li>
+            <li>Escolher forma de pagamento</li>
+            <li>Acessar Central do Candidato</li>
+            <li>Receber orientações finais</li>
+          </ul>
+        </div>
+
+        <p><strong>Vamos continuar o tutorial na próxima página!</strong></p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" onclick="window.location.href='posinscricao.html'">
+          <i class="fas fa-arrow-right"></i> Continuar
+        </button>
+      </div>
+    </div>
+  `;
 
     document.body.appendChild(modal);
   }

@@ -16,9 +16,106 @@
     />
   </head>
   <body>
+    <!-- Modal de Boas-vindas -->
+    <div id="welcomeModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <i class="fas fa-trophy"></i>
+          <h2>Tutorial: Pós-Inscrição</h2>
+        </div>
+        <div class="modal-body">
+          <p>Excelente! A inscrição foi finalizada com sucesso! 🎉</p>
+          <p>Agora você aprenderá sobre a <strong>página pós-inscrição</strong> e como orientar o candidato:</p>
+          <ul>
+            <li><i class="fas fa-user-check"></i> Confirmação dos dados da inscrição</li>
+            <li><i class="fas fa-info-circle"></i> Informações do curso selecionado</li>
+            <li><i class="fas fa-credit-card"></i> Opções de pagamento disponíveis</li>
+            <li><i class="fas fa-user-graduate"></i> Acesso à Central do Candidato</li>
+            <li><i class="fas fa-lightbulb"></i> Orientações importantes para o candidato</li>
+          </ul>
+          <div class="info-box">
+            <i class="fas fa-exclamation-circle"></i>
+            <strong>IMPORTANTE:</strong> Esta página é o que o candidato verá após finalizar a inscrição!
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="startTutorial" class="btn btn-primary">
+            <i class="fas fa-play"></i> Iniciar Tutorial
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Overlay do Tutorial -->
+    <div id="tutorialOverlay" class="tutorial-overlay hidden">
+      <div class="tutorial-box">
+        <div class="tutorial-content">
+          <h3 id="tutorialTitle">Título do Passo</h3>
+          <p id="tutorialText">Descrição do passo atual</p>
+          <div id="tutorialTip" class="tutorial-tip hidden">
+            <i class="fas fa-lightbulb"></i>
+            <span id="tutorialTipText">Dica adicional</span>
+          </div>
+          <div class="tutorial-progress">
+            <span id="tutorialStep">1</span> de <span id="tutorialTotal">6</span>
+          </div>
+        </div>
+        <div class="tutorial-actions">
+          <button id="prevStep" class="btn btn-secondary" disabled>
+            <i class="fas fa-arrow-left"></i> Anterior
+          </button>
+          <button id="nextStep" class="btn btn-primary">
+            Próximo <i class="fas fa-arrow-right"></i>
+          </button>
+          <button id="finishTutorial" class="btn btn-success hidden">
+            <i class="fas fa-check"></i> Finalizar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cursor Animado -->
+    <div id="animatedCursor" class="animated-cursor hidden">
+      <i class="fas fa-mouse-pointer"></i>
+    </div>
+
+    <!-- Highlight para elementos -->
+    <div id="highlight" class="highlight hidden"></div>
+
+    <!-- Painel de Progresso -->
+    <div id="progressPanel" class="progress-panel hidden">
+      <h4><i class="fas fa-tasks"></i> Pós-Inscrição</h4>
+      <div class="progress-items">
+        <div class="progress-item" data-step="1">
+          <i class="fas fa-circle-notch"></i>
+          <span>Dados confirmados</span>
+        </div>
+        <div class="progress-item" data-step="2">
+          <i class="fas fa-circle-notch"></i>
+          <span>Informações do curso</span>
+        </div>
+        <div class="progress-item" data-step="3">
+          <i class="fas fa-circle-notch"></i>
+          <span>Mensagem de boas-vindas</span>
+        </div>
+        <div class="progress-item" data-step="4">
+          <i class="fas fa-circle-notch"></i>
+          <span>Central do Candidato</span>
+        </div>
+        <div class="progress-item" data-step="5">
+          <i class="fas fa-circle-notch"></i>
+          <span>Opções de pagamento</span>
+        </div>
+        <div class="progress-item" data-step="6">
+          <i class="fas fa-circle-notch"></i>
+          <span>Próximos passos</span>
+        </div>
+      </div>
+    </div>
+
     <div class="background-overlay"></div>
     <div class="pos-container">
-      <header class="pos-header">
+      <header class="pos-header" id="headerSection">
         <div class="logo-area">
           <span class="logo-mini-title">CENTRO UNIVERSITÁRIO</span>
           <span class="logo-main-title">
@@ -30,20 +127,20 @@
           <p>CURSOS EAD - Processo Seletivo II 2025/2</p>
         </div>
         <div class="back-link">
-          <a href="#"><i class="fas fa-arrow-left"></i> Voltar Para o Site</a>
+          <a href="index.html" id="backLink"><i class="fas fa-arrow-left"></i> Voltar Para o Site</a>
         </div>
       </header>
 
       <main>
         <section class="info-block">
-          <div class="user-info">
+          <div class="user-info" id="userInfoSection">
             <h2>Fulano Cricrano Beutrano</h2>
             <p><strong>CPF:</strong> 123.456.789-01</p>
             <p><strong>E-mail:</strong> fulando@gmail.com</p>
             <p><strong>Telefone:</strong> (31) 99999-9999</p>
           </div>
           <hr />
-          <div class="process-info">
+          <div class="process-info" id="processInfoSection">
             <p>
               <strong>Processo:</strong> CURSOS EAD - Processo Seletivo II
               2025/2
@@ -54,7 +151,7 @@
             <p><strong>Polo:</strong> Ipatinga - Transitório</p>
           </div>
           <hr />
-          <div class="welcome-msg">
+          <div class="welcome-msg" id="welcomeMsgSection">
             <p>
               Agradecemos por se inscrever em nosso CURSOS EAD - Processo
               Seletivo II 2025/2 da Faculdade Única.
@@ -67,17 +164,17 @@
             </p>
             <p>Faculdade Única, transformando vidas pela educação!</p>
           </div>
-          <div class="pos-payment">
-            <button class="btn candidate-portal">
+          <div class="pos-payment" id="paymentSection">
+            <button class="btn candidate-portal" id="candidatePortalBtn">
               <i class="fas fa-user"></i> Central do Candidato
             </button>
             <div class="payment-instructions">Realizar Pagamento com:</div>
-            <div class="payment-btns">
-              <button class="btn boleto">
+            <div class="payment-btns" id="paymentButtons">
+              <button class="btn boleto" id="boletoBtn">
                 <i class="fas fa-barcode"></i> Boleto
               </button>
-              <button class="btn pix"><i class="fas fa-qrcode"></i> Pix</button>
-              <button class="btn cartao">
+              <button class="btn pix" id="pixBtn"><i class="fas fa-qrcode"></i> Pix</button>
+              <button class="btn cartao" id="cartaoBtn">
                 <i class="fas fa-credit-card"></i> Cartão de Crédito
               </button>
             </div>
@@ -85,5 +182,12 @@
         </section>
       </main>
     </div>
+
+    <!-- Botão para reiniciar tutorial -->
+    <button id="restartTutorial" class="restart-tutorial-btn">
+      <i class="fas fa-redo"></i> Reiniciar Tutorial
+    </button>
+
+    <script src="posinscricao.js"></script>
   </body>
 </html>
