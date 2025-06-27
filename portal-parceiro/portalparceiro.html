@@ -11,23 +11,146 @@
     />
   </head>
   <body>
+    <!-- Modal de Boas-vindas -->
+    <div id="welcomeModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <i class="fas fa-handshake"></i>
+          <h2>Tutorial: Portal do Parceiro</h2>
+        </div>
+        <div class="modal-body">
+          <p>Bem-vindo ao <strong>Portal do Parceiro</strong>! 🤝</p>
+          <p>Este tutorial irá te ensinar como usar todas as ferramentas disponíveis:</p>
+          <ul>
+            <li><i class="fas fa-search"></i> Sistema de busca de alunos</li>
+            <li><i class="fas fa-link"></i> Link de matrícula personalizado</li>
+            <li><i class="fas fa-user-graduate"></i> Processo de nova matrícula</li>
+            <li><i class="fas fa-university"></i> Seleção de instituições</li>
+            <li><i class="fas fa-graduation-cap"></i> Modalidades de ensino</li>
+            <li><i class="fas fa-book"></i> Áreas de curso disponíveis</li>
+            <li><i class="fas fa-tools"></i> Ferramentas do menu lateral</li>
+          </ul>
+          <div class="info-box">
+            <i class="fas fa-star"></i>
+            <strong>IMPORTANTE:</strong> Este portal é sua principal ferramenta de vendas e gestão!
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="startTutorial" class="btn btn-primary">
+            <i class="fas fa-play"></i> Iniciar Tutorial
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Overlay do Tutorial -->
+    <div id="tutorialOverlay" class="tutorial-overlay hidden">
+      <div class="tutorial-box">
+        <div class="tutorial-content">
+          <h3 id="tutorialTitle">Título do Passo</h3>
+          <p id="tutorialText">Descrição do passo atual</p>
+          <div id="tutorialTip" class="tutorial-tip hidden">
+            <i class="fas fa-lightbulb"></i>
+            <span id="tutorialTipText">Dica adicional</span>
+          </div>
+          <div class="tutorial-progress">
+            <span id="tutorialStep">1</span> de <span id="tutorialTotal">12</span>
+          </div>
+        </div>
+        <div class="tutorial-actions">
+          <button id="prevStep" class="btn btn-secondary" disabled>
+            <i class="fas fa-arrow-left"></i> Anterior
+          </button>
+          <button id="nextStep" class="btn btn-primary">
+            Próximo <i class="fas fa-arrow-right"></i>
+          </button>
+          <button id="finishTutorial" class="btn btn-success hidden">
+            <i class="fas fa-check"></i> Finalizar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cursor Animado -->
+    <div id="animatedCursor" class="animated-cursor hidden">
+      <i class="fas fa-mouse-pointer"></i>
+    </div>
+
+    <!-- Highlight para elementos -->
+    <div id="highlight" class="highlight hidden"></div>
+
+    <!-- Painel de Progresso -->
+    <div id="progressPanel" class="progress-panel hidden">
+      <h4><i class="fas fa-tasks"></i> Portal do Parceiro</h4>
+      <div class="progress-items">
+        <div class="progress-item" data-step="1">
+          <i class="fas fa-circle"></i>
+          <span>Visão geral do portal</span>
+        </div>
+        <div class="progress-item" data-step="2">
+          <i class="fas fa-circle"></i>
+          <span>Sistema de busca</span>
+        </div>
+        <div class="progress-item" data-step="3">
+          <i class="fas fa-circle"></i>
+          <span>Link de matrícula</span>
+        </div>
+        <div class="progress-item" data-step="4">
+          <i class="fas fa-circle"></i>
+          <span>Notificações e configurações</span>
+        </div>
+        <div class="progress-item" data-step="5">
+          <i class="fas fa-circle"></i>
+          <span>Perfil do parceiro</span>
+        </div>
+        <div class="progress-item" data-step="6">
+          <i class="fas fa-circle"></i>
+          <span>Nova matrícula</span>
+        </div>
+        <div class="progress-item" data-step="7">
+          <i class="fas fa-circle"></i>
+          <span>Menu lateral</span>
+        </div>
+        <div class="progress-item" data-step="8">
+          <i class="fas fa-circle"></i>
+          <span>Tipo de venda</span>
+        </div>
+        <div class="progress-item" data-step="9">
+          <i class="fas fa-circle"></i>
+          <span>Instituições de ensino</span>
+        </div>
+        <div class="progress-item" data-step="10">
+          <i class="fas fa-circle"></i>
+          <span>Modalidades de ensino</span>
+        </div>
+        <div class="progress-item" data-step="11">
+          <i class="fas fa-circle"></i>
+          <span>Áreas do curso</span>
+        </div>
+        <div class="progress-item" data-step="12">
+          <i class="fas fa-circle"></i>
+          <span>Busca de curso</span>
+        </div>
+      </div>
+    </div>
+
     <header>
-      <div class="top-bar">
+      <div class="top-bar" id="topBar">
         <img src="images/logo-grupo.png" alt="Logo Prominas" id="logo-grupo" />
-        <input type="text" placeholder="Pesquise seus alunos (CPF ou NOME)" />
-        <button class="link-btn">
+        <input type="text" placeholder="Pesquise seus alunos (CPF ou NOME)" id="searchInput" />
+        <button class="link-btn" id="linkBtn">
           Link para matricular alunos <i class="fa fa-copy"></i>
         </button>
-        <div class="icons">
-          <i class="fa fa-bell"></i>
-          <i class="fa fa-cog"></i>
+        <div class="icons" id="iconsArea">
+          <i class="fa fa-bell" id="notificationIcon"></i>
+          <i class="fa fa-cog" id="settingsIcon"></i>
         </div>
       </div>
     </header>
 
     <main>
-      <aside>
-        <div class="perfil">
+      <aside id="sidebar">
+        <div class="perfil" id="profileSection">
           <img src="images/perfil.jpg" alt="Felipe Toledo" id="perfil" />
           <p>
             <strong>Fulano Ciclano</strong><br /><span class="status"
@@ -35,8 +158,8 @@
             >
           </p>
         </div>
-        <nav class="menu-lateral">
-          <button class="nova-matricula">Nova Matrícula</button>
+        <nav class="menu-lateral" id="sideMenu">
+          <button class="nova-matricula" id="novaMatricula">Nova Matrícula</button>
           <ul>
             <li>Banco Digital</li>
             <li>Leads</li>
@@ -51,16 +174,16 @@
         </nav>
       </aside>
 
-      <section class="conteudo">
+      <section class="conteudo" id="mainContent">
         <h2>BEM-VINDO À SUA PLATAFORMA DE VENDAS!</h2>
         <p>No formulário abaixo você realiza a matrícula dos seus alunos:</p>
 
-        <form class="formulario">
+        <form class="formulario" id="enrollmentForm">
           <h3>ESCOLHA A INSTITUIÇÃO E O CURSO DESEJADO</h3>
           <hr />
-          <div class="opcoes">
+          <div class="opcoes" id="tipoVendaSection">
             <p id="titulo-label">Tipo de Venda</p>
-            <div  id="divcampo">
+            <div id="divcampo">
               <label
                 ><input type="radio" name="tipo-venda" checked /> Único
                 curso</label
@@ -69,7 +192,7 @@
             </div>
           </div>
 
-          <div class="instituicoes">
+          <div class="instituicoes" id="instituicoesSection">
             <p id="titulo-label">INSTITUIÇÃO DE ENSINO</p>
             <div id="divcampo">
               <label
@@ -99,9 +222,9 @@
             </div>
           </div>
 
-          <div class="modalidade">
+          <div class="modalidade" id="modalidadeSection">
             <p id="titulo-label">MODALIDADE DE ENSINO</p>
-            <div  id="divcampo">
+            <div id="divcampo">
                 <label
                 ><input type="radio" name="modalidade" checked />
                 Pós-Graduação</label
@@ -117,7 +240,7 @@
             </div>
           </div>
 
-          <div class="areas">
+          <div class="areas" id="areasSection">
             <p id="titulo-label">ÁREAS DO CURSO</p>
                 <div id="divcampo">
                 <label><input type="radio" name="area" checked /> Todas</label>
@@ -138,7 +261,7 @@
             </div>
           </div>
 
-          <div class="buscar-curso">
+          <div class="buscar-curso" id="buscarCursoSection">
             <p id="titulo-label">ENCONTRA O CURSO</p>
             <label for="curso">Digite o nome do curso</label>
             <input
@@ -155,5 +278,12 @@
         </form>
       </section>
     </main>
+
+    <!-- Botão para reiniciar tutorial -->
+    <button id="restartTutorial" class="restart-tutorial-btn">
+      <i class="fas fa-redo"></i> Reiniciar Tutorial
+    </button>
+
+    <script src="portalparceiro.js"></script>
   </body>
 </html>
