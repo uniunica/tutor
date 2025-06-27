@@ -288,7 +288,7 @@ class PosInscricaoTutorialManager {
         <div class="modal-body">
           <p>🎉 <strong>Você concluiu todo o processo de inscrição!</strong></p>
           <p>Agora você sabe como orientar candidatos em todas as etapas:</p>
-          
+
           <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; margin: 15px 0;">
             <h4 style="margin: 0 0 10px 0; color: #28a745;">✅ O que você aprendeu:</h4>
             <ul style="margin: 0; padding-left: 20px;">
@@ -298,12 +298,12 @@ class PosInscricaoTutorialManager {
               <li>Explicar próximos passos</li>
             </ul>
           </div>
-          
+
           <div class="info-box">
             <i class="fas fa-star"></i>
             <strong>Lembre-se:</strong> Sempre preencha o campo "Indicação" para receber suas comissões!
           </div>
-          
+
           <p><strong>Agora você está pronto para ajudar candidatos a se inscreverem!</strong></p>
         </div>
         <div class="modal-footer">
