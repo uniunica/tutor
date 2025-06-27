@@ -1,7 +1,7 @@
 class PortalParceiroTutorialManager {
   constructor() {
     this.currentStep = 0;
-    this.totalSteps = 13;
+    this.totalSteps = 14;
     this.isActive = false;
 
     this.steps = [
@@ -110,6 +110,26 @@ class PortalParceiroTutorialManager {
 
           if (window.portalApp) {
             window.portalApp.updateCourseList();
+          }
+        },
+      },
+      {
+        title: "Carrinho de Cursos",
+        text: "Aqui você visualiza todos os cursos selecionados, pode remover itens individuais ou limpar tudo. O valor total é calculado automaticamente.",
+        tip: "Use 'Prosseguir com Matrícula' quando o cliente confirmar todos os cursos desejados.",
+        target: "#selectedCoursesSection",
+        position: "top",
+        action: () => {
+          // Simular adição de alguns cursos para demonstração
+          if (window.portalApp) {
+            window.portalApp.addCourseToCart(
+              "Automação Industrial - 500H",
+              1200.0
+            );
+            window.portalApp.addCourseToCart(
+              "Engenharia da Qualidade - 500H",
+              1150.0
+            );
           }
         },
       },
@@ -763,11 +783,43 @@ class PortalAppLogic {
       },
     };
 
+    this.selectedCourses = [];
+    this.coursePrices = {
+      // Preços simulados para os cursos
+      "Automação Industrial - 500H": 1200.0,
+      "Engenharia Ambiental - 500H": 1150.0,
+      "Engenharia da Qualidade - 500H": 1150.0,
+      "Engenharia de Produção - 500H": 1100.0,
+      "Engenharia de Controle e Automação Indus - 500H": 1250.0,
+      "Engenharia de Materiais - 720H": 1400.0,
+      "Design de Interiores - 500H": 1050.0,
+      "Engenharia de Estruturas de Concreto Arm - 500H": 1300.0,
+      "Engenharia de Pavimentação Asfáltica - 500H": 1200.0,
+      "Engenharia de Produção e Gerenciamento D - 500H": 1180.0,
+      "Engenharia de Segurança do Trabalho - 600H": 1350.0,
+      "Engenharia de Software - 500H": 1250.0,
+      // Adicionar mais preços conforme necessário
+      "MBA em Gestão Estratégica - 400H": 2500.0,
+      "Análise de Dados e Big Data - 360H": 1800.0,
+      "Gestão de Pessoas e Liderança - 360H": 1600.0,
+      "Finanças Corporativas - 400H": 2200.0,
+      "Marketing e Vendas - 360H": 1500.0,
+      "Cibersegurança e Proteção de Dados - 400H": 2000.0,
+    };
+
     this.courseListContainer = document.getElementById("courseList");
     this.courseSelectionSection = document.getElementById(
       "courseSelectionSection"
     );
     this.noCoursesMessage = document.getElementById("noCoursesMessage");
+
+    // NOVO: Elementos do carrinho
+    this.selectedCoursesSection = document.getElementById(
+      "selectedCoursesSection"
+    );
+    this.selectedCoursesList = document.getElementById("selectedCoursesList");
+    this.coursesCount = document.getElementById("coursesCount");
+    this.totalPrice = document.getElementById("totalPrice");
 
     this.initLogic();
   }
@@ -821,6 +873,27 @@ class PortalAppLogic {
     });
 
     this.updateCourseList(); // Inicializa a lista de cursos ao carregar a página
+
+    this.bindCartEvents();
+    this.updateCartDisplay();
+  }
+
+  // NOVO: Eventos do carrinho
+  bindCartEvents() {
+    const clearAllBtn = document.getElementById("clearAllCourses");
+    const proceedBtn = document.getElementById("proceedToEnrollment");
+
+    if (clearAllBtn) {
+      clearAllBtn.addEventListener("click", () => {
+        this.clearAllCourses();
+      });
+    }
+
+    if (proceedBtn) {
+      proceedBtn.addEventListener("click", () => {
+        this.proceedToEnrollment();
+      });
+    }
   }
 
   getSelectedValues() {
@@ -863,29 +936,43 @@ class PortalAppLogic {
   renderCourseList(courses) {
     if (!this.courseListContainer) return;
 
-    this.courseListContainer.innerHTML = ""; // Limpa a lista atual
+    this.courseListContainer.innerHTML = "";
 
     if (courses.length > 0) {
       courses.forEach((course) => {
         const courseItem = document.createElement("div");
         courseItem.className = "course-item";
+
+        // Verificar se o curso já está no carrinho
+        const isSelected = this.selectedCourses.some(
+          (selected) => selected.name === course
+        );
+        const buttonClass = isSelected
+          ? "add-course-btn disabled"
+          : "add-course-btn";
+        const buttonIcon = isSelected ? "fas fa-check" : "fas fa-plus";
+        const buttonTitle = isSelected
+          ? "Curso já adicionado"
+          : "Adicionar curso";
+
         courseItem.innerHTML = `
           <span>${course}</span>
-          <button class="add-course-btn" data-course="${course}"><i class="fas fa-plus"></i></button>
+          <button class="${buttonClass}" data-course="${course}" title="${buttonTitle}" ${
+          isSelected ? "disabled" : ""
+        }>
+            <i class="${buttonIcon}"></i>
+          </button>
         `;
         this.courseListContainer.appendChild(courseItem);
 
-        courseItem
-          .querySelector(".add-course-btn")
-          .addEventListener("click", (e) => {
+        const addBtn = courseItem.querySelector(".add-course-btn");
+        if (!isSelected) {
+          addBtn.addEventListener("click", (e) => {
             const courseName = e.currentTarget.dataset.course;
-            if (window.portalTutorial) {
-              window.portalTutorial.showNotification(
-                `"${courseName}" adicionado para matrícula!`,
-                "success"
-              );
-            }
+            const coursePrice = this.coursePrices[courseName] || 1000.0; // Preço padrão
+            this.addCourseToCart(courseName, coursePrice);
           });
+        }
       });
 
       if (this.courseSelectionSection) {
@@ -898,11 +985,266 @@ class PortalAppLogic {
       if (this.courseSelectionSection) {
         this.courseSelectionSection.classList.remove("hidden");
       }
-      this.courseListContainer.innerHTML = ""; // Limpa a lista
+      this.courseListContainer.innerHTML = "";
       if (this.noCoursesMessage) {
-        this.noCoursesMessage.classList.remove("hidden"); // Mostra mensagem de "nenhum curso"
+        this.noCoursesMessage.classList.remove("hidden");
       }
     }
+  }
+
+  // NOVO: Adicionar curso ao carrinho
+  addCourseToCart(courseName, coursePrice) {
+    // Verificar se o curso já está no carrinho
+    if (this.selectedCourses.some((course) => course.name === courseName)) {
+      if (window.portalTutorial) {
+        window.portalTutorial.showNotification(
+          "Curso já está no carrinho!",
+          "warning"
+        );
+      }
+      return;
+    }
+
+    // Adicionar curso ao carrinho
+    const courseData = {
+      id: Date.now(), // ID único
+      name: courseName,
+      price: coursePrice,
+      duration: this.extractDuration(courseName),
+      addedAt: new Date(),
+    };
+
+    this.selectedCourses.push(courseData);
+    this.updateCartDisplay();
+    this.updateCourseList(); // Atualizar a lista para mostrar o curso como selecionado
+
+    if (window.portalTutorial) {
+      window.portalTutorial.showNotification(
+        `"${courseName}" adicionado ao carrinho!`,
+        "success"
+      );
+    }
+  }
+
+  // NOVO: Remover curso do carrinho
+  removeCourseFromCart(courseId) {
+    const courseIndex = this.selectedCourses.findIndex(
+      (course) => course.id === courseId
+    );
+    if (courseIndex > -1) {
+      const courseName = this.selectedCourses[courseIndex].name;
+      this.selectedCourses.splice(courseIndex, 1);
+      this.updateCartDisplay();
+      this.updateCourseList(); // Atualizar a lista para mostrar o curso como disponível novamente
+
+      if (window.portalTutorial) {
+        window.portalTutorial.showNotification(
+          `"${courseName}" removido do carrinho!`,
+          "info"
+        );
+      }
+    }
+  }
+
+  // NOVO: Limpar todos os cursos
+  clearAllCourses() {
+    if (this.selectedCourses.length === 0) {
+      if (window.portalTutorial) {
+        window.portalTutorial.showNotification(
+          "Carrinho já está vazio!",
+          "info"
+        );
+      }
+      return;
+    }
+
+    this.selectedCourses = [];
+    this.updateCartDisplay();
+    this.updateCourseList();
+
+    if (window.portalTutorial) {
+      window.portalTutorial.showNotification(
+        "Todos os cursos foram removidos do carrinho!",
+        "info"
+      );
+    }
+  }
+
+  // NOVO: Prosseguir com matrícula
+  proceedToEnrollment() {
+    if (this.selectedCourses.length === 0) {
+      if (window.portalTutorial) {
+        window.portalTutorial.showNotification(
+          "Selecione pelo menos um curso para prosseguir!",
+          "warning"
+        );
+      }
+      return;
+    }
+
+    const totalValue = this.calculateTotal();
+    const coursesCount = this.selectedCourses.length;
+
+    // Criar modal de confirmação
+    const modal = document.createElement("div");
+    modal.className = "modal";
+    modal.innerHTML = `
+      <div class="modal-content">
+        <div class="modal-header" style="background: #28a745;">
+          <i class="fas fa-graduation-cap"></i>
+          <h2>Confirmar Matrícula</h2>
+        </div>
+        <div class="modal-body">
+          <p><strong>Resumo da Matrícula:</strong></p>
+          <ul style="margin: 15px 0; padding-left: 20px;">
+            ${this.selectedCourses
+              .map(
+                (course) =>
+                  `<li>${course.name} - R$ ${course.price
+                    .toFixed(2)
+                    .replace(".", ",")}</li>`
+              )
+              .join("")}
+          </ul>
+          
+          <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; margin: 15px 0;">
+            <h4 style="margin: 0 0 10px 0; color: #28a745;">💰 Resumo Financeiro:</h4>
+            <p><strong>Quantidade de cursos:</strong> ${coursesCount}</p>
+            <p><strong>Valor total:</strong> R$ ${totalValue
+              .toFixed(2)
+              .replace(".", ",")}</p>
+          </div>
+          
+          <p>Deseja prosseguir com esta matrícula?</p>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" onclick="this.closest('.modal').remove()">
+            <i class="fas fa-times"></i> Cancelar
+          </button>
+          <button class="btn btn-success" onclick="window.portalApp.confirmEnrollment(); this.closest('.modal').remove()">
+            <i class="fas fa-check"></i> Confirmar Matrícula
+          </button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(modal);
+  }
+
+  // NOVO: Confirmar matrícula
+  confirmEnrollment() {
+    if (window.portalTutorial) {
+      window.portalTutorial.showNotification(
+        "Matrícula confirmada! Redirecionando para pagamento...",
+        "success"
+      );
+    }
+
+    // Simular redirecionamento após 2 segundos
+    setTimeout(() => {
+      // Aqui você redirecionaria para a página de pagamento
+      console.log("Redirecionando para página de pagamento...");
+      if (window.portalTutorial) {
+        window.portalTutorial.showNotification(
+          "Redirecionando para pagamento...",
+          "info"
+        );
+      }
+    }, 2000);
+  }
+
+  // NOVO: Atualizar display do carrinho
+  updateCartDisplay() {
+    if (!this.selectedCoursesSection) return;
+
+    const coursesCount = this.selectedCourses.length;
+    const totalValue = this.calculateTotal();
+
+    // Atualizar contadores
+    if (this.coursesCount) {
+      this.coursesCount.textContent = `${coursesCount} curso(s) selecionado(s)`;
+    }
+    if (this.totalPrice) {
+      this.totalPrice.textContent = `Total: R$ ${totalValue
+        .toFixed(2)
+        .replace(".", ",")}`;
+    }
+
+    // Mostrar/esconder seção do carrinho
+    if (coursesCount > 0) {
+      this.selectedCoursesSection.classList.remove("hidden");
+      this.renderSelectedCourses();
+    } else {
+      this.selectedCoursesSection.classList.add("hidden");
+    }
+  }
+
+  // NOVO: Renderizar cursos selecionados
+  renderSelectedCourses() {
+    if (!this.selectedCoursesList) return;
+
+    if (this.selectedCourses.length === 0) {
+      this.selectedCoursesList.innerHTML = `
+        <div class="no-courses-selected">
+          <i class="fas fa-shopping-cart"></i>
+          <p>Nenhum curso selecionado</p>
+        </div>
+      `;
+      return;
+    }
+
+    this.selectedCoursesList.innerHTML = "";
+
+    this.selectedCourses.forEach((course) => {
+      const courseItem = document.createElement("div");
+      courseItem.className = "selected-course-item newly-added";
+      courseItem.innerHTML = `
+        <div class="selected-course-info">
+          <div class="selected-course-name">${course.name}</div>
+          <div class="selected-course-details">
+            <span><i class="fas fa-clock"></i> ${course.duration}</span>
+            <span><i class="fas fa-calendar-plus"></i> Adicionado: ${course.addedAt.toLocaleTimeString()}</span>
+          </div>
+        </div>
+        <div class="selected-course-price">R$ ${course.price
+          .toFixed(2)
+          .replace(".", ",")}</div>
+        <button class="remove-course-btn" data-course-id="${
+          course.id
+        }" title="Remover curso">
+          <i class="fas fa-times"></i>
+        </button>
+      `;
+
+      // Adicionar listener para remover
+      courseItem
+        .querySelector(".remove-course-btn")
+        .addEventListener("click", (e) => {
+          const courseId = parseInt(e.currentTarget.dataset.courseId);
+          this.removeCourseFromCart(courseId);
+        });
+
+      this.selectedCoursesList.appendChild(courseItem);
+
+      // Remover classe de animação após a animação
+      setTimeout(() => {
+        courseItem.classList.remove("newly-added");
+      }, 500);
+    });
+  }
+
+  // NOVO: Calcular total
+  calculateTotal() {
+    return this.selectedCourses.reduce(
+      (total, course) => total + course.price,
+      0
+    );
+  }
+
+  // NOVO: Extrair duração do nome do curso
+  extractDuration(courseName) {
+    const match = courseName.match(/(\d+)H/);
+    return match ? match[0] : "500H"; // Padrão
   }
 
   // Filtrar cursos existentes na lista por texto digitado

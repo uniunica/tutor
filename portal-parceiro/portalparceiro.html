@@ -20,11 +20,16 @@
         </div>
         <div class="modal-body">
           <p>Bem-vindo ao <strong>Portal do Parceiro</strong>! 🤝</p>
-          <p>Este tutorial irá te ensinar como usar todas as ferramentas disponíveis:</p>
+          <p>
+            Este tutorial irá te ensinar como usar todas as ferramentas
+            disponíveis:
+          </p>
           <ul>
             <li><i class="fas fa-search"></i> Sistema de busca de alunos</li>
             <li><i class="fas fa-link"></i> Link de matrícula personalizado</li>
-            <li><i class="fas fa-user-graduate"></i> Processo de nova matrícula</li>
+            <li>
+              <i class="fas fa-user-graduate"></i> Processo de nova matrícula
+            </li>
             <li><i class="fas fa-university"></i> Seleção de instituições</li>
             <li><i class="fas fa-graduation-cap"></i> Modalidades de ensino</li>
             <li><i class="fas fa-book"></i> Áreas de curso disponíveis</li>
@@ -32,7 +37,8 @@
           </ul>
           <div class="info-box">
             <i class="fas fa-star"></i>
-            <strong>IMPORTANTE:</strong> Este portal é sua principal ferramenta de vendas e gestão!
+            <strong>IMPORTANTE:</strong> Este portal é sua principal ferramenta
+            de vendas e gestão!
           </div>
         </div>
         <div class="modal-footer">
@@ -54,7 +60,8 @@
             <span id="tutorialTipText">Dica adicional</span>
           </div>
           <div class="tutorial-progress">
-            <span id="tutorialStep">1</span> de <span id="tutorialTotal">13</span>
+            <span id="tutorialStep">1</span> de
+            <span id="tutorialTotal">14</span>
           </div>
         </div>
         <div class="tutorial-actions">
@@ -132,8 +139,12 @@
           <span>Busca de curso</span>
         </div>
         <div class="progress-item" data-step="13">
-            <i class="fas fa-circle"></i>
-            <span>Seleção de cursos</span>
+          <i class="fas fa-circle"></i>
+          <span>Seleção de cursos</span>
+        </div>
+        <div class="progress-item" data-step="14">
+        <i class="fas fa-circle"></i>
+        <span>Carrinho de cursos</span>
         </div>
       </div>
     </div>
@@ -141,7 +152,11 @@
     <header>
       <div class="top-bar" id="topBar">
         <img src="images/logo-grupo.png" alt="Logo Prominas" id="logo-grupo" />
-        <input type="text" placeholder="Pesquise seus alunos (CPF ou NOME)" id="searchInput" />
+        <input
+          type="text"
+          placeholder="Pesquise seus alunos (CPF ou NOME)"
+          id="searchInput"
+        />
         <button class="link-btn" id="linkBtn">
           Link para matricular alunos <i class="fa fa-copy"></i>
         </button>
@@ -163,7 +178,9 @@
           </p>
         </div>
         <nav class="menu-lateral" id="sideMenu">
-          <button class="nova-matricula" id="novaMatricula">Nova Matrícula</button>
+          <button class="nova-matricula" id="novaMatricula">
+            Nova Matrícula
+          </button>
           <ul>
             <li>Banco Digital</li>
             <li>Leads</li>
@@ -229,39 +246,41 @@
           <div class="modalidade" id="modalidadeSection">
             <p id="titulo-label">MODALIDADE DE ENSINO</p>
             <div id="divcampo">
-                <label
+              <label
                 ><input type="radio" name="modalidade" checked />
                 Pós-Graduação</label
-                >
-                <label
+              >
+              <label
                 ><input type="radio" name="modalidade" /> Aperfeiçoamento</label
-                >
-                <label><input type="radio" name="modalidade" /> Extensão</label>
-                <label
+              >
+              <label><input type="radio" name="modalidade" /> Extensão</label>
+              <label
                 ><input type="radio" name="modalidade" /> Ensino Médio
                 (EJA)</label
-                >
+              >
             </div>
           </div>
 
           <div class="areas" id="areasSection">
             <p id="titulo-label">ÁREAS DO CURSO</p>
-                <div id="divcampo">
-                <label><input type="radio" name="area" checked /> Todas</label>
-                <label><input type="radio" name="area" /> Engenharias</label>
-                <label
+            <div id="divcampo">
+              <label><input type="radio" name="area" checked /> Todas</label>
+              <label><input type="radio" name="area" /> Engenharias</label>
+              <label
                 ><input type="radio" name="area" /> Empresarial, TI e
                 Negócios</label
-                >
-                <label><input type="radio" name="area" /> Meio Ambiente</label>
-                <label><input type="radio" name="area" /> Serviço Social</label>
-                <label><input type="radio" name="area" /> Estética</label>
-                <label><input type="radio" name="area" /> Jurídica</label>
-                <label><input type="radio" name="area" /> Ciências da Saúde</label>
-                <label><input type="radio" name="area" /> Psicologia</label>
-                <label><input type="radio" name="area" /> MBA Executivo</label>
-                <label><input type="radio" name="area" /> Educação</label>
-                <label><input type="radio" name="area" /> Gastronomia</label>
+              >
+              <label><input type="radio" name="area" /> Meio Ambiente</label>
+              <label><input type="radio" name="area" /> Serviço Social</label>
+              <label><input type="radio" name="area" /> Estética</label>
+              <label><input type="radio" name="area" /> Jurídica</label>
+              <label
+                ><input type="radio" name="area" /> Ciências da Saúde</label
+              >
+              <label><input type="radio" name="area" /> Psicologia</label>
+              <label><input type="radio" name="area" /> MBA Executivo</label>
+              <label><input type="radio" name="area" /> Educação</label>
+              <label><input type="radio" name="area" /> Gastronomia</label>
             </div>
           </div>
 
@@ -276,15 +295,51 @@
           </div>
 
           <!-- NOVA SEÇÃO: Cursos Disponíveis -->
-        <div class="course-selection-section hidden" id="courseSelectionSection">
+          <div
+            class="course-selection-section hidden"
+            id="courseSelectionSection"
+          >
             <p id="titulo-label">CURSOS DISPONÍVEIS</p>
             <div class="course-list" id="courseList">
-                <!-- Cursos serão injetados aqui via JavaScript -->
+              <!-- Cursos serão injetados aqui via JavaScript -->
             </div>
-            <div id="noCoursesMessage" class="hidden" style="text-align: center; color: #555; padding: 20px;">
-                Nenhum curso encontrado para a seleção atual.
+            <div
+              id="noCoursesMessage"
+              class="hidden"
+              style="text-align: center; color: #555; padding: 20px"
+            >
+              Nenhum curso encontrado para a seleção atual.
             </div>
-        </div>
+          </div>
+
+          <!-- NOVA SEÇÃO: Carrinho de Cursos Selecionados -->
+          <div
+            class="selected-courses-section hidden"
+            id="selectedCoursesSection"
+          >
+            <div class="selected-courses-header">
+              <p id="titulo-label">CURSOS SELECIONADOS</p>
+              <div class="courses-summary">
+                <span class="courses-count" id="coursesCount"
+                  >0 curso(s) selecionado(s)</span
+                >
+                <span class="total-price" id="totalPrice">Total: R$ 0,00</span>
+              </div>
+            </div>
+
+            <div class="selected-courses-list" id="selectedCoursesList">
+              <!-- Cursos selecionados serão inseridos aqui via JavaScript -->
+            </div>
+
+            <div class="selected-courses-actions">
+              <button class="btn-clear-all" id="clearAllCourses">
+                <i class="fas fa-trash"></i> Limpar Todos
+              </button>
+              <button class="btn-proceed" id="proceedToEnrollment">
+                <i class="fas fa-arrow-right"></i> Prosseguir com Matrícula
+              </button>
+            </div>
+          </div>
 
           <div class="botoes-form">
             <button type="button" class="voltar">Voltar</button>
