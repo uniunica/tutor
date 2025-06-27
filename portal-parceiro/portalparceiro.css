@@ -233,38 +233,48 @@ aside {
 /* Common style for group titles */
 #titulo-label {
   font-weight: bold;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
   display: block;
   font-size: 1.1em;
   color: #555;
+  width: 100%;
 }
 
-/* Containers for Radio Button Groups */
+/* Containers for Radio Button Groups - ESTRUTURA APRIMORADA */
 .opcoes,
 .instituicoes,
 .modalidade,
 .areas {
   margin-top: 15px;
+  margin-bottom: 25px;
+  display: block; /* Mudança principal: de flex para block */
+}
+
+/* Container interno para os labels - NOVO */
+.opcoes-labels,
+.instituicoes-labels,
+.modalidade-labels,
+.areas-labels {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin-bottom: 25px;
+  margin-top: 10px; /* Espaço entre título e labels */
 }
 
-/* Specific Layouts for Groups */
-.opcoes label {
+/* Specific Layouts for Groups - APLICADO AOS NOVOS CONTAINERS */
+.opcoes-labels label {
   flex-basis: calc(50% - 5px);
 }
 
-.instituicoes label {
+.instituicoes-labels label {
   flex-basis: calc(33.33% - 7px);
 }
 
-.modalidade label {
+.modalidade-labels label {
   flex-basis: calc(25% - 7.5px);
 }
 
-.areas label {
+.areas-labels label {
   flex-basis: calc(33.33% - 7px);
 }
 
@@ -340,6 +350,12 @@ label img {
   margin-right: 8px;
   vertical-align: middle;
   flex-shrink: 0;
+}
+
+#divcampo {
+    display: flex; 
+    gap: 10px; 
+    flex-wrap: wrap
 }
 
 /* Logo adjustments */
