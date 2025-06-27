@@ -24,14 +24,14 @@ class InscricaoTutorialManager {
         text: "Inicie coletando CPF, nome completo e sexo. Estes são os dados fundamentais para identificação do candidato.",
         tip: "Sempre confirme a grafia correta do nome - erros podem causar problemas na matrícula.",
         target: "#cpfField",
-        position: "top",
+        position: "right",
       },
       {
         title: "Informações de Contato",
         text: "E-mail e celular são essenciais para comunicação. O candidato receberá confirmações e informações importantes.",
         tip: "Verifique se o e-mail está correto - todas as comunicações oficiais serão enviadas para ele.",
         target: "#emailField",
-        position: "top",
+        position: "right",
       },
       {
         title: "Campo Indicação - MUITO IMPORTANTE!",
@@ -46,7 +46,7 @@ class InscricaoTutorialManager {
         text: "Colete todas as informações de endereço. O CEP ajuda a preencher automaticamente cidade e estado.",
         tip: "Endereço completo é necessário para emissão de documentos e correspondências oficiais.",
         target: "#enderecoRow",
-        position: "top",
+        position: "right",
       },
       {
         title: "Seleção de Curso",
@@ -60,7 +60,7 @@ class InscricaoTutorialManager {
         title: "Finalização e Pagamento",
         text: "Após preencher todos os dados, clique em CONTINUAR. A taxa de matrícula é de até R$ 250,00.",
         tip: "O pagamento da taxa de matrícula dá acesso ao portal e materiais didáticos. Valor pode ser alterado pela equipe.",
-        target: "#submitButton",
+                target: "#submitButton",
         position: "top",
       },
     ];
@@ -104,6 +104,22 @@ class InscricaoTutorialManager {
       }
     });
 
+    // Adicionar eventos de teclado
+    document.addEventListener("keydown", (e) => {
+      if (this.isActive) {
+        if (e.key === "ArrowRight" || e.key === "Space") {
+          e.preventDefault();
+          this.nextStep();
+        } else if (e.key === "ArrowLeft") {
+          e.preventDefault();
+          this.prevStep();
+        } else if (e.key === "Escape") {
+          e.preventDefault();
+          this.finishTutorial();
+        }
+      }
+    });
+
     // Simular envio do formulário
     document.querySelector("form").addEventListener("submit", (e) => {
       e.preventDefault();
@@ -130,9 +146,10 @@ class InscricaoTutorialManager {
   showStep() {
     const step = this.steps[this.currentStep];
     const overlay = document.getElementById("tutorialOverlay");
-    const highlight = document.getElementById("highlight");
-    const cursor = document.getElementById("animatedCursor");
+    const tutorialBox = overlay.querySelector(".tutorial-box");
     const tipElement = document.getElementById("tutorialTip");
+
+    console.log(`Mostrando passo ${this.currentStep + 1}: ${step.title}`);
 
     // Executar ação especial se necessário
     if (step.action === "switchTab") {
@@ -158,33 +175,158 @@ class InscricaoTutorialManager {
 
     // Destacar se for importante
     if (step.important) {
-      document.querySelector(".tutorial-box").style.border =
-        "3px solid #ff6b35";
+      tutorialBox.style.border = "3px solid #ff6b35";
       document.querySelector(".tutorial-content h3").style.color = "#ff6b35";
+      const iconElement = document.querySelector(".tutorial-content h3::before");
+      if (iconElement) {
+        iconElement.textContent = "⚠️";
+      }
     } else {
-      document.querySelector(".tutorial-box").style.border = "none";
+      tutorialBox.style.border = "3px solid #7c4dff";
       document.querySelector(".tutorial-content h3").style.color = "#7c4dff";
     }
 
     // Atualizar botões
-    document.getElementById("prevStep").disabled = this.currentStep === 0;
+    const prevBtn = document.getElementById("prevStep");
+    const nextBtn = document.getElementById("nextStep");
+    const finishBtn = document.getElementById("finishTutorial");
 
-    if (this.currentStep === this.totalSteps - 1) {
-      document.getElementById("nextStep").classList.add("hidden");
-      document.getElementById("finishTutorial").classList.remove("hidden");
+    // Desabilitar/habilitar botão anterior
+    if (this.currentStep === 0) {
+      prevBtn.disabled = true;
+      prevBtn.style.opacity = "0.5";
+      prevBtn.style.cursor = "not-allowed";
     } else {
-      document.getElementById("nextStep").classList.remove("hidden");
-      document.getElementById("finishTutorial").classList.add("hidden");
+      prevBtn.disabled = false;
+      prevBtn.style.opacity = "1";
+      prevBtn.style.cursor = "pointer";
     }
 
-    // Destacar elemento
+    // Mostrar/esconder botões próximo/finalizar
+    if (this.currentStep === this.totalSteps - 1) {
+      nextBtn.classList.add("hidden");
+      finishBtn.classList.remove("hidden");
+    } else {
+      nextBtn.classList.remove("hidden");
+      finishBtn.classList.add("hidden");
+    }
+
+    // PRIMEIRO: Atualizar progresso
+    this.updateProgress();
+
+    // SEGUNDO: Destacar elemento
     this.highlightElement(step.target);
 
-    // Animar cursor
+    // TERCEIRO: Animar cursor
     this.animateCursor(step.target);
 
-    // Atualizar progresso
-    this.updateProgress();
+    // QUARTO: Posicionar caixa do tutorial (com delay para garantir que o elemento esteja visível)
+    setTimeout(() => {
+      this.positionTutorialBox(step.target, step.position);
+    }, 200);
+
+    // Adicionar efeito hover ao elemento destacado
+    this.addHoverEffect(step.target);
+  }
+
+  // FUNÇÃO CORRIGIDA DE POSICIONAMENTO
+  positionTutorialBox(selector, position) {
+    const element = document.querySelector(selector);
+    const tutorialBox = document.querySelector(".tutorial-box");
+
+    console.log(`Tentando posicionar tutorial box para: ${selector}`);
+
+    if (!element) {
+      console.error(`Elemento não encontrado: ${selector}`);
+      return;
+    }
+
+    if (!tutorialBox) {
+      console.error("Tutorial box não encontrado");
+      return;
+    }
+
+    // Remover classes de posição anteriores
+    tutorialBox.classList.remove(
+      "position-top",
+      "position-bottom", 
+      "position-left",
+      "position-right"
+    );
+
+    // Forçar o tutorial box a ser visível temporariamente para calcular dimensões
+    tutorialBox.style.visibility = "hidden";
+    tutorialBox.style.display = "block";
+    tutorialBox.style.position = "fixed";
+
+    // Aguardar próximo frame para cálculos
+    requestAnimationFrame(() => {
+      const elementRect = element.getBoundingClientRect();
+      const boxRect = tutorialBox.getBoundingClientRect();
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+
+      console.log("Element rect:", elementRect);
+      console.log("Box rect:", boxRect);
+
+      let top, left;
+      let finalPosition = position;
+
+      // Calcular posição inicial baseada na preferência
+      switch (position) {
+        case "top":
+          top = elementRect.top - boxRect.height - 20;
+          left = elementRect.left + (elementRect.width / 2) - (boxRect.width / 2);
+          break;
+
+        case "bottom":
+          top = elementRect.bottom + 20;
+          left = elementRect.left + (elementRect.width / 2) - (boxRect.width / 2);
+          break;
+
+        case "left":
+          top = elementRect.top + (elementRect.height / 2) - (boxRect.height / 2);
+          left = elementRect.left - boxRect.width - 20;
+          break;
+
+        case "right":
+          top = elementRect.top + (elementRect.height / 2) - (boxRect.height / 2);
+          left = elementRect.right + 20;
+          break;
+
+        default:
+          top = elementRect.bottom + 20;
+          left = elementRect.left + (elementRect.width / 2) - (boxRect.width / 2);
+          finalPosition = "bottom";
+          break;
+      }
+
+      // Ajustar se sair da tela horizontalmente
+      if (left < 20) {
+        left = 20;
+      } else if (left + boxRect.width > viewportWidth - 20) {
+        left = viewportWidth - boxRect.width - 20;
+      }
+
+      // Ajustar se sair da tela verticalmente
+      if (top < 20) {
+        top = elementRect.bottom + 20;
+        finalPosition = "bottom";
+      } else if (top + boxRect.height > viewportHeight - 20) {
+        top = elementRect.top - boxRect.height - 20;
+        finalPosition = "top";
+      }
+
+      // Aplicar a classe de posição final
+      tutorialBox.classList.add(`position-${finalPosition}`);
+
+      // Aplicar posição
+      tutorialBox.style.top = `${Math.max(20, top)}px`;
+      tutorialBox.style.left = `${Math.max(20, left)}px`;
+      tutorialBox.style.visibility = "visible";
+
+      console.log(`Tutorial box posicionado em: top=${top}, left=${left}, position=${finalPosition}`);
+    });
   }
 
   highlightElement(selector) {
@@ -193,16 +335,17 @@ class InscricaoTutorialManager {
 
     if (element) {
       const rect = element.getBoundingClientRect();
-      highlight.style.top = rect.top - 5 + "px";
-      highlight.style.left = rect.left - 5 + "px";
-      highlight.style.width = rect.width + 10 + "px";
-      highlight.style.height = rect.height + 10 + "px";
+      highlight.style.top = (rect.top - 8) + "px";
+      highlight.style.left = (rect.left - 8) + "px";
+      highlight.style.width = (rect.width + 16) + "px";
+      highlight.style.height = (rect.height + 16) + "px";
       highlight.classList.remove("hidden");
 
-      // Scroll para o elemento se necessário
+      // Scroll suave para o elemento
       element.scrollIntoView({
         behavior: "smooth",
         block: "center",
+        inline: "center",
       });
     }
   }
@@ -213,8 +356,8 @@ class InscricaoTutorialManager {
 
     if (element) {
       const rect = element.getBoundingClientRect();
-      const centerX = rect.left + rect.width / 2;
-      const centerY = rect.top + rect.height / 2;
+      const centerX = rect.left + (rect.width / 2);
+      const centerY = rect.top + (rect.height / 2);
 
       cursor.style.left = centerX + "px";
       cursor.style.top = centerY + "px";
@@ -223,41 +366,71 @@ class InscricaoTutorialManager {
       // Animação especial para campo indicação
       if (selector === "#indicacaoField") {
         cursor.style.color = "#ff6b35";
-        cursor.style.fontSize = "28px";
+        cursor.style.fontSize = "32px";
       } else {
         cursor.style.color = "#ff4444";
-        cursor.style.fontSize = "24px";
+        cursor.style.fontSize = "28px";
       }
 
-      // Animação de clique no último passo
+      // Animação especial no último passo
       if (this.currentStep === this.totalSteps - 1) {
         setTimeout(() => {
-          cursor.style.transform = "scale(0.8)";
+          cursor.style.transform = "scale(0.7)";
           setTimeout(() => {
             cursor.style.transform = "scale(1)";
-          }, 200);
-        }, 1000);
+          }, 300);
+        }, 1500);
       }
     }
   }
 
+  addHoverEffect(selector) {
+    // Remover efeito anterior
+    const previousElement = document.querySelector(".tutorial-highlight-hover");
+    if (previousElement) {
+      previousElement.classList.remove("tutorial-highlight-hover");
+    }
+
+    // Adicionar ao elemento atual
+    const element = document.querySelector(selector);
+    if (element) {
+      element.classList.add("tutorial-highlight-hover");
+    }
+  }
+
+  // FUNÇÃO CORRIGIDA DE ATUALIZAÇÃO DE PROGRESSO
   updateProgress() {
-    const items = document.querySelectorAll(".progress-item");
+    console.log(`Atualizando progresso para passo: ${this.currentStep + 1} de ${this.totalSteps}`);
+    
+    const progressItems = document.querySelectorAll(".progress-item");
+    
+    console.log(`Encontrados ${progressItems.length} itens de progresso`);
 
-    items.forEach((item, index) => {
+    progressItems.forEach((item, index) => {
       const icon = item.querySelector("i");
+      
+      if (!icon) {
+        console.error(`Ícone não encontrado para item ${index}`);
+        return;
+      }
 
+      // Limpar todas as classes primeiro
+      item.classList.remove("completed", "current");
+      
       if (index < this.currentStep) {
+        // Passos já concluídos
         item.classList.add("completed");
-        item.classList.remove("current");
         icon.className = "fas fa-check-circle";
+        console.log(`Item ${index} marcado como concluído`);
       } else if (index === this.currentStep) {
+        // Passo atual
         item.classList.add("current");
-        item.classList.remove("completed");
         icon.className = "fas fa-circle-notch";
+        console.log(`Item ${index} marcado como atual`);
       } else {
-        item.classList.remove("completed", "current");
+        // Passos futuros
         icon.className = "fas fa-circle";
+        console.log(`Item ${index} marcado como futuro`);
       }
     });
   }
@@ -265,6 +438,7 @@ class InscricaoTutorialManager {
   nextStep() {
     if (this.currentStep < this.totalSteps - 1) {
       this.currentStep++;
+      console.log(`Avançando para passo: ${this.currentStep + 1}`);
       this.showStep();
     }
   }
@@ -272,6 +446,17 @@ class InscricaoTutorialManager {
   prevStep() {
     if (this.currentStep > 0) {
       this.currentStep--;
+      console.log(`Voltando para passo: ${this.currentStep + 1}`);
+      
+      // Se voltar para o passo 7 (seleção de curso), garantir que a aba correta esteja ativa
+      if (this.currentStep === 6) {
+        document.getElementById("tabCurso").click();
+      }
+      // Se voltar para passos anteriores ao 7, voltar para aba de dados do candidato
+      else if (this.currentStep < 6) {
+        document.getElementById("tabCandidato").click();
+      }
+      
       this.showStep();
     }
   }
@@ -281,6 +466,12 @@ class InscricaoTutorialManager {
     document.getElementById("tutorialOverlay").classList.add("hidden");
     document.getElementById("highlight").classList.add("hidden");
     document.getElementById("animatedCursor").classList.add("hidden");
+
+    // Remover efeito hover
+    const element = document.querySelector(".tutorial-highlight-hover");
+    if (element) {
+      element.classList.remove("tutorial-highlight-hover");
+    }
 
     // Mostrar mensagem de conclusão
     this.showCompletionMessage();
@@ -297,6 +488,14 @@ class InscricaoTutorialManager {
         </div>
         <div class="modal-body">
           <p>Parabéns! Você aprendeu como preencher o formulário de inscrição! 🎉</p>
+          <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; margin: 15px 0;">
+            <p><strong>💡 Dicas importantes:</strong></p>
+            <ul style="margin: 10px 0; padding-left: 20px;">
+              <li>Use as <strong>setas do teclado</strong> para navegar no tutorial</li>
+              <li>Pressione <strong>ESC</strong> para sair do tutorial</li>
+              <li>As caixas de diálogo se posicionam automaticamente</li>
+            </ul>
+          </div>
           <p><strong>Pontos importantes para lembrar:</strong></p>
           <ul>
             <li><i class="fas fa-exclamation-triangle" style="color: #ff6b35;"></i> <strong>SEMPRE</strong> preencha o campo "Indicação" com seu nome</li>
@@ -327,7 +526,6 @@ class InscricaoTutorialManager {
     }, 15000);
   }
 
-  // Atualizar a função showPaymentInfo para redirecionar
   showPaymentInfo() {
     const modal = document.createElement("div");
     modal.className = "modal";
@@ -339,23 +537,23 @@ class InscricaoTutorialManager {
       </div>
       <div class="modal-body">
         <p>✅ <strong>Parabéns! Inscrição realizada com sucesso!</strong></p>
-        <p>Agora você será direcionado para a página de pagamento onde o candidato poderá:</p>
+        <p>Agora você será direcionado para a Central do Candidato onde poderá:</p>
 
         <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; margin: 15px 0;">
           <h4 style="margin: 0 0 10px 0; color: #28a745;">📋 Próximos Passos:</h4>
           <ul style="margin: 0; padding-left: 20px;">
-            <li>Ver resumo da inscrição</li>
-            <li>Escolher forma de pagamento</li>
-            <li>Acessar Central do Candidato</li>
-            <li>Receber orientações finais</li>
+            <li>Acessar área do candidato</li>
+            <li>Verificar dados da inscrição</li>
+            <li>Fazer upload de documentos</li>
+            <li>Acompanhar status do processo</li>
           </ul>
         </div>
 
-        <p><strong>Vamos continuar o tutorial na próxima página!</strong></p>
+        <p><strong>Vamos continuar o tutorial na Central do Candidato!</strong></p>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-primary" onclick="window.location.href='posinscricao.html'">
-          <i class="fas fa-arrow-right"></i> Continuar
+        <button class="btn btn-primary" onclick="window.location.href='centralcandidato.html'">
+          <i class="fas fa-arrow-right"></i> Ir para Central do Candidato
         </button>
       </div>
     </div>
@@ -368,6 +566,7 @@ class InscricaoTutorialManager {
     this.hideProgressPanel();
     // Voltar para aba de dados do candidato
     document.getElementById("tabCandidato").click();
+    this.currentStep = 0;
     this.showWelcomeModal();
   }
 
@@ -382,8 +581,12 @@ class InscricaoTutorialManager {
 
 // Inicializar quando a página carregar
 document.addEventListener("DOMContentLoaded", () => {
+  console.log("Inicializando Tutorial Manager");
   new InscricaoTutorialManager();
 });
+
+// Resto do código permanece o mesmo...
+// (Todas as outras funções: modalidades, validação, etc.)
 
 // Adicionar informações detalhadas sobre modalidades
 document.addEventListener("DOMContentLoaded", () => {
@@ -401,53 +604,520 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function showModalityInfo(modality) {
   let info = "";
+  let icon = "";
 
   switch (modality) {
     case "Prova Agendada":
-      info =
-        "📝 <strong>Prova Agendada:</strong><br>• Redação online com tema específico<br>• Modalidade mais comum<br>• Agendamento flexível";
+      icon = "📝";
+      info = `
+        <strong>Prova Agendada:</strong><br>
+        • Redação online com tema específico<br>
+        • Modalidade mais comum<br>
+        • Agendamento flexível<br>
+        • Duração: 2 horas
+      `;
       break;
     case "ENEM":
-      info =
-        "🎓 <strong>ENEM:</strong><br>• Para quem fez o exame nos últimos 3 anos<br>• Média mínima: 450 pontos<br>• Não precisa fazer nova prova";
+      icon = "🎓";
+      info = `
+        <strong>ENEM:</strong><br>
+        • Para quem fez o exame nos últimos 3 anos<br>
+        • Média mínima: 450 pontos<br>
+        • Não precisa fazer nova prova<br>
+        • Apresentar certificado
+      `;
       break;
     case "Novo Título":
-      info =
-        "🎯 <strong>Novo Título:</strong><br>• Para quem já possui graduação<br>• Processo simplificado<br>• Apresentação de diploma";
+      icon = "🎯";
+      info = `
+        <strong>Novo Título:</strong><br>
+        • Para quem já possui graduação<br>
+        • Processo simplificado<br>
+        • Apresentação de diploma<br>
+        • Análise curricular
+      `;
       break;
     case "Transferência":
-      info =
-        "🔄 <strong>Transferência:</strong><br>• Já estuda o curso em outra instituição<br>• Quer concluir na Uniúnica<br>• Análise de disciplinas cursadas";
+      icon = "🔄";
+      info = `
+        <strong>Transferência:</strong><br>
+        • Já estuda o curso em outra instituição<br>
+        • Quer concluir na Uniúnica<br>
+        • Análise de disciplinas cursadas<br>
+        • Aproveitamento de créditos
+      `;
       break;
   }
 
-  // Mostrar tooltip ou modal pequeno com a informação
   const tooltip = document.createElement("div");
+  tooltip.className = "modality-tooltip";
+  tooltip.innerHTML = `
+    <div class="tooltip-header">
+      <span class="tooltip-icon">${icon}</span>
+      <button class="tooltip-close" onclick="this.closest('.modality-tooltip').remove()">×</button>
+    </div>
+    <div class="tooltip-content">
+      ${info}
+    </div>
+  `;
+
   tooltip.style.cssText = `
     position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
     background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-    z-index: 1001;
-    max-width: 300px;
     border: 2px solid #7c4dff;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    z-index: 1001;
+    max-width: 320px;
+    animation: tooltipSlideIn 0.3s ease;
   `;
-  tooltip.innerHTML =
-    info + '<br><br><small style="color: #666;">Clique para fechar</small>';
+
+  const clickedLabel = event.target.closest("label");
+  if (clickedLabel) {
+    const rect = clickedLabel.getBoundingClientRect();
+    const tooltipWidth = 320;
+    const tooltipHeight = 150;
+
+    let left = rect.left + rect.width / 2 - tooltipWidth / 2;
+    let top = rect.bottom + 15;
+
+    if (left < 20) left = 20;
+    if (left + tooltipWidth > window.innerWidth - 20) {
+      left = window.innerWidth - tooltipWidth - 20;
+    }
+    if (top + tooltipHeight > window.innerHeight - 20) {
+      top = rect.top - tooltipHeight - 15;
+    }
+
+    tooltip.style.left = `${left}px`;
+    tooltip.style.top = `${top}px`;
+  }
 
   document.body.appendChild(tooltip);
 
-  tooltip.addEventListener("click", () => {
-    tooltip.remove();
-  });
-
   setTimeout(() => {
     if (tooltip.parentNode) {
-      tooltip.remove();
+      tooltip.style.animation = "tooltipSlideOut 0.3s ease";
+      setTimeout(() => tooltip.remove(), 300);
     }
-  }, 5000);
+  }, 8000);
 }
+
+// Adicionar estilos para os tooltips das modalidades
+const modalityTooltipStyles = document.createElement("style");
+modalityTooltipStyles.textContent = `
+  .modality-tooltip {
+    font-family: 'Open Sans', sans-serif;
+  }
+  
+  .tooltip-header {
+    background: linear-gradient(135deg, #7c4dff, #a081ff);
+    color: white;
+    padding: 12px 15px;
+    border-radius: 10px 10px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .tooltip-icon {
+    font-size: 1.5em;
+  }
+  
+  .tooltip-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5em;
+    cursor: pointer;
+    padding: 0;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s ease;
+  }
+  
+  .tooltip-close:hover {
+    background: rgba(255,255,255,0.2);
+  }
+  
+  .tooltip-content {
+    padding: 15px;
+    line-height: 1.5;
+    color: #333;
+    font-size: 0.9em;
+  }
+  
+  .tooltip-content strong {
+    color: #7c4dff;
+    font-size: 1.1em;
+  }
+  
+  @keyframes tooltipSlideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-15px) scale(0.9);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+  
+  @keyframes tooltipSlideOut {
+    from {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(-15px) scale(0.9);
+    }
+  }
+`;
+document.head.appendChild(modalityTooltipStyles);
+
+// Sistema de validação em tempo real
+class FormValidation {
+  constructor() {
+    this.init();
+  }
+
+  init() {
+    const cpfInput = document.querySelector('input[title="Digite o CPF"]');
+    if (cpfInput) {
+      cpfInput.addEventListener("input", (e) => {
+        this.applyCPFMask(e.target);
+      });
+      cpfInput.addEventListener("blur", (e) => {
+        this.validateCPF(e.target);
+      });
+    }
+
+    const phoneInput = document.querySelector('input[title="Digite o Celular"]');
+    if (phoneInput) {
+      phoneInput.addEventListener("input", (e) => {
+        this.applyPhoneMask(e.target);
+      });
+    }
+
+    const cepInput = document.querySelector('input[title="Digite o CEP"]');
+    if (cepInput) {
+      cepInput.addEventListener("input", (e) => {
+        this.applyCEPMask(e.target);
+      });
+      cepInput.addEventListener("blur", (e) => {
+        this.searchCEP(e.target.value);
+      });
+    }
+
+    const emailInput = document.querySelector('input[title="Digite o Email"]');
+    if (emailInput) {
+      emailInput.addEventListener("blur", (e) => {
+        this.validateEmail(e.target);
+      });
+    }
+  }
+
+  applyCPFMask(input) {
+    let value = input.value.replace(/\D/g, "");
+    value = value.replace(/(\d{3})(\d)/, "$1.$2");
+    value = value.replace(/(\d{3})(\d)/, "$1.$2");
+    value = value.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+    input.value = value;
+  }
+
+  applyPhoneMask(input) {
+    let value = input.value.replace(/\D/g, "");
+    value = value.replace(/(\d{2})(\d)/, "($1) $2");
+    value = value.replace(/(\d{5})(\d)/, "$1-$2");
+    input.value = value;
+  }
+
+  applyCEPMask(input) {
+    let value = input.value.replace(/\D/g, "");
+    value = value.replace(/(\d{5})(\d)/, "$1-$2");
+    input.value = value;
+  }
+
+  validateCPF(input) {
+    const cpf = input.value.replace(/\D/g, "");
+    if (cpf.length !== 11) {
+      this.showFieldError(input, "CPF deve ter 11 dígitos");
+      return false;
+    }
+    if (/^(\d)\1{10}$/.test(cpf)) {
+      this.showFieldError(input, "CPF inválido");
+      return false;
+    }
+    this.showFieldSuccess(input);
+    return true;
+  }
+
+  validateEmail(input) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(input.value)) {
+      this.showFieldError(input, "Email inválido");
+      return false;
+    }
+    this.showFieldSuccess(input);
+    return true;
+  }
+
+  searchCEP(cep) {
+    const cleanCEP = cep.replace(/\D/g, "");
+    if (cleanCEP.length === 8) {
+      setTimeout(() => {
+        this.fillAddressFields({
+          logradouro: "Rua das Flores",
+          bairro: "Centro",
+          localidade: "São Paulo",
+          uf: "SP",
+        });
+      }, 1000);
+    }
+  }
+
+  fillAddressFields(data) {
+    const enderecoInput = document.querySelector('input[title="Endereço"]');
+    const bairroInput = document.querySelector('input[title="Bairro"]');
+
+    if (enderecoInput && !enderecoInput.value) {
+      enderecoInput.value = data.logradouro;
+      this.animateField(enderecoInput);
+    }
+
+    if (bairroInput && !bairroInput.value) {
+      bairroInput.value = data.bairro;
+      this.animateField(bairroInput);
+    }
+
+    this.showNotification("✅ Endereço preenchido automaticamente!", "success");
+  }
+
+  animateField(field) {
+    field.style.background = "#e8f5e8";
+    field.style.transform = "scale(1.02)";
+    setTimeout(() => {
+      field.style.background = "#faf8ff";
+      field.style.transform = "scale(1)";
+    }, 1000);
+  }
+
+  showFieldError(field, message) {
+    field.style.borderColor = "#e74c3c";
+    field.style.background = "#fdf2f2";
+
+    const existingError = field.parentNode.querySelector(".field-error");
+    if (existingError) existingError.remove();
+
+    const errorDiv = document.createElement("div");
+    errorDiv.className = "field-error";
+    errorDiv.textContent = message;
+    errorDiv.style.cssText = `
+      color: #e74c3c;
+      font-size: 0.8em;
+      margin-top: 5px;
+      animation: errorSlideIn 0.3s ease;
+    `;
+
+    field.parentNode.appendChild(errorDiv);
+  }
+
+  showFieldSuccess(field) {
+    field.style.borderColor = "#27ae60";
+    field.style.background = "#f0fff4";
+
+    const existingError = field.parentNode.querySelector(".field-error");
+    if (existingError) existingError.remove();
+  }
+
+  showNotification(message, type = "info") {
+    const notification = document.createElement("div");
+    notification.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: ${type === "success" ? "#27ae60" : "#3498db"};
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 0.9em;
+      z-index: 1002;
+      animation: notificationSlideIn 0.3s ease;
+      max-width: 300px;
+    `;
+
+    notification.textContent = message;
+    document.body.appendChild(notification);
+
+    setTimeout(() => {
+      notification.style.animation = "notificationSlideOut 0.3s ease";
+      setTimeout(() => notification.remove(), 300);
+    }, 3000);
+  }
+}
+
+// Adicionar estilos para validação
+const validationStyles = document.createElement("style");
+validationStyles.textContent = `
+  @keyframes errorSlideIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes notificationSlideIn {
+    from { opacity: 0; transform: translateX(100%); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  
+  @keyframes notificationSlideOut {
+    from { opacity: 1; transform: translateX(0); }
+    to { opacity: 0; transform: translateX(100%); }
+  }
+`;
+document.head.appendChild(validationStyles);
+
+// Inicializar validação
+document.addEventListener("DOMContentLoaded", () => {
+  new FormValidation();
+});
+
+// Sistema de dicas contextuais para campos
+class ContextualHelp {
+  constructor() {
+    this.tips = {
+      "Digite o CPF": "Apenas números. A formatação será aplicada automaticamente.",
+      "Digite o Nome Completo": "Nome completo sem abreviações.",
+      "Digite o Email": "Email válido para receber comunicações importantes.",
+      "Digite o Celular": "Número com DDD para contato.",
+      "Escolha quem te indicou": "⚠️ IMPORTANTE: Selecione seu nome para receber comissão!",
+      "Digite o CEP": "CEP válido para preenchimento automático do endereço.",
+    };
+    this.init();
+  }
+
+  init() {
+    Object.keys(this.tips).forEach((title) => {
+      const input = document.querySelector(`input[title="${title}"], select[title="${title}"]`);
+      if (input) {
+        this.addContextualTip(input, this.tips[title]);
+      }
+    });
+  }
+
+  addContextualTip(element, tipText) {
+    element.addEventListener("focus", (e) => {
+      this.showTip(e.target, tipText);
+    });
+    element.addEventListener("blur", () => {
+      this.hideTip();
+    });
+  }
+
+  showTip(element, text) {
+    this.hideTip();
+
+    const tip = document.createElement("div");
+    tip.id = "contextualTip";
+    tip.innerHTML = text;
+
+    const isImportant = text.includes("⚠️");
+
+    tip.style.cssText = `
+      position: fixed;
+      background: ${isImportant ? "#fff3cd" : "#f8f9fa"};
+      border: 2px solid ${isImportant ? "#ffc107" : "#7c4dff"};
+      color: ${isImportant ? "#856404" : "#333"};
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 0.85em;
+      z-index: 1003;
+      max-width: 250px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      animation: tipSlideIn 0.3s ease;
+      pointer-events: none;
+    `;
+
+    document.body.appendChild(tip);
+
+    const rect = element.getBoundingClientRect();
+    const tipRect = tip.getBoundingClientRect();
+
+    let left = rect.right + 10;
+    let top = rect.top + rect.height / 2 - tipRect.height / 2;
+
+    if (left + tipRect.width > window.innerWidth - 20) {
+      left = rect.left - tipRect.width - 10;
+    }
+    if (top < 20) top = 20;
+    if (top + tipRect.height > window.innerHeight - 20) {
+      top = window.innerHeight - tipRect.height - 20;
+    }
+
+    tip.style.left = `${left}px`;
+    tip.style.top = `${top}px`;
+  }
+
+  hideTip() {
+    const tip = document.getElementById("contextualTip");
+    if (tip) {
+      tip.style.animation = "tipSlideOut 0.3s ease";
+      setTimeout(() => tip.remove(), 300);
+    }
+  }
+}
+
+// Adicionar estilos para dicas contextuais
+const contextualHelpStyles = document.createElement("style");
+contextualHelpStyles.textContent = `
+  @keyframes tipSlideIn {
+    from { opacity: 0; transform: translateX(-10px) scale(0.9); }
+    to { opacity: 1; transform: translateX(0) scale(1); }
+  }
+  
+  @keyframes tipSlideOut {
+    from { opacity: 1; transform: translateX(0) scale(1); }
+    to { opacity: 0; transform: translateX(-10px) scale(0.9); }
+  }
+`;
+document.head.appendChild(contextualHelpStyles);
+
+// Inicializar sistema de ajuda contextual
+document.addEventListener("DOMContentLoaded", () => {
+  new ContextualHelp();
+});
+
+// Adicionar efeitos visuais aprimorados
+document.addEventListener("DOMContentLoaded", () => {
+  const formFields = document.querySelectorAll("input, select");
+  formFields.forEach((field) => {
+    field.addEventListener("focus", () => {
+      field.style.transform = "translateY(-2px)";
+      field.style.boxShadow = "0 4px 12px rgba(124, 77, 255, 0.2)";
+    });
+
+    field.addEventListener("blur", () => {
+      field.style.transform = "translateY(0)";
+      field.style.boxShadow = "none";
+    });
+  });
+
+  const tabs = document.querySelectorAll(".tab");
+  tabs.forEach((tab) => {
+    tab.addEventListener("mouseenter", () => {
+      if (!tab.classList.contains("active")) {
+        tab.style.transform = "translateY(-2px)";
+      }
+    });
+
+    tab.addEventListener("mouseleave", () => {
+      if (!tab.classList.contains("active")) {
+        tab.style.transform = "translateY(0)";
+      }
+    });
+  });
+});

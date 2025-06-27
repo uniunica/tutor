@@ -31,6 +31,7 @@ body {
   max-width: 1100px;
   margin: 32px auto;
   box-sizing: border-box;
+  animation: containerSlideUp 0.8s ease-out;
 }
 
 /* Header */
@@ -44,6 +45,7 @@ header {
   border-radius: 20px 20px 0 0;
   box-shadow: 0 4px 18px 0 rgba(42, 5, 118, 0.08);
   margin-bottom: 10px;
+  animation: headerFadeIn 1s ease-out;
 }
 
 .logo-area {
@@ -88,12 +90,14 @@ header {
   font-weight: 700;
   text-decoration: none;
   font-size: 1em;
+  transition: all 0.3s ease;
 }
 .back-link i {
   margin-right: 8px;
 }
 .back-link a:hover {
   text-decoration: underline;
+  transform: translateX(-3px);
 }
 
 /* Main box */
@@ -138,7 +142,7 @@ header {
   cursor: pointer;
   font-weight: 600;
   border: 2px solid #ece4ff;
-  transition: border 0.18s, background 0.2s;
+  transition: all 0.3s ease;
 }
 .modality-options input[type="radio"] {
   margin-right: 7px;
@@ -149,6 +153,7 @@ header {
 .modality-options input[type="radio"]:checked + span {
   background: #ece4ff;
   border: 2px solid #7c4dff;
+  transform: translateY(-2px);
 }
 
 /* Tabs */
@@ -170,12 +175,19 @@ header {
   display: flex;
   align-items: center;
   gap: 8px;
+  transition: all 0.3s ease;
 }
 .tab.active {
   background: #7c4dff;
   color: #fff;
   border: 1.5px solid #7c4dff;
   z-index: 1;
+  transform: translateY(-2px);
+}
+
+.tab:hover:not(.active) {
+  background: #e5dbfa;
+  transform: translateY(-1px);
 }
 
 form {
@@ -219,7 +231,7 @@ label {
 }
 .req.important {
   color: #ff6b35;
-  animation: pulse 2s infinite;
+  animation: importantPulse 2s infinite;
 }
 input,
 select {
@@ -231,12 +243,13 @@ select {
   outline: none;
   margin-bottom: 0;
   color: #252040;
-  transition: border 0.18s, box-shadow 0.2s;
+  transition: all 0.3s ease;
 }
 input:focus,
 select:focus {
   border: 1.5px solid #7c4dff;
-  box-shadow: 0 0 0 2px #e2dcff55;
+  box-shadow: 0 0 0 3px rgba(124, 77, 255, 0.1);
+  transform: translateY(-1px);
 }
 
 option[value=""] {
@@ -259,14 +272,15 @@ button[type="submit"] {
   box-shadow: 0 2px 7px rgba(124, 77, 255, 0.09);
   cursor: pointer;
   letter-spacing: 1px;
-  transition: background 0.16s, box-shadow 0.18s;
+  transition: all 0.3s ease;
 }
 button[type="submit"]:hover {
   background: linear-gradient(90deg, #a081ff 40%, #7c4dff 100%);
-  box-shadow: 0 4px 18px rgba(124, 77, 255, 0.15);
+  box-shadow: 0 6px 20px rgba(124, 77, 255, 0.2);
+  transform: translateY(-2px);
 }
 
-/* ESTILOS DO TUTORIAL */
+/* NOVO SISTEMA DE TUTORIAL APRIMORADO */
 
 /* Modal de Boas-vindas */
 .modal {
@@ -359,74 +373,144 @@ button[type="submit"]:hover {
   border-top: 1px solid #eee;
 }
 
-/* Tutorial Overlay */
+/* NOVO SISTEMA DE TUTORIAL SEM OVERLAY ESCURO */
 .tutorial-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
+  pointer-events: none; /* Permite interação com elementos por baixo */
   z-index: 999;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 .tutorial-box {
+  position: absolute;
   background: white;
   border-radius: 15px;
-  max-width: 450px;
-  width: 90%;
-  animation: slideIn 0.4s ease;
+  max-width: 380px;
+  min-width: 300px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  border: 3px solid #7c4dff;
+  animation: tutorialSlideIn 0.4s ease;
+  pointer-events: auto; /* Permite interação com a caixa do tutorial */
+}
+
+.tutorial-box::before {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-style: solid;
+}
+
+/* Setas direcionais para diferentes posições */
+.tutorial-box.position-top::before {
+  bottom: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-top: 12px solid #7c4dff;
+}
+
+.tutorial-box.position-bottom::before {
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-bottom: 12px solid #7c4dff;
+}
+
+.tutorial-box.position-left::before {
+  right: -12px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-top: 12px solid transparent;
+  border-bottom: 12px solid transparent;
+  border-left: 12px solid #7c4dff;
+}
+
+.tutorial-box.position-right::before {
+  left: -12px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-top: 12px solid transparent;
+  border-bottom: 12px solid transparent;
+  border-right: 12px solid #7c4dff;
 }
 
 .tutorial-content {
-  padding: 25px;
+  padding: 20px;
 }
 
 .tutorial-content h3 {
   color: #7c4dff;
-  margin-bottom: 15px;
-  font-size: 1.3em;
+  margin-bottom: 12px;
+  font-size: 1.2em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tutorial-content h3::before {
+  content: "📝";
+  font-size: 1.1em;
 }
 
 .tutorial-content p {
-  line-height: 1.6;
-  margin-bottom: 15px;
+  line-height: 1.5;
+  margin-bottom: 12px;
+  font-size: 0.95em;
+  color: #555;
 }
 
 .tutorial-tip {
   background: #e8f5e8;
   border: 1px solid #c3e6c3;
   border-radius: 8px;
-  padding: 12px;
-  margin: 15px 0;
+  padding: 10px;
+  margin: 12px 0;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 8px;
+  font-size: 0.9em;
 }
 
 .tutorial-tip i {
   color: #28a745;
   font-size: 1.1em;
+  margin-top: 2px;
 }
 
 .tutorial-progress {
-  background: #f8f9fa;
-  padding: 10px;
-  border-radius: 8px;
+  background: linear-gradient(135deg, #7c4dff, #a081ff);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 20px;
   text-align: center;
   font-weight: 600;
-  color: #666;
+  font-size: 0.85em;
+  margin-bottom: 15px;
 }
 
 .tutorial-actions {
-  padding: 20px;
-  border-top: 1px solid #eee;
   display: flex;
-  gap: 10px;
+  gap: 8px;
   justify-content: space-between;
+  align-items: center;
+}
+
+.tutorial-actions .btn {
+  padding: 8px 16px;
+  font-size: 0.85em;
+  border-radius: 20px;
+  min-width: auto;
+}
+
+.tutorial-actions .btn i {
+  margin-right: 5px;
 }
 
 /* Botões */
@@ -455,6 +539,7 @@ button[type="submit"]:hover {
 
 .btn-primary:hover {
   background-color: #6c3ce6;
+  transform: translateY(-2px);
 }
 
 .btn-secondary {
@@ -464,6 +549,7 @@ button[type="submit"]:hover {
 
 .btn-secondary:hover {
   background-color: #5a6268;
+  transform: translateY(-2px);
 }
 
 .btn-success {
@@ -473,103 +559,134 @@ button[type="submit"]:hover {
 
 .btn-success:hover {
   background-color: #218838;
+  transform: translateY(-2px);
 }
 
-/* Cursor Animado */
+/* Cursor Animado Aprimorado */
 .animated-cursor {
   position: fixed;
   z-index: 998;
   color: #ff4444;
-  font-size: 24px;
+  font-size: 28px;
   pointer-events: none;
-  transition: all 0.8s ease;
-  animation: pulse 1.5s infinite;
+  transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  animation: cursorPulse 2s infinite;
+  filter: drop-shadow(0 0 8px rgba(255, 68, 68, 0.6));
 }
 
-/* Highlight */
+/* Highlight Aprimorado */
 .highlight {
   position: fixed;
-  border: 3px solid #ff4444;
-  border-radius: 8px;
-  background-color: rgba(255, 68, 68, 0.1);
+  border: 4px solid #ff4444;
+  border-radius: 12px;
+  background-color: rgba(255, 68, 68, 0.08);
   z-index: 997;
   pointer-events: none;
   transition: all 0.5s ease;
-  animation: glow 2s infinite alternate;
+  animation: highlightGlow 3s infinite;
+  box-shadow: 0 0 0 4px rgba(255, 68, 68, 0.2), 0 0 20px rgba(255, 68, 68, 0.3);
 }
 
-/* Painel de Progresso */
+/* Painel de Progresso Aprimorado */
 .progress-panel {
   position: fixed;
   top: 20px;
   right: 20px;
   background: white;
-  border-radius: 10px;
+  border-radius: 15px;
   padding: 20px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
   z-index: 996;
-  min-width: 280px;
-  max-height: 400px;
+  min-width: 300px;
+  max-height: 450px;
   overflow-y: auto;
+  border-left: 5px solid #7c4dff;
 }
 
 .progress-panel h4 {
   color: #7c4dff;
   margin-bottom: 15px;
   font-size: 1.1em;
-}
-
-.progress-panel h4 i {
-  margin-right: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .progress-item {
   display: flex;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   font-size: 0.85em;
+  padding: 8px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
 }
 
 .progress-item i {
-  margin-right: 10px;
+  margin-right: 12px;
   color: #ccc;
-  transition: color 0.3s ease;
-  width: 16px;
+  transition: all 0.3s ease;
+  width: 20px;
+  text-align: center;
+}
+
+.progress-item.completed {
+  background: rgba(40, 167, 69, 0.1);
+  color: #28a745;
 }
 
 .progress-item.completed i {
   color: #28a745;
+  transform: scale(1.1);
+}
+
+.progress-item.current {
+  background: rgba(124, 77, 255, 0.1);
+  color: #7c4dff;
+  font-weight: 600;
 }
 
 .progress-item.current i {
   color: #7c4dff;
-  animation: spin 2s linear infinite;
+  animation: progressSpin 2s linear infinite;
 }
 
-/* Botão Reiniciar Tutorial */
+/* Botão Reiniciar Tutorial Aprimorado */
 .restart-tutorial-btn {
   position: fixed;
   bottom: 20px;
   left: 20px;
-  background: #7c4dff;
+  background: linear-gradient(135deg, #7c4dff, #a081ff);
   color: white;
   border: none;
   border-radius: 50px;
-  padding: 12px 20px;
+  padding: 15px 25px;
   cursor: pointer;
   font-size: 0.9em;
   font-weight: 600;
   transition: all 0.3s ease;
   z-index: 995;
+  box-shadow: 0 4px 15px rgba(124, 77, 255, 0.3);
 }
 
 .restart-tutorial-btn:hover {
-  background: #6c3ce6;
-  transform: translateY(-2px);
+  background: linear-gradient(135deg, #6c3ce6, #9c4dcd);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(124, 77, 255, 0.4);
 }
 
 .restart-tutorial-btn i {
   margin-right: 8px;
+}
+
+/* Efeitos de Hover para Elementos Destacados */
+.tutorial-highlight-hover {
+  transition: all 0.3s ease;
+}
+
+.tutorial-highlight-hover:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 25px rgba(124, 77, 255, 0.2);
 }
 
 /* Utilitários */
@@ -577,7 +694,7 @@ button[type="submit"]:hover {
   display: none !important;
 }
 
-/* Animações */
+/* Animações Aprimoradas */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -598,31 +715,83 @@ button[type="submit"]:hover {
   }
 }
 
-@keyframes pulse {
+@keyframes tutorialSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes cursorPulse {
   0%,
   100% {
     transform: scale(1);
+    opacity: 1;
   }
   50% {
-    transform: scale(1.2);
+    transform: scale(1.3);
+    opacity: 0.8;
   }
 }
 
-@keyframes glow {
-  from {
-    box-shadow: 0 0 5px #ff4444;
+@keyframes highlightGlow {
+  0%,
+  100% {
+    border-color: #ff4444;
+    box-shadow: 0 0 0 4px rgba(255, 68, 68, 0.2),
+      0 0 20px rgba(255, 68, 68, 0.3);
   }
-  to {
-    box-shadow: 0 0 20px #ff4444, 0 0 30px #ff4444;
+  50% {
+    border-color: #ff6666;
+    box-shadow: 0 0 0 8px rgba(255, 68, 68, 0.3),
+      0 0 30px rgba(255, 68, 68, 0.5);
   }
 }
 
-@keyframes spin {
+@keyframes progressSpin {
   from {
     transform: rotate(0deg);
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes importantPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    color: #ff6b35;
+  }
+  50% {
+    transform: scale(1.1);
+    color: #ff8c42;
+  }
+}
+
+@keyframes containerSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes headerFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -644,11 +813,25 @@ button[type="submit"]:hover {
   }
 
   .progress-panel {
-    position: relative;
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    left: 20px;
     top: auto;
-    right: auto;
-    margin: 20px;
-    width: calc(100% - 40px);
+    width: auto;
+    max-height: 200px;
+  }
+
+  .tutorial-box {
+    max-width: 320px;
+    min-width: 280px;
+  }
+
+  .restart-tutorial-btn {
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 20px;
   }
 }
 
@@ -683,14 +866,29 @@ button[type="submit"]:hover {
   }
 
   .tutorial-box {
-    width: 95%;
+    max-width: 300px;
+    min-width: 250px;
+  }
+
+  .tutorial-content {
+    padding: 15px;
+  }
+
+  .tutorial-content h3 {
+    font-size: 1.1em;
+  }
+
+  .tutorial-content p {
+    font-size: 0.9em;
   }
 
   .tutorial-actions {
     flex-direction: column;
+    gap: 8px;
   }
 
   .tutorial-actions .btn {
     width: 100%;
+    justify-content: center;
   }
 }
