@@ -339,7 +339,7 @@ class InscricaoTutorialManager {
         <div class="modal-body">
           <p>✅ <strong>Inscrição realizada com sucesso!</strong></p>
           <p>O candidato agora pode efetuar o pagamento da taxa de matrícula.</p>
-          
+
           <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; margin: 15px 0;">
             <h4 style="margin: 0 0 10px 0; color: #28a745;">💰 Informações de Pagamento:</h4>
             <ul style="margin: 0; padding-left: 20px;">
@@ -349,7 +349,7 @@ class InscricaoTutorialManager {
               <li><strong>Após pagamento:</strong> Acesso ao portal e materiais</li>
             </ul>
           </div>
-          
+
           <p><strong>Próximos passos do candidato:</strong></p>
           <ol>
             <li>Receber e-mail com dados de acesso</li>

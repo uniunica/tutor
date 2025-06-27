@@ -6,14 +6,14 @@ class TutorialManager {
 
     this.steps = [
       {
-        title: "Bem-vindo à Interface!",
-        text: "Esta é a página principal do processo seletivo. Aqui você encontra todas as informações importantes sobre os cursos disponíveis.",
+        title: "Bem-vindo Parceiro(a)!",
+        text: "Esta é a página principal do processo seletivo. Aqui você encontra todas as informações importantes sobre o processo de matrícula dos cursos de graduação disponíveis.",
         target: ".card",
         position: "center",
       },
       {
         title: "Informações do Curso",
-        text: "Aqui você pode ver o tipo de curso (EAD), o processo seletivo atual e outras informações relevantes.",
+        text: "Aqui você pode ver o tipo de curso, o processo seletivo atual e outras informações relevantes.",
         target: "#courseTitle",
         position: "bottom",
       },
@@ -25,7 +25,7 @@ class TutorialManager {
       },
       {
         title: "Central do Candidato",
-        text: "Use este botão para acessar informações sobre candidatos já inscritos, acompanhar status de inscrições e muito mais.",
+        text: "Use este botão para acessar informações a central do candidato, acompanhar status de inscrições e muito mais.",
         target: "#candidateCenter",
         position: "top",
       },
@@ -230,11 +230,11 @@ class TutorialManager {
         </div>
         <div class="modal-body">
           <p>Você concluiu o tutorial com sucesso! 🎉</p>
-          <p>Agora você já sabe como navegar pelo sistema de inscrições.</p>
+          <p>Agora você já sabe como navegar pela página inicial de inscrições.</p>
           <p><strong>Próximos passos:</strong></p>
           <ul>
-            <li><i class="fas fa-user-graduate"></i> Acesse a Central do Candidato para gerenciar inscrições</li>
-            <li><i class="fas fa-pencil-alt"></i> Use "Fazer Inscrição" para novas matrículas</li>
+            <li><i class="fas fa-user-graduate"></i> Acesse a Central do Candidato</li>
+            <li><i class="fas fa-pencil-alt"></i> Clique em "Fazer Inscrição" para realizar uma matrícula</li>
             <li><i class="fas fa-calendar-alt"></i> Sempre verifique os prazos de inscrição</li>
           </ul>
         </div>
