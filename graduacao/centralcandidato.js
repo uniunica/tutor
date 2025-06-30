@@ -4,7 +4,8 @@ class CentralCandidatoTutorialManager {
     this.totalSteps = 5;
     this.isActive = false;
     this.isLoggedIn = false;
-    this.originalScrollPosition = 0; // NOVO: Armazenar posição original
+    this.scrollPosition = 0; // Posição atual do scroll
+    this.isScrollBlocked = false; // Estado do bloqueio
 
     this.steps = [
       {
@@ -123,102 +124,90 @@ class CentralCandidatoTutorialManager {
     });
   }
 
-  // NOVO: Sistema de scroll inteligente durante tutorial
-  blockScrollAndAdjust(targetElement = null) {
-    // Armazenar posição atual
-    this.originalScrollPosition = window.scrollY;
+  // SISTEMA SIMPLIFICADO DE SCROLL
+  blockScroll() {
+    if (this.isScrollBlocked) return;
     
-    // Se há um elemento alvo, calcular a melhor posição
-    if (targetElement) {
-      const element = document.querySelector(targetElement);
-      if (element) {
-        const rect = element.getBoundingClientRect();
-        const viewportHeight = window.innerHeight;
-        
-        // Se o elemento não está visível na viewport
-        if (rect.top < 0 || rect.bottom > viewportHeight) {
-          // Calcular posição ideal para centralizar o elemento
-          const elementCenter = rect.top + window.scrollY + (rect.height / 2);
-          const idealScrollPosition = elementCenter - (viewportHeight / 2);
-          
-          // Ajustar scroll antes de bloquear
-          window.scrollTo(0, Math.max(0, idealScrollPosition));
-          
-          // Aguardar um frame para o scroll se completar
-          requestAnimationFrame(() => {
-            this.applyScrollBlock();
-          });
-        } else {
-          // Elemento já está visível, apenas bloquear
-          this.applyScrollBlock();
-        }
-      } else {
-        this.applyScrollBlock();
-      }
-    } else {
-      this.applyScrollBlock();
-    }
-  }
-
-  applyScrollBlock() {
+    this.scrollPosition = window.scrollY;
     document.body.style.overflow = 'hidden';
     document.body.style.position = 'fixed';
-    document.body.style.top = `-${window.scrollY}px`;
+    document.body.style.top = `-${this.scrollPosition}px`;
     document.body.style.width = '100%';
     document.body.style.left = '0';
+    this.isScrollBlocked = true;
+    
+    console.log(`Scroll bloqueado na posição: ${this.scrollPosition}`);
   }
 
-  // NOVO: Desbloquear scroll e restaurar posição
   unblockScroll() {
-    const scrollY = document.body.style.top;
+    if (!this.isScrollBlocked) return;
+    
     document.body.style.overflow = '';
     document.body.style.position = '';
     document.body.style.top = '';
     document.body.style.width = '';
     document.body.style.left = '';
     
-    // Restaurar posição original ou usar a posição armazenada
-    const targetPosition = scrollY ? parseInt(scrollY.replace('-', '').replace('px', '')) : this.originalScrollPosition;
-    window.scrollTo(0, targetPosition);
+    window.scrollTo(0, this.scrollPosition);
+    this.isScrollBlocked = false;
+    
+    console.log(`Scroll desbloqueado, restaurado para: ${this.scrollPosition}`);
   }
 
-  // NOVO: Ajustar posição durante o tutorial
-  adjustViewForElement(selector) {
+  // NOVA FUNÇÃO: Ajustar scroll de forma controlada
+  adjustScrollForElement(selector) {
     const element = document.querySelector(selector);
-    if (!element) return;
-
-    // Temporariamente desbloquear scroll para ajustar posição
-    const currentTop = document.body.style.top;
-    document.body.style.position = '';
-    document.body.style.overflow = '';
-    
-    // Restaurar scroll temporariamente
-    if (currentTop) {
-      window.scrollTo(0, parseInt(currentTop.replace('-', '').replace('px', '')));
+    if (!element) {
+      console.log(`Elemento ${selector} não encontrado`);
+      return;
     }
 
-    // Aguardar um frame e então ajustar posição
+    // Temporariamente desbloquear para calcular posições
+    const wasBlocked = this.isScrollBlocked;
+    if (wasBlocked) {
+      document.body.style.position = '';
+      document.body.style.overflow = '';
+      window.scrollTo(0, this.scrollPosition);
+    }
+
+    // Aguardar um frame para o DOM se atualizar
     requestAnimationFrame(() => {
       const rect = element.getBoundingClientRect();
       const viewportHeight = window.innerHeight;
+      const currentScroll = window.scrollY;
       
-      // Se elemento não está completamente visível
-      if (rect.top < 100 || rect.bottom > viewportHeight - 100) {
-        const elementCenter = rect.top + window.scrollY + (rect.height / 2);
-        const idealPosition = elementCenter - (viewportHeight / 2);
+      console.log(`Elemento ${selector} - Top: ${rect.top}, Bottom: ${rect.bottom}, Viewport: ${viewportHeight}`);
+
+      // Verificar se elemento precisa ser ajustado
+      const needsAdjustment = rect.top < 100 || rect.bottom > viewportHeight - 100;
+      
+      if (needsAdjustment) {
+        // Calcular nova posição ideal
+        const elementCenter = rect.top + currentScroll + (rect.height / 2);
+        const newScrollPosition = Math.max(0, elementCenter - (viewportHeight / 2));
         
+        console.log(`Ajustando scroll de ${currentScroll} para ${newScrollPosition}`);
+        
+        // Fazer scroll suave
         window.scrollTo({
-          top: Math.max(0, idealPosition),
+          top: newScrollPosition,
           behavior: 'smooth'
         });
         
-        // Aguardar scroll completar e rebloquear
+        // Aguardar scroll completar e atualizar posição
         setTimeout(() => {
-          this.applyScrollBlock();
-        }, 500);
+          this.scrollPosition = window.scrollY;
+          if (wasBlocked) {
+            this.blockScroll();
+          }
+          console.log(`Scroll ajustado para: ${this.scrollPosition}`);
+        }, 600);
       } else {
-        // Elemento já visível, apenas rebloquear
-        this.applyScrollBlock();
+        // Elemento já visível, apenas rebloquear se necessário
+        if (wasBlocked) {
+          this.blockScroll();
+        }
+        console.log(`Elemento ${selector} já está visível, sem ajuste necessário`);
       }
     });
   }
@@ -233,7 +222,7 @@ class CentralCandidatoTutorialManager {
 
   showWelcomeModal() {
     document.getElementById("welcomeModal").style.display = "flex";
-    this.blockScrollAndAdjust(); // Bloquear scroll inteligente
+    this.blockScroll();
   }
 
   hideWelcomeModal() {
@@ -247,7 +236,6 @@ class CentralCandidatoTutorialManager {
     this.currentStep = 0;
     this.showProgressPanel();
     this.showStep();
-    // Scroll continua bloqueado durante o tutorial
   }
 
   showStep() {
@@ -256,7 +244,7 @@ class CentralCandidatoTutorialManager {
     const tutorialBox = overlay.querySelector(".tutorial-box");
     const tipElement = document.getElementById("tutorialTip");
 
-    console.log(`Mostrando passo ${this.currentStep + 1}: ${step.title}`);
+    console.log(`\n=== PASSO ${this.currentStep + 1}: ${step.title} ===`);
 
     // Se for o primeiro passo e não estiver logado, mostrar tela de login
     if (this.currentStep === 0 && !this.isLoggedIn) {
@@ -265,11 +253,6 @@ class CentralCandidatoTutorialManager {
     // Se for passo 2 ou maior, garantir que está na tela da central
     else if (this.currentStep >= 1 && !this.isLoggedIn) {
       this.showCentralScreen();
-    }
-
-    // NOVO: Ajustar visualização para o elemento alvo
-    if (step.target) {
-      this.adjustViewForElement(step.target);
     }
 
     // Mostrar overlay
@@ -317,25 +300,32 @@ class CentralCandidatoTutorialManager {
     // PRIMEIRO: Atualizar progresso
     this.updateProgress();
 
-    // SEGUNDO: Destacar elemento (com delay para aguardar ajuste de scroll)
+    // SEGUNDO: Ajustar scroll se necessário (com delay para mudanças de tela)
+    if (step.target) {
+      setTimeout(() => {
+        this.adjustScrollForElement(step.target);
+      }, this.currentStep === 1 ? 1600 : 300); // Delay maior no passo 2 por causa do login
+    }
+
+    // TERCEIRO: Destacar elemento (com delay para aguardar ajuste de scroll)
     setTimeout(() => {
       this.highlightElement(step.target);
-    }, 600);
+    }, this.currentStep === 1 ? 2200 : 900);
 
-    // TERCEIRO: Animar cursor (com delay)
+    // QUARTO: Animar cursor (com delay)
     setTimeout(() => {
       this.animateCursor(step.target);
-    }, 700);
+    }, this.currentStep === 1 ? 2300 : 1000);
 
-    // QUARTO: Posicionar caixa do tutorial (com delay maior)
+    // QUINTO: Posicionar caixa do tutorial (com delay maior)
     setTimeout(() => {
       this.positionTutorialBox(step.target, step.position);
-    }, 800);
+    }, this.currentStep === 1 ? 2400 : 1100);
 
-    // Adicionar efeito hover ao elemento destacado
+    // SEXTO: Adicionar efeito hover ao elemento destacado
     setTimeout(() => {
       this.addHoverEffect(step.target);
-    }, 900);
+    }, this.currentStep === 1 ? 2500 : 1200);
   }
 
   // FUNÇÃO CORRIGIDA DE POSICIONAMENTO
@@ -343,7 +333,7 @@ class CentralCandidatoTutorialManager {
     const element = document.querySelector(selector);
     const tutorialBox = document.querySelector(".tutorial-box");
 
-    console.log(`Tentando posicionar tutorial box para: ${selector}`);
+    console.log(`Posicionando tutorial box para: ${selector}`);
 
     if (!element) {
       console.error(`Elemento não encontrado: ${selector}`);
@@ -375,8 +365,8 @@ class CentralCandidatoTutorialManager {
       const viewportWidth = window.innerWidth;
       const viewportHeight = window.innerHeight;
 
-      console.log("Element rect:", elementRect);
-      console.log("Box rect:", boxRect);
+      console.log(`Element rect:`, elementRect);
+      console.log(`Box rect:`, boxRect);
 
       let top, left;
       let finalPosition = position;
@@ -434,9 +424,7 @@ class CentralCandidatoTutorialManager {
       tutorialBox.style.left = `${Math.max(20, left)}px`;
       tutorialBox.style.visibility = "visible";
 
-      console.log(
-        `Tutorial box posicionado em: top=${top}, left=${left}, position=${finalPosition}`
-      );
+      console.log(`Tutorial box posicionado: top=${top}, left=${left}, position=${finalPosition}`);
     });
   }
 
@@ -452,7 +440,7 @@ class CentralCandidatoTutorialManager {
       highlight.style.height = rect.height + 16 + "px";
       highlight.classList.remove("hidden");
 
-      console.log(`Elemento destacado: ${selector} em posição:`, rect);
+      console.log(`Elemento ${selector} destacado em:`, rect);
     }
   }
 
@@ -478,7 +466,7 @@ class CentralCandidatoTutorialManager {
         cursor.style.fontSize = "28px";
       }
 
-      console.log(`Cursor animado posicionado em: ${centerX}, ${centerY}`);
+      console.log(`Cursor posicionado em: ${centerX}, ${centerY}`);
     }
   }
 
@@ -497,15 +485,9 @@ class CentralCandidatoTutorialManager {
   }
 
   updateProgress() {
-    console.log(
-      `Atualizando progresso para passo: ${this.currentStep + 1} de ${
-        this.totalSteps
-      }`
-    );
+    console.log(`Atualizando progresso: ${this.currentStep + 1}/${this.totalSteps}`);
 
     const progressItems = document.querySelectorAll(".progress-item");
-
-    console.log(`Encontrados ${progressItems.length} itens de progresso`);
 
     progressItems.forEach((item, index) => {
       const icon = item.querySelector("i");
@@ -522,16 +504,13 @@ class CentralCandidatoTutorialManager {
         // Passos já concluídos
         item.classList.add("completed");
         icon.className = "fas fa-check-circle";
-        console.log(`Item ${index} marcado como concluído`);
       } else if (index === this.currentStep) {
         // Passo atual
         item.classList.add("current");
         icon.className = "fas fa-circle-notch";
-        console.log(`Item ${index} marcado como atual`);
       } else {
         // Passos futuros
         icon.className = "fas fa-circle";
-        console.log(`Item ${index} marcado como futuro`);
       }
     });
   }
@@ -826,15 +805,15 @@ alertStyles.textContent = `
     }
   }
 
-  /* NOVO: Indicador de elemento sendo ajustado */
-  .tutorial-adjusting {
-    transition: all 0.5s ease;
-    transform: scale(1.02);
-    box-shadow: 0 0 20px rgba(255, 68, 68, 0.3);
+  /* Indicador de scroll sendo ajustado */
+  .scroll-adjusting {
+    transition: all 0.6s ease;
   }
 `;
 document.head.appendChild(alertStyles);
 
+// Resto das classes permanecem iguais (FormValidator, ContextualTips, etc.)
+// ... [resto do código permanece igual]
 // Resto das classes permanecem iguais...
 // (FormValidator, ContextualTips, DataSimulator, etc.)
 
