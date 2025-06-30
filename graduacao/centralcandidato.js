@@ -127,30 +127,30 @@ class CentralCandidatoTutorialManager {
   // SISTEMA SIMPLIFICADO DE SCROLL
   blockScroll() {
     if (this.isScrollBlocked) return;
-    
+
     this.scrollPosition = window.scrollY;
-    document.body.style.overflow = 'hidden';
-    document.body.style.position = 'fixed';
+    document.body.style.overflow = "hidden";
+    document.body.style.position = "fixed";
     document.body.style.top = `-${this.scrollPosition}px`;
-    document.body.style.width = '100%';
-    document.body.style.left = '0';
+    document.body.style.width = "100%";
+    document.body.style.left = "0";
     this.isScrollBlocked = true;
-    
+
     console.log(`Scroll bloqueado na posição: ${this.scrollPosition}`);
   }
 
   unblockScroll() {
     if (!this.isScrollBlocked) return;
-    
-    document.body.style.overflow = '';
-    document.body.style.position = '';
-    document.body.style.top = '';
-    document.body.style.width = '';
-    document.body.style.left = '';
-    
+
+    document.body.style.overflow = "";
+    document.body.style.position = "";
+    document.body.style.top = "";
+    document.body.style.width = "";
+    document.body.style.left = "";
+
     window.scrollTo(0, this.scrollPosition);
     this.isScrollBlocked = false;
-    
+
     console.log(`Scroll desbloqueado, restaurado para: ${this.scrollPosition}`);
   }
 
@@ -165,8 +165,8 @@ class CentralCandidatoTutorialManager {
     // Temporariamente desbloquear para calcular posições
     const wasBlocked = this.isScrollBlocked;
     if (wasBlocked) {
-      document.body.style.position = '';
-      document.body.style.overflow = '';
+      document.body.style.position = "";
+      document.body.style.overflow = "";
       window.scrollTo(0, this.scrollPosition);
     }
 
@@ -175,25 +175,33 @@ class CentralCandidatoTutorialManager {
       const rect = element.getBoundingClientRect();
       const viewportHeight = window.innerHeight;
       const currentScroll = window.scrollY;
-      
-      console.log(`Elemento ${selector} - Top: ${rect.top}, Bottom: ${rect.bottom}, Viewport: ${viewportHeight}`);
+
+      console.log(
+        `Elemento ${selector} - Top: ${rect.top}, Bottom: ${rect.bottom}, Viewport: ${viewportHeight}`
+      );
 
       // Verificar se elemento precisa ser ajustado
-      const needsAdjustment = rect.top < 100 || rect.bottom > viewportHeight - 100;
-      
+      const needsAdjustment =
+        rect.top < 100 || rect.bottom > viewportHeight - 100;
+
       if (needsAdjustment) {
         // Calcular nova posição ideal
-        const elementCenter = rect.top + currentScroll + (rect.height / 2);
-        const newScrollPosition = Math.max(0, elementCenter - (viewportHeight / 2));
-        
-        console.log(`Ajustando scroll de ${currentScroll} para ${newScrollPosition}`);
-        
+        const elementCenter = rect.top + currentScroll + rect.height / 2;
+        const newScrollPosition = Math.max(
+          0,
+          elementCenter - viewportHeight / 2
+        );
+
+        console.log(
+          `Ajustando scroll de ${currentScroll} para ${newScrollPosition}`
+        );
+
         // Fazer scroll suave
         window.scrollTo({
           top: newScrollPosition,
-          behavior: 'smooth'
+          behavior: "smooth",
         });
-        
+
         // Aguardar scroll completar e atualizar posição
         setTimeout(() => {
           this.scrollPosition = window.scrollY;
@@ -207,7 +215,9 @@ class CentralCandidatoTutorialManager {
         if (wasBlocked) {
           this.blockScroll();
         }
-        console.log(`Elemento ${selector} já está visível, sem ajuste necessário`);
+        console.log(
+          `Elemento ${selector} já está visível, sem ajuste necessário`
+        );
       }
     });
   }
@@ -302,30 +312,45 @@ class CentralCandidatoTutorialManager {
 
     // SEGUNDO: Ajustar scroll se necessário (com delay para mudanças de tela)
     if (step.target) {
-      setTimeout(() => {
-        this.adjustScrollForElement(step.target);
-      }, this.currentStep === 1 ? 1600 : 300); // Delay maior no passo 2 por causa do login
+      setTimeout(
+        () => {
+          this.adjustScrollForElement(step.target);
+        },
+        this.currentStep === 1 ? 1600 : 300
+      ); // Delay maior no passo 2 por causa do login
     }
 
     // TERCEIRO: Destacar elemento (com delay para aguardar ajuste de scroll)
-    setTimeout(() => {
-      this.highlightElement(step.target);
-    }, this.currentStep === 1 ? 2200 : 900);
+    setTimeout(
+      () => {
+        this.highlightElement(step.target);
+      },
+      this.currentStep === 1 ? 2200 : 900
+    );
 
     // QUARTO: Animar cursor (com delay)
-    setTimeout(() => {
-      this.animateCursor(step.target);
-    }, this.currentStep === 1 ? 2300 : 1000);
+    setTimeout(
+      () => {
+        this.animateCursor(step.target);
+      },
+      this.currentStep === 1 ? 2300 : 1000
+    );
 
     // QUINTO: Posicionar caixa do tutorial (com delay maior)
-    setTimeout(() => {
-      this.positionTutorialBox(step.target, step.position);
-    }, this.currentStep === 1 ? 2400 : 1100);
+    setTimeout(
+      () => {
+        this.positionTutorialBox(step.target, step.position);
+      },
+      this.currentStep === 1 ? 2400 : 1100
+    );
 
     // SEXTO: Adicionar efeito hover ao elemento destacado
-    setTimeout(() => {
-      this.addHoverEffect(step.target);
-    }, this.currentStep === 1 ? 2500 : 1200);
+    setTimeout(
+      () => {
+        this.addHoverEffect(step.target);
+      },
+      this.currentStep === 1 ? 2500 : 1200
+    );
   }
 
   // FUNÇÃO CORRIGIDA DE POSICIONAMENTO
@@ -424,7 +449,9 @@ class CentralCandidatoTutorialManager {
       tutorialBox.style.left = `${Math.max(20, left)}px`;
       tutorialBox.style.visibility = "visible";
 
-      console.log(`Tutorial box posicionado: top=${top}, left=${left}, position=${finalPosition}`);
+      console.log(
+        `Tutorial box posicionado: top=${top}, left=${left}, position=${finalPosition}`
+      );
     });
   }
 
@@ -485,7 +512,9 @@ class CentralCandidatoTutorialManager {
   }
 
   updateProgress() {
-    console.log(`Atualizando progresso: ${this.currentStep + 1}/${this.totalSteps}`);
+    console.log(
+      `Atualizando progresso: ${this.currentStep + 1}/${this.totalSteps}`
+    );
 
     const progressItems = document.querySelectorAll(".progress-item");
 
@@ -597,7 +626,7 @@ class CentralCandidatoTutorialManager {
               <li>Acompanhe o status dos processos seletivos</li>
               <li>Oriente sobre prazos e procedimentos</li>
             </ul>
-            
+
             <!-- NOVO: Botão para página inicial do tutor -->
             <div style="margin-top: 20px; text-align: center; padding-top: 15px; border-top: 1px solid #ddd;">
               <p style="margin-bottom: 10px; font-weight: 600; color: #666;">
@@ -771,9 +800,6 @@ class CentralCandidatoTutorialManager {
     document.getElementById("progressPanel").classList.add("hidden");
   }
 }
-
-// Resto do código permanece igual...
-// (Manter todas as outras classes e funções como estavam)
 
 // Inicializar quando a página carregar
 document.addEventListener("DOMContentLoaded", () => {
@@ -1272,7 +1298,7 @@ class TutorialAnalytics {
       events: this.events,
     };
 
-        console.log("📈 Tutorial Analytics Report:", report);
+    console.log("📈 Tutorial Analytics Report:", report);
     return report;
   }
 }
