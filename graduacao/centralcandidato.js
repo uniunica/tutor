@@ -4,6 +4,7 @@ class CentralCandidatoTutorialManager {
     this.totalSteps = 5;
     this.isActive = false;
     this.isLoggedIn = false;
+    this.originalScrollPosition = 0; // NOVO: Armazenar posição original
 
     this.steps = [
       {
@@ -122,22 +123,104 @@ class CentralCandidatoTutorialManager {
     });
   }
 
-  // NOVO: Bloquear scroll durante tutorial
-  blockScroll() {
+  // NOVO: Sistema de scroll inteligente durante tutorial
+  blockScrollAndAdjust(targetElement = null) {
+    // Armazenar posição atual
+    this.originalScrollPosition = window.scrollY;
+    
+    // Se há um elemento alvo, calcular a melhor posição
+    if (targetElement) {
+      const element = document.querySelector(targetElement);
+      if (element) {
+        const rect = element.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+        
+        // Se o elemento não está visível na viewport
+        if (rect.top < 0 || rect.bottom > viewportHeight) {
+          // Calcular posição ideal para centralizar o elemento
+          const elementCenter = rect.top + window.scrollY + (rect.height / 2);
+          const idealScrollPosition = elementCenter - (viewportHeight / 2);
+          
+          // Ajustar scroll antes de bloquear
+          window.scrollTo(0, Math.max(0, idealScrollPosition));
+          
+          // Aguardar um frame para o scroll se completar
+          requestAnimationFrame(() => {
+            this.applyScrollBlock();
+          });
+        } else {
+          // Elemento já está visível, apenas bloquear
+          this.applyScrollBlock();
+        }
+      } else {
+        this.applyScrollBlock();
+      }
+    } else {
+      this.applyScrollBlock();
+    }
+  }
+
+  applyScrollBlock() {
     document.body.style.overflow = 'hidden';
     document.body.style.position = 'fixed';
     document.body.style.top = `-${window.scrollY}px`;
     document.body.style.width = '100%';
+    document.body.style.left = '0';
   }
 
-  // NOVO: Desbloquear scroll
+  // NOVO: Desbloquear scroll e restaurar posição
   unblockScroll() {
     const scrollY = document.body.style.top;
     document.body.style.overflow = '';
     document.body.style.position = '';
     document.body.style.top = '';
     document.body.style.width = '';
-    window.scrollTo(0, parseInt(scrollY || '0') * -1);
+    document.body.style.left = '';
+    
+    // Restaurar posição original ou usar a posição armazenada
+    const targetPosition = scrollY ? parseInt(scrollY.replace('-', '').replace('px', '')) : this.originalScrollPosition;
+    window.scrollTo(0, targetPosition);
+  }
+
+  // NOVO: Ajustar posição durante o tutorial
+  adjustViewForElement(selector) {
+    const element = document.querySelector(selector);
+    if (!element) return;
+
+    // Temporariamente desbloquear scroll para ajustar posição
+    const currentTop = document.body.style.top;
+    document.body.style.position = '';
+    document.body.style.overflow = '';
+    
+    // Restaurar scroll temporariamente
+    if (currentTop) {
+      window.scrollTo(0, parseInt(currentTop.replace('-', '').replace('px', '')));
+    }
+
+    // Aguardar um frame e então ajustar posição
+    requestAnimationFrame(() => {
+      const rect = element.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      
+      // Se elemento não está completamente visível
+      if (rect.top < 100 || rect.bottom > viewportHeight - 100) {
+        const elementCenter = rect.top + window.scrollY + (rect.height / 2);
+        const idealPosition = elementCenter - (viewportHeight / 2);
+        
+        window.scrollTo({
+          top: Math.max(0, idealPosition),
+          behavior: 'smooth'
+        });
+        
+        // Aguardar scroll completar e rebloquear
+        setTimeout(() => {
+          this.applyScrollBlock();
+        }, 500);
+      } else {
+        // Elemento já visível, apenas rebloquear
+        this.applyScrollBlock();
+      }
+    });
   }
 
   applyCPFMask(input) {
@@ -150,7 +233,7 @@ class CentralCandidatoTutorialManager {
 
   showWelcomeModal() {
     document.getElementById("welcomeModal").style.display = "flex";
-    this.blockScroll(); // Bloquear scroll
+    this.blockScrollAndAdjust(); // Bloquear scroll inteligente
   }
 
   hideWelcomeModal() {
@@ -182,6 +265,11 @@ class CentralCandidatoTutorialManager {
     // Se for passo 2 ou maior, garantir que está na tela da central
     else if (this.currentStep >= 1 && !this.isLoggedIn) {
       this.showCentralScreen();
+    }
+
+    // NOVO: Ajustar visualização para o elemento alvo
+    if (step.target) {
+      this.adjustViewForElement(step.target);
     }
 
     // Mostrar overlay
@@ -229,19 +317,25 @@ class CentralCandidatoTutorialManager {
     // PRIMEIRO: Atualizar progresso
     this.updateProgress();
 
-    // SEGUNDO: Destacar elemento
-    this.highlightElement(step.target);
+    // SEGUNDO: Destacar elemento (com delay para aguardar ajuste de scroll)
+    setTimeout(() => {
+      this.highlightElement(step.target);
+    }, 600);
 
-    // TERCEIRO: Animar cursor
-    this.animateCursor(step.target);
+    // TERCEIRO: Animar cursor (com delay)
+    setTimeout(() => {
+      this.animateCursor(step.target);
+    }, 700);
 
-    // QUARTO: Posicionar caixa do tutorial (com delay)
+    // QUARTO: Posicionar caixa do tutorial (com delay maior)
     setTimeout(() => {
       this.positionTutorialBox(step.target, step.position);
-    }, 200);
+    }, 800);
 
     // Adicionar efeito hover ao elemento destacado
-    this.addHoverEffect(step.target);
+    setTimeout(() => {
+      this.addHoverEffect(step.target);
+    }, 900);
   }
 
   // FUNÇÃO CORRIGIDA DE POSICIONAMENTO
@@ -358,12 +452,7 @@ class CentralCandidatoTutorialManager {
       highlight.style.height = rect.height + 16 + "px";
       highlight.classList.remove("hidden");
 
-      // Não usar scroll durante tutorial - elemento já está visível
-      // element.scrollIntoView({
-      //   behavior: "smooth",
-      //   block: "center",
-      //   inline: "center",
-      // });
+      console.log(`Elemento destacado: ${selector} em posição:`, rect);
     }
   }
 
@@ -388,6 +477,8 @@ class CentralCandidatoTutorialManager {
         cursor.style.color = "#ff4444";
         cursor.style.fontSize = "28px";
       }
+
+      console.log(`Cursor animado posicionado em: ${centerX}, ${centerY}`);
     }
   }
 
@@ -734,8 +825,18 @@ alertStyles.textContent = `
       opacity: 0;
     }
   }
+
+  /* NOVO: Indicador de elemento sendo ajustado */
+  .tutorial-adjusting {
+    transition: all 0.5s ease;
+    transform: scale(1.02);
+    box-shadow: 0 0 20px rgba(255, 68, 68, 0.3);
+  }
 `;
 document.head.appendChild(alertStyles);
+
+// Resto das classes permanecem iguais...
+// (FormValidator, ContextualTips, DataSimulator, etc.)
 
 // Funcionalidades adicionais para melhorar a experiência
 document.addEventListener("DOMContentLoaded", () => {
@@ -1192,7 +1293,7 @@ class TutorialAnalytics {
       events: this.events,
     };
 
-    console.log("📈 Tutorial Analytics Report:", report);
+        console.log("📈 Tutorial Analytics Report:", report);
     return report;
   }
 }
@@ -1231,7 +1332,8 @@ function demonstrateAdvancedFeatures() {
   console.log("✅ Notificações em tempo real");
   console.log("✅ Recursos de acessibilidade");
   console.log("✅ Analytics de tutorial");
-  console.log("✅ Bloqueio de scroll durante tutorial");
+  console.log("✅ Scroll inteligente durante tutorial");
+  console.log("✅ Posicionamento automático de elementos");
 
   // Inicializar simulador de dados e notificações
   const dataSimulator = new DataSimulator();
