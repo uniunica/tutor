@@ -122,6 +122,24 @@ class CentralCandidatoTutorialManager {
     });
   }
 
+  // NOVO: Bloquear scroll durante tutorial
+  blockScroll() {
+    document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${window.scrollY}px`;
+    document.body.style.width = '100%';
+  }
+
+  // NOVO: Desbloquear scroll
+  unblockScroll() {
+    const scrollY = document.body.style.top;
+    document.body.style.overflow = '';
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.width = '';
+    window.scrollTo(0, parseInt(scrollY || '0') * -1);
+  }
+
   applyCPFMask(input) {
     let value = input.value.replace(/\D/g, "");
     value = value.replace(/(\d{3})(\d)/, "$1.$2");
@@ -132,10 +150,12 @@ class CentralCandidatoTutorialManager {
 
   showWelcomeModal() {
     document.getElementById("welcomeModal").style.display = "flex";
+    this.blockScroll(); // Bloquear scroll
   }
 
   hideWelcomeModal() {
     document.getElementById("welcomeModal").style.display = "none";
+    // Não desbloquear scroll aqui pois o tutorial vai começar
   }
 
   startTutorial() {
@@ -144,6 +164,7 @@ class CentralCandidatoTutorialManager {
     this.currentStep = 0;
     this.showProgressPanel();
     this.showStep();
+    // Scroll continua bloqueado durante o tutorial
   }
 
   showStep() {
@@ -223,7 +244,7 @@ class CentralCandidatoTutorialManager {
     this.addHoverEffect(step.target);
   }
 
-  // NOVA FUNÇÃO DE POSICIONAMENTO INTELIGENTE
+  // FUNÇÃO CORRIGIDA DE POSICIONAMENTO
   positionTutorialBox(selector, position) {
     const element = document.querySelector(selector);
     const tutorialBox = document.querySelector(".tutorial-box");
@@ -337,11 +358,12 @@ class CentralCandidatoTutorialManager {
       highlight.style.height = rect.height + 16 + "px";
       highlight.classList.remove("hidden");
 
-      element.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-        inline: "center",
-      });
+      // Não usar scroll durante tutorial - elemento já está visível
+      // element.scrollIntoView({
+      //   behavior: "smooth",
+      //   block: "center",
+      //   inline: "center",
+      // });
     }
   }
 
@@ -460,6 +482,9 @@ class CentralCandidatoTutorialManager {
       element.classList.remove("tutorial-highlight-hover");
     }
 
+    // IMPORTANTE: Desbloquear scroll quando finalizar tutorial
+    this.unblockScroll();
+
     this.showCompletionMessage();
   }
 
@@ -494,6 +519,43 @@ class CentralCandidatoTutorialManager {
             • As caixas se posicionam automaticamente próximas aos elementos</p>
           </div>
 
+          <div style="background: #fff3cd; padding: 15px; border-radius: 8px; margin: 15px 0;">
+            <h4 style="margin: 0 0 10px 0; color: #f39c12;">🚀 Próximos Passos:</h4>
+            <ul style="margin: 0; padding-left: 20px;">
+              <li>Pratique orientando candidatos sobre o acesso</li>
+              <li>Ajude no envio correto de documentos</li>
+              <li>Acompanhe o status dos processos seletivos</li>
+              <li>Oriente sobre prazos e procedimentos</li>
+            </ul>
+            
+            <!-- NOVO: Botão para página inicial do tutor -->
+            <div style="margin-top: 20px; text-align: center; padding-top: 15px; border-top: 1px solid #ddd;">
+              <p style="margin-bottom: 10px; font-weight: 600; color: #666;">
+                <i class="fas fa-graduation-cap"></i> Quer aprender mais?
+              </p>
+              <button class="btn btn-info" onclick="window.open('https://uniunica.github.io/tutor/', '_blank')" style="
+                background: linear-gradient(135deg, #667eea, #764ba2);
+                color: white;
+                border: none;
+                padding: 12px 25px;
+                border-radius: 25px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                text-decoration: none;
+                font-size: 1em;
+              " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(102, 126, 234, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                <i class="fas fa-home"></i> Página Inicial do Tutor
+              </button>
+              <p style="margin-top: 8px; font-size: 0.85em; color: #888;">
+                Acesse outros tutoriais e continue aprendendo!
+              </p>
+            </div>
+          </div>
+
           <div class="info-box">
             <i class="fas fa-star"></i>
             <strong>Dica Final:</strong> A Central do Candidato é a ferramenta mais importante para acompanhamento do processo seletivo!
@@ -505,8 +567,8 @@ class CentralCandidatoTutorialManager {
           <button class="btn btn-success" onclick="this.closest('.modal').remove()">
             <i class="fas fa-medal"></i> Sou um Expert!
           </button>
-          <button class="btn btn-primary" onclick="window.location.href='index.html'">
-            <i class="fas fa-home"></i> Voltar ao Início
+          <button class="btn btn-primary" onclick="window.location.href='../index.html'">
+            <i class="fas fa-arrow-left"></i> Voltar ao Menu Principal
           </button>
         </div>
       </div>
@@ -1169,6 +1231,7 @@ function demonstrateAdvancedFeatures() {
   console.log("✅ Notificações em tempo real");
   console.log("✅ Recursos de acessibilidade");
   console.log("✅ Analytics de tutorial");
+  console.log("✅ Bloqueio de scroll durante tutorial");
 
   // Inicializar simulador de dados e notificações
   const dataSimulator = new DataSimulator();
