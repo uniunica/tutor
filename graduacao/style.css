@@ -400,6 +400,40 @@ body::before {
   margin-right: 5px;
 }
 
+.links-matriculas {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.links-matriculas a {
+  text-decoration: none;
+  color: #7c4dff;
+  font-weight: 600;
+  transition: color 0.3s ease;
+  -webkit-animation: pulse 2s infinite;
+  animation: pulse 2s infinite;
+}
+/* Animação do link pulsando de .links-matriculas a */
+@keyframes pulse {
+  0% {
+    color: #7c4dff;
+  }
+  50% {
+    color: #cfc1f7;
+  }
+  100% {
+    color: #31108a;
+  }
+}
+
+.box-tutorial-navegacao {
+  background: #e3f2fd;
+  padding: 15px;
+  border-radius: 8px;
+  margin: 15px 0;
+  border-left: 4px solid #2196f3;
+}
+
 /* Cursor Animado Aprimorado */
 .animated-cursor {
   position: fixed;
