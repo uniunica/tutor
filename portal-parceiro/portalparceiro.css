@@ -1380,6 +1380,28 @@ button.avancar:hover {
   letter-spacing: 0.2px;
 }
 
+#link-portal-parceiro{
+  color: #002f5f;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 0.9em;
+  -webkit-animation: pulse 2s infinite;
+  animation: pulse 2s infinite;
+}
+
+/*Animação de pulso para o link do portal parceiro */
+@keyframes pulse {
+  0% {
+    text-shadow: 0 0 0 rgba(0, 47, 95, 0.2);
+  }
+  50% {
+    text-shadow: 0 0 10px rgba(0, 47, 95, 0.5);
+  }
+  100% {
+    text-shadow: 0 0 0 rgba(0, 47, 95, 0.2);
+  }
+}
+
 /* Responsividade */
 @media (max-width: 992px) {
   .payment-options-container {

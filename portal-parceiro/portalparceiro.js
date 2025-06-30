@@ -685,9 +685,9 @@ class PortalParceiroTutorialManager {
           <h2>Tutorial Concluído!</h2>
         </div>
         <div class="modal-body">
-          <p>🎉 <strong>Parabéns! Você dominou o Portal do Parceiro!</strong></p>
-          <p>Agora você sabe como usar todas as ferramentas disponíveis:</p>
-          
+          <p>🎉 <strong>Parabéns! Você dominou o processo de inscrição no Portal do Parceiro!</strong></p>
+          <p>Agora você sabe como matricular um novo candidato:</p>
+
           <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; margin: 15px 0;">
             <h4 style="margin: 0 0 10px 0; color: #28a745;">✅ Conhecimentos adquiridos:</h4>
             <ul style="margin: 0; padding-left: 20px;">
@@ -712,22 +712,22 @@ class PortalParceiroTutorialManager {
             <h4 style="margin: 0 0 10px 0; color: #f39c12;">🚀 Próximos Passos:</h4>
             <ul style="margin: 0; padding-left: 20px;">
               <li><strong>Explore o menu lateral</strong> - Acesse relatórios, leads e treinamentos</li>
-              <li><strong>Use o link personalizado</strong> - Compartilhe com seus clientes</li>
+              <li><strong>Use o link personalizado</strong> - Explore a ferramenta</li>
               <li><strong>Pratique matrículas</strong> - Quanto mais usar, melhor será</li>
               <li><strong>Acompanhe notificações</strong> - Fique sempre atualizado</li>
             </ul>
           </div>
-          
+
           <div class="info-box">
             <i class="fas fa-star"></i>
-            <strong>Dica Final:</strong> O Portal do Parceiro é sua ferramenta de sucesso - use todas as funcionalidades!
+            <strong>Dica Final:</strong> O Portal do Parceiro é sua ferramenta de sucesso - use todas as funcionalidades, não tenha medo da tecnologia!
           </div>
         </div>
         <div class="modal-footer">
           <button class="btn btn-success" onclick="this.closest('.modal').remove()">
             <i class="fas fa-medal"></i> Sou um Expert!
           </button>
-          <button class="btn btn-primary" onclick="window.location.href='index.html'">
+          <button class="btn btn-primary" onclick="window.location.href='https://uniunica.github.io/tutor/'">
             <i class="fas fa-home"></i> Voltar ao Início
           </button>
         </div>
