@@ -154,7 +154,7 @@ class CentralCandidatoTutorialManager {
     console.log(`Scroll desbloqueado, restaurado para: ${this.scrollPosition}`);
   }
 
-  // NOVA FUNÇÃO: Ajustar scroll de forma controlada
+  // NOVA FUNÇÃO: Ajustar scroll de forma controlada (versão melhorada)
   adjustScrollForElement(selector) {
     const element = document.querySelector(selector);
     if (!element) {
@@ -180,17 +180,30 @@ class CentralCandidatoTutorialManager {
         `Elemento ${selector} - Top: ${rect.top}, Bottom: ${rect.bottom}, Viewport: ${viewportHeight}`
       );
 
+      // NOVO: Verificação especial para uploadSection
+      const isUploadSection = selector === "#uploadSection";
+      const marginTop = isUploadSection ? 200 : 100; // Mais margem para upload
+      const marginBottom = isUploadSection ? 150 : 100; // Mais margem inferior para upload
+
       // Verificar se elemento precisa ser ajustado
       const needsAdjustment =
-        rect.top < 100 || rect.bottom > viewportHeight - 100;
+        rect.top < marginTop || rect.bottom > viewportHeight - marginBottom;
 
       if (needsAdjustment) {
-        // Calcular nova posição ideal
-        const elementCenter = rect.top + currentScroll + rect.height / 2;
-        const newScrollPosition = Math.max(
-          0,
-          elementCenter - viewportHeight / 2
-        );
+        let newScrollPosition;
+
+        if (isUploadSection) {
+          // Para uploadSection, posicionar para que haja bastante espaço acima
+          const elementTop = rect.top + currentScroll;
+          newScrollPosition = Math.max(0, elementTop - viewportHeight * 0.4); // 40% da viewport acima
+          console.log(
+            `Posicionamento especial para uploadSection: ${newScrollPosition}`
+          );
+        } else {
+          // Calcular nova posição ideal para outros elementos
+          const elementCenter = rect.top + currentScroll + rect.height / 2;
+          newScrollPosition = Math.max(0, elementCenter - viewportHeight / 2);
+        }
 
         console.log(
           `Ajustando scroll de ${currentScroll} para ${newScrollPosition}`
@@ -353,7 +366,7 @@ class CentralCandidatoTutorialManager {
     );
   }
 
-  // FUNÇÃO CORRIGIDA DE POSICIONAMENTO
+  // FUNÇÃO CORRIGIDA DE POSICIONAMENTO COM AJUSTE INTELIGENTE
   positionTutorialBox(selector, position) {
     const element = document.querySelector(selector);
     const tutorialBox = document.querySelector(".tutorial-box");
@@ -392,9 +405,18 @@ class CentralCandidatoTutorialManager {
 
       console.log(`Element rect:`, elementRect);
       console.log(`Box rect:`, boxRect);
+      console.log(`Viewport: ${viewportWidth}x${viewportHeight}`);
 
       let top, left;
       let finalPosition = position;
+
+      // NOVO: Verificação especial para elementos no final da página
+      const isElementAtBottom = elementRect.bottom > viewportHeight * 0.7;
+      const isUploadSection = selector === "#uploadSection";
+
+      console.log(
+        `Elemento no final da página: ${isElementAtBottom}, É upload section: ${isUploadSection}`
+      );
 
       // Calcular posição inicial baseada na preferência
       switch (position) {
@@ -404,7 +426,16 @@ class CentralCandidatoTutorialManager {
           break;
 
         case "bottom":
-          top = elementRect.bottom + 20;
+          // NOVO: Se elemento está no final da página, forçar posição "top"
+          if (isElementAtBottom || isUploadSection) {
+            top = elementRect.top - boxRect.height - 30; // Mais espaço para upload
+            finalPosition = "top";
+            console.log(
+              `Forçando posição 'top' para elemento no final da página`
+            );
+          } else {
+            top = elementRect.bottom + 20;
+          }
           left = elementRect.left + elementRect.width / 2 - boxRect.width / 2;
           break;
 
@@ -419,38 +450,99 @@ class CentralCandidatoTutorialManager {
           break;
 
         default:
-          top = elementRect.bottom + 20;
+          // NOVO: Para posição padrão, também verificar se está no final
+          if (isElementAtBottom || isUploadSection) {
+            top = elementRect.top - boxRect.height - 30;
+            finalPosition = "top";
+          } else {
+            top = elementRect.bottom + 20;
+            finalPosition = "bottom";
+          }
           left = elementRect.left + elementRect.width / 2 - boxRect.width / 2;
-          finalPosition = "bottom";
           break;
       }
 
       // Ajustar se sair da tela horizontalmente
       if (left < 20) {
         left = 20;
+        console.log(`Ajustado left para não sair da tela: ${left}`);
       } else if (left + boxRect.width > viewportWidth - 20) {
         left = viewportWidth - boxRect.width - 20;
+        console.log(`Ajustado left para não sair da tela direita: ${left}`);
       }
 
-      // Ajustar se sair da tela verticalmente
+      // NOVO: Ajuste vertical mais inteligente
       if (top < 20) {
-        top = elementRect.bottom + 20;
-        finalPosition = "bottom";
+        // Se não cabe acima, tentar abaixo
+        if (finalPosition === "top" || position === "top") {
+          const bottomPosition = elementRect.bottom + 20;
+          if (bottomPosition + boxRect.height <= viewportHeight - 20) {
+            top = bottomPosition;
+            finalPosition = "bottom";
+            console.log(`Mudando para posição 'bottom' pois não cabe acima`);
+          } else {
+            // Se não cabe nem acima nem abaixo, centralizar na viewport
+            top = Math.max(20, (viewportHeight - boxRect.height) / 2);
+            finalPosition = "center";
+            console.log(`Centralizando na viewport: ${top}`);
+          }
+        } else {
+          top = 20;
+        }
       } else if (top + boxRect.height > viewportHeight - 20) {
-        top = elementRect.top - boxRect.height - 20;
-        finalPosition = "top";
+        // Se sai por baixo, tentar acima
+        const topPosition = elementRect.top - boxRect.height - 20;
+        if (topPosition >= 20) {
+          top = topPosition;
+          finalPosition = "top";
+          console.log(`Mudando para posição 'top' pois sai por baixo`);
+        } else {
+          // Se não cabe nem acima nem abaixo, ajustar para caber
+          top = Math.max(20, viewportHeight - boxRect.height - 20);
+          console.log(`Ajustando para caber na viewport: ${top}`);
+        }
+      }
+
+      // NOVO: Ajuste especial para uploadSection
+      if (isUploadSection) {
+        // Garantir que o tutorial box fique bem visível acima do elemento
+        const idealTop = elementRect.top - boxRect.height - 50;
+        if (idealTop >= 20) {
+          top = idealTop;
+          finalPosition = "top";
+          console.log(`Posicionamento especial para uploadSection: ${top}`);
+        } else {
+          // Se não cabe acima, posicionar no meio da viewport
+          top = Math.max(20, (viewportHeight - boxRect.height) / 2);
+          finalPosition = "center";
+          console.log(`Upload section: centralizando na viewport: ${top}`);
+        }
       }
 
       // Aplicar a classe de posição final
       tutorialBox.classList.add(`position-${finalPosition}`);
 
-      // Aplicar posição
-      tutorialBox.style.top = `${Math.max(20, top)}px`;
-      tutorialBox.style.left = `${Math.max(20, left)}px`;
+      // Aplicar posição final
+      const finalTop = Math.max(
+        20,
+        Math.min(top, viewportHeight - boxRect.height - 20)
+      );
+      const finalLeft = Math.max(
+        20,
+        Math.min(left, viewportWidth - boxRect.width - 20)
+      );
+
+      tutorialBox.style.top = `${finalTop}px`;
+      tutorialBox.style.left = `${finalLeft}px`;
       tutorialBox.style.visibility = "visible";
 
       console.log(
-        `Tutorial box posicionado: top=${top}, left=${left}, position=${finalPosition}`
+        `Tutorial box posicionado: top=${finalTop}, left=${finalLeft}, position=${finalPosition}`
+      );
+      console.log(
+        `Elemento visível na viewport: ${
+          elementRect.top >= 0 && elementRect.bottom <= viewportHeight
+        }`
       );
     });
   }
@@ -806,7 +898,7 @@ document.addEventListener("DOMContentLoaded", () => {
   new CentralCandidatoTutorialManager();
 });
 
-// Adicionar estilos para animações de alerta
+// Adicionar estilos para animações de alerta (versão expandida)
 const alertStyles = document.createElement("style");
 alertStyles.textContent = `
   @keyframes slideInRight {
@@ -834,6 +926,35 @@ alertStyles.textContent = `
   /* Indicador de scroll sendo ajustado */
   .scroll-adjusting {
     transition: all 0.6s ease;
+  }
+
+  /* NOVO: Estilo para posição centralizada */
+  .tutorial-box.position-center {
+    transform: translateX(-50%);
+    left: 50% !important;
+  }
+
+  .tutorial-box.position-center::before {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid #7c4dff;
+  }
+
+  /* Melhorar visibilidade do tutorial box no upload */
+  .tutorial-box.position-top {
+    box-shadow: 0 -4px 20px rgba(124, 77, 255, 0.3);
+  }
+
+  .tutorial-box.position-center {
+    box-shadow: 0 8px 30px rgba(124, 77, 255, 0.4);
+    border: 3px solid #7c4dff;
   }
 `;
 document.head.appendChild(alertStyles);
