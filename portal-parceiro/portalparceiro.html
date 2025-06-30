@@ -144,8 +144,16 @@
           <span>Seleção de cursos</span>
         </div>
         <div class="progress-item" data-step="14">
-        <i class="fas fa-circle"></i>
-        <span>Carrinho de cursos</span>
+          <i class="fas fa-circle"></i>
+          <span>Carrinho de cursos</span>
+        </div>
+        <div class="progress-item" data-step="15">
+          <i class="fas fa-circle"></i>
+          <span>Pagamento da matrícula</span>
+        </div>
+        <div class="progress-item" data-step="16">
+          <i class="fas fa-circle"></i>
+          <span>Pagamento do curso</span>
         </div>
       </div>
     </div>
@@ -313,11 +321,8 @@
             </div>
           </div>
 
-          <!-- NOVA SEÇÃO: Carrinho de Cursos Selecionados -->
-          <div
-            class="selected-courses-section hidden"
-            id="selectedCoursesSection"
-          >
+          <!-- Carrinho de Cursos Selecionados -->
+          <div class="selected-courses-section hidden" id="selectedCoursesSection">
             <div class="selected-courses-header">
               <p id="titulo-label">CURSOS SELECIONADOS</p>
               <div class="courses-summary">
@@ -339,6 +344,106 @@
               <button class="btn-proceed" id="proceedToEnrollment">
                 <i class="fas fa-arrow-right"></i> Prosseguir com Matrícula
               </button>
+            </div>
+          </div>
+
+          <!-- Configuração de Pagamento (Matrícula e Curso) -->
+          <div class="payment-options-container hidden" id="paymentOptionsContainer">
+            <!-- Payment Box 1: Matrícula -->
+            <div class="payment-box" id="matriculaPaymentBox">
+                <p class="payment-title">CONFIGURE O PAGAMENTO DA MATRÍCULA</p>
+                <hr class="payment-divider" />
+
+                <div class="payment-field-group">
+                    <p class="payment-subtitle">MÉTODO DE PAGAMENTO</p>
+                    <div class="payment-radio-group">
+                        <label class="payment-radio-label">
+                            <input type="radio" name="metodo-pagamento-matricula" value="boleto" checked />
+                            <span class="radio-custom"></span>
+                            Boleto Bancário
+                        </label>
+                        <label class="payment-radio-label">
+                            <input type="radio" name="metodo-pagamento-matricula" value="cartao" />
+                            <span class="radio-custom"></span>
+                            Cartão de Crédito
+                        </label>
+                    </div>
+                </div>
+
+                <div class="payment-field-group inline-fields">
+                    <div class="value-field">
+                        <label for="valorMatricula" class="payment-field-label">VALOR</label>
+                        <input type="text" id="valorMatricula" class="payment-input" value="R$ 180,00" readonly />
+                        <span class="field-sublabel">VALOR TOTAL</span>
+                    </div>
+                    <div class="parcels-field">
+                        <label for="parcelasMatricula" class="payment-field-label">PARCELAS</label>
+                        <select id="parcelasMatricula" class="payment-select">
+                            <option value="1">EM 1</option>
+                        </select>
+                        <span class="field-sublabel">VEZES</span>
+                    </div>
+                </div>
+
+                <div class="payment-field-group">
+                    <label for="vencimentoMatricula" class="payment-field-label">QUANDO VENCE A MATRÍCULA</label>
+                    <input type="text" id="vencimentoMatricula" class="payment-input" placeholder="DD/MM/AAAA" value="03/07/2025" />
+                    <span class="field-sublabel">DIA/MÊS/ANO *</span>
+                </div>
+            </div>
+
+            <!-- Payment Box 2: Curso -->
+            <div class="payment-box" id="cursoPaymentBox">
+                <p class="payment-title">CONFIGURE O PAGAMENTO DO CURSO</p>
+                <hr class="payment-divider" />
+
+                <div class="payment-field-group">
+                    <p class="payment-subtitle">MÉTODO DE PAGAMENTO</p>
+                    <div class="payment-radio-group">
+                        <label class="payment-radio-label">
+                            <input type="radio" name="metodo-pagamento-curso" value="boleto" />
+                            <span class="radio-custom"></span>
+                            Boleto Bancário
+                        </label>
+                        <label class="payment-radio-label">
+                            <input type="radio" name="metodo-pagamento-curso" value="cartao" checked />
+                            <span class="radio-custom"></span>
+                            Cartão de Crédito
+                        </label>
+                    </div>
+                </div>
+
+                <div class="payment-field-group inline-fields">
+                    <div class="value-field">
+                        <label for="valorCurso" class="payment-field-label">VALOR</label>
+                        <input type="text" id="valorCurso" class="payment-input" value="R$ 3.980,00" readonly />
+                        <span class="field-sublabel">VALOR PROMOCIONAL</span>
+                    </div>
+                    <div class="parcels-field">
+                        <label for="parcelasCurso" class="payment-field-label">EM PARCELAMENTO</label>
+                        <select id="parcelasCurso" class="payment-select">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                            <option value="11">11</option>
+                            <option value="12">12</option>
+                        </select>
+                        <span class="field-sublabel">VEZES</span>
+                    </div>
+                </div>
+
+                <div class="payment-field-group">
+                    <label for="vencimentoMensalidade" class="payment-field-label">QUANDO VENCE A MENSALIDADE</label>
+                    <input type="text" id="vencimentoMensalidade" class="payment-input" placeholder="DD/MM/AAAA" value="01/07/2025" />
+                    <span class="field-sublabel">DIA/MÊS/ANO *</span>
+                </div>
             </div>
           </div>
 

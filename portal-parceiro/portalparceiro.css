@@ -1190,6 +1190,245 @@ button.avancar:hover {
   transform: scale(1.1);
 }
 
+/* NOVA SEÇÃO: Configuração de Pagamento */
+.payment-options-container {
+  display: flex;
+  gap: 25px;
+  margin: 30px 0;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.payment-box {
+  background: #ffffff;
+  border: 2px solid #e0e6ed;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  flex: 1;
+  min-width: 400px;
+  max-width: calc(50% - 12px);
+  transition: all 0.3s ease;
+}
+
+.payment-box:hover {
+  border-color: #002f5f;
+  box-shadow: 0 6px 20px rgba(0, 47, 95, 0.12);
+  transform: translateY(-2px);
+}
+
+.payment-title {
+  font-size: 1.1em;
+  font-weight: bold;
+  color: #002f5f;
+  margin: 0 0 15px 0;
+  text-align: left;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.payment-divider {
+  border: none;
+  border-top: 2px solid #e0e6ed;
+  margin: 15px 0 20px 0;
+}
+
+.payment-field-group {
+  margin-bottom: 20px;
+}
+
+.payment-subtitle {
+  font-size: 0.9em;
+  font-weight: 600;
+  color: #555;
+  margin: 0 0 12px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.payment-radio-group {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.payment-radio-label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-size: 0.9em;
+  color: #333;
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  background: transparent;
+  border: none;
+  min-width: auto;
+}
+
+.payment-radio-label:hover {
+  background: rgba(0, 47, 95, 0.05);
+  transform: none;
+  box-shadow: none;
+}
+
+.payment-radio-label input[type="radio"] {
+  display: none;
+}
+
+.radio-custom {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #ccc;
+  border-radius: 50%;
+  margin-right: 10px;
+  position: relative;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.payment-radio-label input[type="radio"]:checked + .radio-custom {
+  border-color: #002f5f;
+  background: #002f5f;
+}
+
+.payment-radio-label input[type="radio"]:checked + .radio-custom::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 8px;
+  height: 8px;
+  background: white;
+  border-radius: 50%;
+}
+
+.inline-fields {
+  display: flex;
+  gap: 20px;
+  align-items: flex-end;
+}
+
+.value-field,
+.parcels-field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.payment-field-label {
+  font-size: 0.8em;
+  color: #666;
+  margin-bottom: 6px;
+  display: block;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  background: none;
+  padding: 0;
+  border: none;
+  cursor: default;
+}
+
+.payment-input,
+.payment-select {
+  width: 100%;
+  padding: 12px 15px;
+  border: 2px solid #e0e6ed;
+  border-radius: 8px;
+  font-size: 1em;
+  color: #333;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+  background: white;
+}
+
+.payment-input:focus,
+.payment-select:focus {
+  outline: none;
+  border-color: #002f5f;
+  box-shadow: 0 0 0 3px rgba(0, 47, 95, 0.1);
+}
+
+.payment-input[readonly] {
+  background-color: #f8f9fa;
+  color: #495057;
+  cursor: default;
+  font-weight: 600;
+}
+
+.payment-select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23666%22%20d%3D%22M287%2C197.973L146.202%2C62.007C143.8%2C59.605%20140.7%2C58.404%20137.6%2C58.404c-3.1%2C0-6.2%2C1.201-8.6%2C3.603L0%2C197.973l25.8%2C25.8%20111.8-111.8L261.2%2C223.773L287%2C197.973z%22%2F%3E%3C%2Fsvg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 12px;
+  padding-right: 35px;
+  cursor: pointer;
+}
+
+.field-sublabel {
+  font-size: 0.7em;
+  color: #999;
+  text-transform: uppercase;
+  margin-top: 6px;
+  display: block;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+}
+
+/* Responsividade */
+@media (max-width: 992px) {
+  .payment-options-container {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .payment-box {
+    max-width: 100%;
+    min-width: unset;
+  }
+}
+
+@media (max-width: 768px) {
+  .inline-fields {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .payment-radio-group {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .payment-box {
+    padding: 20px;
+  }
+}
+
+/* Animação de entrada */
+@keyframes paymentBoxSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.payment-options-container:not(.hidden) .payment-box {
+  animation: paymentBoxSlideIn 0.5s ease-out;
+}
+
+.payment-options-container:not(.hidden) .payment-box:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
 .selected-courses-actions {
   display: flex;
   justify-content: space-between;

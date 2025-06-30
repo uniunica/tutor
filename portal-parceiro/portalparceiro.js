@@ -1,7 +1,7 @@
 class PortalParceiroTutorialManager {
   constructor() {
     this.currentStep = 0;
-    this.totalSteps = 14;
+    this.totalSteps = 16;
     this.isActive = false;
 
     this.steps = [
@@ -131,6 +131,53 @@ class PortalParceiroTutorialManager {
               1150.0
             );
           }
+        },
+      },
+      // Adicione estes dois novos passos ao final do array this.steps
+      {
+        title: "Configuração de Pagamento da Matrícula",
+        text: "Aqui você define como será pago o valor da matrícula (ex: R$ 180,00). Escolha o método, o valor, parcelas e a data de vencimento.",
+        tip: "O valor da matrícula é fixo e geralmente é pago à vista ou em poucas parcelas.",
+        target: "#matriculaPaymentBox",
+        position: "top",
+        action: () => {
+          // Garantir que a seção de pagamento esteja visível
+          document
+            .getElementById("selectedCoursesSection")
+            .classList.add("hidden");
+          document
+            .getElementById("paymentOptionsContainer")
+            .classList.remove("hidden");
+          // Simular alguns cursos selecionados se necessário
+          if (
+            window.portalApp &&
+            window.portalApp.selectedCourses.length === 0
+          ) {
+            window.portalApp.addCourseToCart(
+              "Automação Industrial - 500H",
+              1200.0
+            );
+            window.portalApp.addCourseToCart(
+              "Engenharia da Qualidade - 500H",
+              1150.0
+            );
+          }
+        },
+      },
+      {
+        title: "Configuração de Pagamento do Curso",
+        text: "Configure o pagamento das mensalidades do curso. Defina o método de pagamento, o valor promocional e o vencimento da primeira mensalidade.",
+        tip: "Este é o valor total do curso, que pode ser parcelado em até 12 vezes.",
+        target: "#cursoPaymentBox",
+        position: "top",
+        action: () => {
+          // Garantir que a seção de pagamento esteja visível
+          document
+            .getElementById("selectedCoursesSection")
+            .classList.add("hidden");
+          document
+            .getElementById("paymentOptionsContainer")
+            .classList.remove("hidden");
         },
       },
     ];
@@ -345,236 +392,259 @@ class PortalParceiroTutorialManager {
   }
 
   // Função melhorada para posicionamento do tutorial box
-positionTutorialBox(selector, position) {
-  const element = document.querySelector(selector);
-  const tutorialBox = document.querySelector(".tutorial-box");
+  positionTutorialBox(selector, position) {
+    const element = document.querySelector(selector);
+    const tutorialBox = document.querySelector(".tutorial-box");
 
-  if (!element || !tutorialBox) {
-    console.error(`Elemento não encontrado: ${selector}`);
-    return;
-  }
-
-  // Scroll suave para o elemento primeiro
-  element.scrollIntoView({
-    behavior: "smooth",
-    block: "center",
-    inline: "center",
-  });
-
-  setTimeout(() => {
-    // Remover classes de posição anteriores
-    tutorialBox.classList.remove(
-      "position-top",
-      "position-bottom",
-      "position-left",
-      "position-right"
-    );
-
-    // Resetar posição
-    tutorialBox.style.position = "fixed";
-    tutorialBox.style.visibility = "hidden";
-    tutorialBox.style.display = "block";
-
-    // Aguardar dois frames para garantir que o scroll terminou
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        const elementRect = element.getBoundingClientRect();
-        const boxRect = tutorialBox.getBoundingClientRect();
-        const viewportWidth = window.innerWidth;
-        const viewportHeight = window.innerHeight;
-
-        let top, left;
-        let finalPosition = position;
-
-        // Margem de segurança
-        const margin = 25;
-        const arrowSize = 15;
-
-        // Calcular posição baseada na preferência
-        switch (position) {
-          case "top":
-            top = elementRect.top - boxRect.height - arrowSize - margin;
-            left = elementRect.left + (elementRect.width / 2) - (boxRect.width / 2);
-            break;
-
-          case "bottom":
-            top = elementRect.bottom + arrowSize + margin;
-            left = elementRect.left + (elementRect.width / 2) - (boxRect.width / 2);
-            break;
-
-          case "left":
-            top = elementRect.top + (elementRect.height / 2) - (boxRect.height / 2);
-            left = elementRect.left - boxRect.width - arrowSize - margin;
-            break;
-
-          case "right":
-            top = elementRect.top + (elementRect.height / 2) - (boxRect.height / 2);
-            left = elementRect.right + arrowSize + margin;
-            break;
-
-          default:
-            top = elementRect.bottom + arrowSize + margin;
-            left = elementRect.left + (elementRect.width / 2) - (boxRect.width / 2);
-            finalPosition = "bottom";
-            break;
-        }
-
-        // Verificar limites horizontais
-        if (left < margin) {
-          left = margin;
-        } else if (left + boxRect.width > viewportWidth - margin) {
-          left = viewportWidth - boxRect.width - margin;
-        }
-
-        // Verificar limites verticais e ajustar posição se necessário
-        if (top < margin) {
-          // Se não cabe em cima, colocar embaixo
-          top = elementRect.bottom + arrowSize + margin;
-          finalPosition = "bottom";
-        } else if (top + boxRect.height > viewportHeight - margin) {
-          // Se não cabe embaixo, colocar em cima
-          top = elementRect.top - boxRect.height - arrowSize - margin;
-          finalPosition = "top";
-          
-          // Se ainda não cabe, usar posição lateral
-          if (top < margin) {
-            if (elementRect.left > viewportWidth / 2) {
-              // Colocar à esquerda
-              top = elementRect.top + (elementRect.height / 2) - (boxRect.height / 2);
-              left = elementRect.left - boxRect.width - arrowSize - margin;
-              finalPosition = "left";
-            } else {
-              // Colocar à direita
-              top = elementRect.top + (elementRect.height / 2) - (boxRect.height / 2);
-              left = elementRect.right + arrowSize + margin;
-              finalPosition = "right";
-            }
-          }
-        }
-
-        // Garantir que não saia da tela (última verificação)
-        top = Math.max(margin, Math.min(top, viewportHeight - boxRect.height - margin));
-        left = Math.max(margin, Math.min(left, viewportWidth - boxRect.width - margin));
-
-        // Aplicar posição final
-        tutorialBox.classList.add(`position-${finalPosition}`);
-        tutorialBox.style.top = `${Math.round(top)}px`;
-        tutorialBox.style.left = `${Math.round(left)}px`;
-        tutorialBox.style.visibility = "visible";
-
-        console.log(`Tutorial posicionado: ${finalPosition} em (${Math.round(top)}, ${Math.round(left)})`);
-        console.log(`Elemento alvo:`, elementRect);
-      });
-    });
-  }, 400); // Tempo maior para garantir que o scroll termine
-}
-
-// Função melhorada para highlight
-highlightElement(selector) {
-  const element = document.querySelector(selector);
-  const highlight = document.getElementById("highlight");
-
-  // Remover highlight anterior
-  highlight.classList.add("hidden");
-  highlight.classList.remove("highlight-pulse");
-
-  if (element) {
-    // Aguardar o scroll terminar
-    setTimeout(() => {
-      const rect = element.getBoundingClientRect();
-      
-      // Aplicar highlight com posicionamento mais preciso
-      const highlightPadding = 8;
-      highlight.style.top = (rect.top - highlightPadding) + "px";
-      highlight.style.left = (rect.left - highlightPadding) + "px";
-      highlight.style.width = (rect.width + (highlightPadding * 2)) + "px";
-      highlight.style.height = (rect.height + (highlightPadding * 2)) + "px";
-      
-      // Mostrar highlight
-      highlight.classList.remove("hidden");
-      
-      // Adicionar animação de pulse após um pequeno delay
-      setTimeout(() => {
-        highlight.classList.add("highlight-pulse");
-      }, 100);
-
-      console.log(`Highlight aplicado em:`, rect);
-    }, 450); // Sincronizado com o scroll
-  }
-}
-
-// Função melhorada para cursor animado
-animateCursor(selector) {
-  const element = document.querySelector(selector);
-  const cursor = document.getElementById("animatedCursor");
-
-  if (element) {
-    setTimeout(() => {
-      const rect = element.getBoundingClientRect();
-      const centerX = rect.left + (rect.width / 2);
-      const centerY = rect.top + (rect.height / 2);
-
-      cursor.style.left = centerX + "px";
-      cursor.style.top = centerY + "px";
-      cursor.classList.remove("hidden");
-
-      // Animação especial para elementos importantes
-      if (selector === "#novaMatricula") {
-        cursor.style.color = "#e53935";
-        cursor.style.fontSize = "36px";
-        cursor.style.animation = "cursorPulse 1.5s infinite";
-        cursor.style.filter = "drop-shadow(2px 2px 4px rgba(0,0,0,0.3))";
-      } else {
-        cursor.style.color = "#e53935";
-        cursor.style.fontSize = "30px";
-        cursor.style.animation = "cursorBounce 2s infinite";
-        cursor.style.filter = "drop-shadow(2px 2px 4px rgba(0,0,0,0.3))";
-      }
-
-      console.log(`Cursor posicionado em: (${centerX}, ${centerY})`);
-    }, 500); // Sincronizado com highlight e posicionamento
-  }
-}
-
-// Função melhorada para atualizar progresso
-updateProgress() {
-  const progressItems = document.querySelectorAll(".progress-item");
-
-  progressItems.forEach((item, index) => {
-    const icon = item.querySelector("i");
-
-    // Remover todas as classes de estado
-    item.classList.remove("completed", "current");
-
-    if (index < this.currentStep) {
-      // Passos já completados
-      item.classList.add("completed");
-      icon.className = "fas fa-check-circle";
-      icon.style.color = "#28a745";
-    } else if (index === this.currentStep) {
-      // Passo atual
-      item.classList.add("current");
-      icon.className = "fas fa-circle-notch fa-spin";
-      icon.style.color = "#002f5f";
-    } else {
-      // Passos futuros
-      icon.className = "fas fa-circle";
-      icon.style.color = "#6c757d";
+    if (!element || !tutorialBox) {
+      console.error(`Elemento não encontrado: ${selector}`);
+      return;
     }
-  });
 
-  // Scroll suave para o item atual no painel de progresso
-  const currentItem = document.querySelector(`.progress-item[data-step="${this.currentStep + 1}"]`);
-  if (currentItem) {
-    currentItem.scrollIntoView({
+    // Scroll suave para o elemento primeiro
+    element.scrollIntoView({
       behavior: "smooth",
       block: "center",
-      inline: "nearest",
+      inline: "center",
     });
+
+    setTimeout(() => {
+      // Remover classes de posição anteriores
+      tutorialBox.classList.remove(
+        "position-top",
+        "position-bottom",
+        "position-left",
+        "position-right"
+      );
+
+      // Resetar posição
+      tutorialBox.style.position = "fixed";
+      tutorialBox.style.visibility = "hidden";
+      tutorialBox.style.display = "block";
+
+      // Aguardar dois frames para garantir que o scroll terminou
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          const elementRect = element.getBoundingClientRect();
+          const boxRect = tutorialBox.getBoundingClientRect();
+          const viewportWidth = window.innerWidth;
+          const viewportHeight = window.innerHeight;
+
+          let top, left;
+          let finalPosition = position;
+
+          // Margem de segurança
+          const margin = 25;
+          const arrowSize = 15;
+
+          // Calcular posição baseada na preferência
+          switch (position) {
+            case "top":
+              top = elementRect.top - boxRect.height - arrowSize - margin;
+              left =
+                elementRect.left + elementRect.width / 2 - boxRect.width / 2;
+              break;
+
+            case "bottom":
+              top = elementRect.bottom + arrowSize + margin;
+              left =
+                elementRect.left + elementRect.width / 2 - boxRect.width / 2;
+              break;
+
+            case "left":
+              top =
+                elementRect.top + elementRect.height / 2 - boxRect.height / 2;
+              left = elementRect.left - boxRect.width - arrowSize - margin;
+              break;
+
+            case "right":
+              top =
+                elementRect.top + elementRect.height / 2 - boxRect.height / 2;
+              left = elementRect.right + arrowSize + margin;
+              break;
+
+            default:
+              top = elementRect.bottom + arrowSize + margin;
+              left =
+                elementRect.left + elementRect.width / 2 - boxRect.width / 2;
+              finalPosition = "bottom";
+              break;
+          }
+
+          // Verificar limites horizontais
+          if (left < margin) {
+            left = margin;
+          } else if (left + boxRect.width > viewportWidth - margin) {
+            left = viewportWidth - boxRect.width - margin;
+          }
+
+          // Verificar limites verticais e ajustar posição se necessário
+          if (top < margin) {
+            // Se não cabe em cima, colocar embaixo
+            top = elementRect.bottom + arrowSize + margin;
+            finalPosition = "bottom";
+          } else if (top + boxRect.height > viewportHeight - margin) {
+            // Se não cabe embaixo, colocar em cima
+            top = elementRect.top - boxRect.height - arrowSize - margin;
+            finalPosition = "top";
+
+            // Se ainda não cabe, usar posição lateral
+            if (top < margin) {
+              if (elementRect.left > viewportWidth / 2) {
+                // Colocar à esquerda
+                top =
+                  elementRect.top + elementRect.height / 2 - boxRect.height / 2;
+                left = elementRect.left - boxRect.width - arrowSize - margin;
+                finalPosition = "left";
+              } else {
+                // Colocar à direita
+                top =
+                  elementRect.top + elementRect.height / 2 - boxRect.height / 2;
+                left = elementRect.right + arrowSize + margin;
+                finalPosition = "right";
+              }
+            }
+          }
+
+          // Garantir que não saia da tela (última verificação)
+          top = Math.max(
+            margin,
+            Math.min(top, viewportHeight - boxRect.height - margin)
+          );
+          left = Math.max(
+            margin,
+            Math.min(left, viewportWidth - boxRect.width - margin)
+          );
+
+          // Aplicar posição final
+          tutorialBox.classList.add(`position-${finalPosition}`);
+          tutorialBox.style.top = `${Math.round(top)}px`;
+          tutorialBox.style.left = `${Math.round(left)}px`;
+          tutorialBox.style.visibility = "visible";
+
+          console.log(
+            `Tutorial posicionado: ${finalPosition} em (${Math.round(
+              top
+            )}, ${Math.round(left)})`
+          );
+          console.log(`Elemento alvo:`, elementRect);
+        });
+      });
+    }, 400); // Tempo maior para garantir que o scroll termine
   }
 
-  console.log(`Progresso atualizado: passo ${this.currentStep + 1} de ${this.totalSteps}`);
-}
+  // Função melhorada para highlight
+  highlightElement(selector) {
+    const element = document.querySelector(selector);
+    const highlight = document.getElementById("highlight");
+
+    // Remover highlight anterior
+    highlight.classList.add("hidden");
+    highlight.classList.remove("highlight-pulse");
+
+    if (element) {
+      // Aguardar o scroll terminar
+      setTimeout(() => {
+        const rect = element.getBoundingClientRect();
+
+        // Aplicar highlight com posicionamento mais preciso
+        const highlightPadding = 8;
+        highlight.style.top = rect.top - highlightPadding + "px";
+        highlight.style.left = rect.left - highlightPadding + "px";
+        highlight.style.width = rect.width + highlightPadding * 2 + "px";
+        highlight.style.height = rect.height + highlightPadding * 2 + "px";
+
+        // Mostrar highlight
+        highlight.classList.remove("hidden");
+
+        // Adicionar animação de pulse após um pequeno delay
+        setTimeout(() => {
+          highlight.classList.add("highlight-pulse");
+        }, 100);
+
+        console.log(`Highlight aplicado em:`, rect);
+      }, 450); // Sincronizado com o scroll
+    }
+  }
+
+  // Função melhorada para cursor animado
+  animateCursor(selector) {
+    const element = document.querySelector(selector);
+    const cursor = document.getElementById("animatedCursor");
+
+    if (element) {
+      setTimeout(() => {
+        const rect = element.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+
+        cursor.style.left = centerX + "px";
+        cursor.style.top = centerY + "px";
+        cursor.classList.remove("hidden");
+
+        // Animação especial para elementos importantes
+        if (selector === "#novaMatricula") {
+          cursor.style.color = "#e53935";
+          cursor.style.fontSize = "36px";
+          cursor.style.animation = "cursorPulse 1.5s infinite";
+          cursor.style.filter = "drop-shadow(2px 2px 4px rgba(0,0,0,0.3))";
+        } else {
+          cursor.style.color = "#e53935";
+          cursor.style.fontSize = "30px";
+          cursor.style.animation = "cursorBounce 2s infinite";
+          cursor.style.filter = "drop-shadow(2px 2px 4px rgba(0,0,0,0.3))";
+        }
+
+        console.log(`Cursor posicionado em: (${centerX}, ${centerY})`);
+      }, 500); // Sincronizado com highlight e posicionamento
+    }
+  }
+
+  // Função melhorada para atualizar progresso
+  updateProgress() {
+    const progressItems = document.querySelectorAll(".progress-item");
+
+    progressItems.forEach((item, index) => {
+      const icon = item.querySelector("i");
+
+      // Remover todas as classes de estado
+      item.classList.remove("completed", "current");
+
+      if (index < this.currentStep) {
+        // Passos já completados
+        item.classList.add("completed");
+        icon.className = "fas fa-check-circle";
+        icon.style.color = "#28a745";
+      } else if (index === this.currentStep) {
+        // Passo atual
+        item.classList.add("current");
+        icon.className = "fas fa-circle-notch fa-spin";
+        icon.style.color = "#002f5f";
+      } else {
+        // Passos futuros
+        icon.className = "fas fa-circle";
+        icon.style.color = "#6c757d";
+      }
+    });
+
+    // Scroll suave para o item atual no painel de progresso
+    const currentItem = document.querySelector(
+      `.progress-item[data-step="${this.currentStep + 1}"]`
+    );
+    if (currentItem) {
+      currentItem.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+        inline: "nearest",
+      });
+    }
+
+    console.log(
+      `Progresso atualizado: passo ${this.currentStep + 1} de ${
+        this.totalSteps
+      }`
+    );
+  }
 
   nextStep() {
     if (this.currentStep < this.totalSteps - 1) {
@@ -1166,53 +1236,39 @@ class PortalAppLogic {
       return;
     }
 
+    // Ocultar a seção de seleção de cursos
+    this.selectedCoursesSection.classList.add("hidden");
+
+    // Mostrar as seções de configuração de pagamento
+    document
+      .getElementById("paymentOptionsContainer")
+      .classList.remove("hidden");
+
+    // Rolar suavemente para a nova seção
+    document.getElementById("paymentOptionsContainer").scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+
+    // Atualizar valores baseados nos cursos selecionados
+    this.updatePaymentValues();
+
+    if (window.portalTutorial) {
+      window.portalTutorial.showNotification(
+        "Configure agora o pagamento da matrícula e do curso.",
+        "success"
+      );
+    }
+  }
+
+  // NOVA: Função para atualizar valores de pagamento
+  updatePaymentValues() {
     const totalValue = this.calculateTotal();
-    const coursesCount = this.selectedCourses.length;
+    const valorCursoInput = document.getElementById("valorCurso");
 
-    // Criar modal de confirmação
-    const modal = document.createElement("div");
-    modal.className = "modal";
-    modal.innerHTML = `
-      <div class="modal-content">
-        <div class="modal-header" style="background: #28a745;">
-          <i class="fas fa-graduation-cap"></i>
-          <h2>Confirmar Matrícula</h2>
-        </div>
-        <div class="modal-body">
-          <p><strong>Resumo da Matrícula:</strong></p>
-          <ul style="margin: 15px 0; padding-left: 20px;">
-            ${this.selectedCourses
-              .map(
-                (course) =>
-                  `<li>${course.name} - R$ ${course.price
-                    .toFixed(2)
-                    .replace(".", ",")}</li>`
-              )
-              .join("")}
-          </ul>
-          
-          <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; margin: 15px 0;">
-            <h4 style="margin: 0 0 10px 0; color: #28a745;">💰 Resumo Financeiro:</h4>
-            <p><strong>Quantidade de cursos:</strong> ${coursesCount}</p>
-            <p><strong>Valor total:</strong> R$ ${totalValue
-              .toFixed(2)
-              .replace(".", ",")}</p>
-          </div>
-          
-          <p>Deseja prosseguir com esta matrícula?</p>
-        </div>
-        <div class="modal-footer">
-          <button class="btn btn-secondary" onclick="this.closest('.modal').remove()">
-            <i class="fas fa-times"></i> Cancelar
-          </button>
-          <button class="btn btn-success" onclick="window.portalApp.confirmEnrollment(); this.closest('.modal').remove()">
-            <i class="fas fa-check"></i> Confirmar Matrícula
-          </button>
-        </div>
-      </div>
-    `;
-
-    document.body.appendChild(modal);
+    if (valorCursoInput) {
+      valorCursoInput.value = `R$ ${totalValue.toFixed(2).replace(".", ",")}`;
+    }
   }
 
   // NOVO: Confirmar matrícula
