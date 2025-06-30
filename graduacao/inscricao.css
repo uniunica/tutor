@@ -280,6 +280,14 @@ button[type="submit"]:hover {
   transform: translateY(-2px);
 }
 
+.info-box-navegacao {
+  background: #e3f2fd;
+  padding: 15px;
+  border-radius: 8px;
+  margin: 15px 0;
+  border-left: 4px solid #2196f3;
+}
+
 /* NOVO SISTEMA DE TUTORIAL APRIMORADO */
 
 /* Modal de Boas-vindas */
@@ -327,6 +335,8 @@ button[type="submit"]:hover {
 
 .modal-body {
   padding: 25px;
+  padding-bottom: 0px;
+  padding-top: 0px;
 }
 
 .modal-body p {
@@ -360,6 +370,23 @@ button[type="submit"]:hover {
   display: flex;
   align-items: center;
   gap: 10px;
+  -webkit-animation: pulse 1.5s infinite;
+  animation: pulse 1.5s infinite;
+}
+/* Efeito de pulsação do .info-box */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 rgba(255, 255, 255, 0);
+  }
+  50% {
+    transform: scale(1.02);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 rgba(255, 255, 255, 0);
+  }
 }
 
 .info-box i {
