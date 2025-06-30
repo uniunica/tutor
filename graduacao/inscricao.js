@@ -137,20 +137,20 @@ class InscricaoTutorialManager {
 
   // NOVO: Bloquear scroll durante tutorial
   blockScroll() {
-    document.body.style.overflow = 'hidden';
-    document.body.style.position = 'fixed';
+    document.body.style.overflow = "hidden";
+    document.body.style.position = "fixed";
     document.body.style.top = `-${window.scrollY}px`;
-    document.body.style.width = '100%';
+    document.body.style.width = "100%";
   }
 
   // NOVO: Desbloquear scroll
   unblockScroll() {
     const scrollY = document.body.style.top;
-    document.body.style.overflow = '';
-    document.body.style.position = '';
-    document.body.style.top = '';
-    document.body.style.width = '';
-    window.scrollTo(0, parseInt(scrollY || '0') * -1);
+    document.body.style.overflow = "";
+    document.body.style.position = "";
+    document.body.style.top = "";
+    document.body.style.width = "";
+    window.scrollTo(0, parseInt(scrollY || "0") * -1);
   }
 
   showWelcomeModal() {
@@ -625,238 +625,372 @@ document.addEventListener("DOMContentLoaded", () => {
   new InscricaoTutorialManager();
 });
 
-// SISTEMA CORRIGIDO DE INFORMAÇÕES DAS MODALIDADES
+// SISTEMA SIMPLIFICADO E FUNCIONAL DE TOOLTIPS DAS MODALIDADES
 document.addEventListener("DOMContentLoaded", () => {
-  const modalityLabels = document.querySelectorAll(".modality-options label");
-  let currentTooltip = null; // Controlar tooltip ativo
+  console.log("Inicializando sistema de tooltips das modalidades");
 
-  modalityLabels.forEach((label) => {
-    // Usar mouseenter em vez de click para evitar múltiplas aberturas
-    label.addEventListener("mouseenter", (e) => {
-      const input = label.querySelector('input[type="radio"]');
-      if (input) {
-        const modalityText = label.textContent.trim();
-        showModalityInfo(modalityText, e.currentTarget);
+  // Aguardar um pouco para garantir que todos os elementos estejam carregados
+  setTimeout(() => {
+    initModalityTooltips();
+  }, 500);
+});
+
+function initModalityTooltips() {
+  const modalityLabels = document.querySelectorAll(".modality-options label");
+  console.log(`Encontrados ${modalityLabels.length} labels de modalidade`);
+
+  let activeTooltip = null;
+  let hoverTimeout = null;
+
+  // Dados das modalidades
+  const modalityData = {
+    "Prova Agendada": {
+      icon: "📝",
+      title: "Prova Agendada",
+      description: [
+        "• Redação online com tema específico",
+        "• Modalidade mais comum e flexível",
+        "• Agendamento conforme disponibilidade",
+        "• Duração: até 2 horas",
+        "• Resultado em até 48 horas",
+      ],
+    },
+    ENEM: {
+      icon: "🎓",
+      title: "ENEM",
+      description: [
+        "• Para quem fez o exame nos últimos 3 anos",
+        "• Média mínima: 450 pontos",
+        "• Não precisa fazer nova prova",
+        "• Apresentar certificado ou boletim",
+        "• Processo mais rápido",
+      ],
+    },
+    "Novo Título": {
+      icon: "🎯",
+      title: "Novo Título",
+      description: [
+        "• Para quem já possui graduação completa",
+        "• Processo simplificado sem prova",
+        "• Apresentação de diploma registrado",
+        "• Análise curricular prévia",
+        "• Segunda graduação",
+      ],
+    },
+    Transferência: {
+      icon: "🔄",
+      title: "Transferência",
+      description: [
+        "• Já estuda o curso em outra instituição",
+        "• Quer concluir na UniÚnica",
+        "• Análise de disciplinas já cursadas",
+        "• Aproveitamento de créditos",
+        "• Histórico escolar obrigatório",
+      ],
+    },
+  };
+
+  // Função para fechar tooltip
+  function closeTooltip() {
+    if (activeTooltip) {
+      console.log("Fechando tooltip");
+      activeTooltip.style.opacity = "0";
+      activeTooltip.style.transform = "translateY(-10px) scale(0.9)";
+
+      setTimeout(() => {
+        if (activeTooltip && activeTooltip.parentNode) {
+          activeTooltip.remove();
+        }
+        activeTooltip = null;
+      }, 200);
+    }
+
+    if (hoverTimeout) {
+      clearTimeout(hoverTimeout);
+      hoverTimeout = null;
+    }
+  }
+
+  // Função para criar tooltip
+  function createTooltip(modalityName, targetElement) {
+    console.log(`Criando tooltip para: ${modalityName}`);
+
+    // Fechar tooltip anterior
+    closeTooltip();
+
+    const data = modalityData[modalityName];
+    if (!data) {
+      console.error(`Dados não encontrados para modalidade: ${modalityName}`);
+      return;
+    }
+
+    // Criar elemento tooltip
+    const tooltip = document.createElement("div");
+    tooltip.className = "modality-tooltip-simple";
+
+    // Conteúdo do tooltip
+    tooltip.innerHTML = `
+      <div class="tooltip-header-simple">
+        <span class="tooltip-icon-simple">${data.icon}</span>
+        <span class="tooltip-title-simple">${data.title}</span>
+        <button class="tooltip-close-simple" type="button" aria-label="Fechar">×</button>
+      </div>
+      <div class="tooltip-content-simple">
+        ${data.description
+          .map((item) => `<div class="tooltip-item">${item}</div>`)
+          .join("")}
+      </div>
+    `;
+
+    // Adicionar ao body
+    document.body.appendChild(tooltip);
+    activeTooltip = tooltip;
+
+    // Posicionar tooltip
+    positionTooltip(tooltip, targetElement);
+
+    // Adicionar eventos
+    const closeBtn = tooltip.querySelector(".tooltip-close-simple");
+    closeBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      console.log("Botão fechar clicado");
+      closeTooltip();
+    });
+
+    // Manter tooltip aberto quando mouse está sobre ele
+    tooltip.addEventListener("mouseenter", () => {
+      if (hoverTimeout) {
+        clearTimeout(hoverTimeout);
+        hoverTimeout = null;
       }
     });
 
-    // Fechar tooltip ao sair do elemento
-    label.addEventListener("mouseleave", () => {
-      setTimeout(() => {
-        if (currentTooltip && !currentTooltip.matches(':hover')) {
-          closeCurrentTooltip();
-        }
-      }, 100);
+    tooltip.addEventListener("mouseleave", () => {
+      hoverTimeout = setTimeout(closeTooltip, 300);
     });
-  });
 
-  function showModalityInfo(modality, targetElement) {
-    // Fechar tooltip anterior se existir
-    closeCurrentTooltip();
+    // Auto-fechar após 8 segundos
+    setTimeout(() => {
+      if (activeTooltip === tooltip) {
+        closeTooltip();
+      }
+    }, 8000);
 
-    let info = "";
-    let icon = "";
+    console.log("Tooltip criado com sucesso");
+  }
 
-    switch (modality) {
-      case "Prova Agendada":
-        icon = "📝";
-        info = `
-          <strong>Prova Agendada:</strong><br>
-          • Redação online com tema específico<br>
-          • Modalidade mais comum e flexível<br>
-          • Agendamento conforme disponibilidade<br>
-          • Duração: até 2 horas<br>
-          • Resultado em até 48 horas
-        `;
-        break;
-      case "ENEM":
-        icon = "🎓";
-        info = `
-          <strong>ENEM:</strong><br>
-          • Para quem fez o exame nos últimos 3 anos<br>
-          • Média mínima: 450 pontos<br>
-          • Não precisa fazer nova prova<br>
-          • Apresentar certificado ou boletim<br>
-          • Processo mais rápido
-        `;
-        break;
-      case "Novo Título":
-        icon = "🎯";
-        info = `
-          <strong>Novo Título:</strong><br>
-          • Para quem já possui graduação completa<br>
-          • Processo simplificado sem prova<br>
-          • Apresentação de diploma registrado<br>
-          • Análise curricular prévia<br>
-          • Segunda graduação
-        `;
-        break;
-      case "Transferência":
-        icon = "🔄";
-        info = `
-          <strong>Transferência:</strong><br>
-          • Já estuda o curso em outra instituição<br>
-          • Quer concluir na UniÚnica<br>
-          • Análise de disciplinas já cursadas<br>
-          • Aproveitamento de créditos<br>
-          • Histórico escolar obrigatório
-        `;
-        break;
-    }
-
-    const tooltip = document.createElement("div");
-    tooltip.className = "modality-tooltip";
-    tooltip.innerHTML = `
-      <div class="tooltip-header">
-        <span class="tooltip-icon">${icon}</span>
-        <button class="tooltip-close" onclick="closeCurrentTooltip()">×</button>
-      </div>
-      <div class="tooltip-content">
-        ${info}
-      </div>
-    `;
-
-    tooltip.style.cssText = `
-      position: fixed;
-      background: white;
-      border: 2px solid #7c4dff;
-      border-radius: 12px;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-      z-index: 1001;
-      max-width: 320px;
-      animation: tooltipSlideIn 0.3s ease;
-    `;
-
-    // Posicionar tooltip
+  // Função para posicionar tooltip
+  function positionTooltip(tooltip, targetElement) {
     const rect = targetElement.getBoundingClientRect();
-    const tooltipWidth = 320;
-    const tooltipHeight = 180;
+    const tooltipRect = tooltip.getBoundingClientRect();
 
-    let left = rect.left + rect.width / 2 - tooltipWidth / 2;
-    let top = rect.bottom + 15;
+    let left = rect.left + rect.width / 2 - tooltipRect.width / 2;
+    let top = rect.bottom + 10;
 
-    if (left < 20) left = 20;
-    if (left + tooltipWidth > window.innerWidth - 20) {
-      left = window.innerWidth - tooltipWidth - 20;
+    // Ajustar se sair da tela
+    if (left < 10) {
+      left = 10;
+    } else if (left + tooltipRect.width > window.innerWidth - 10) {
+      left = window.innerWidth - tooltipRect.width - 10;
     }
-    if (top + tooltipHeight > window.innerHeight - 20) {
-      top = rect.top - tooltipHeight - 15;
+
+    if (top + tooltipRect.height > window.innerHeight - 10) {
+      top = rect.top - tooltipRect.height - 10;
     }
 
     tooltip.style.left = `${left}px`;
     tooltip.style.top = `${top}px`;
 
-    // Manter referência do tooltip ativo
-    currentTooltip = tooltip;
-    document.body.appendChild(tooltip);
+    console.log(`Tooltip posicionado em: ${left}, ${top}`);
+  }
 
-    // Adicionar evento para manter tooltip aberto quando mouse está sobre ele
-    tooltip.addEventListener('mouseenter', () => {
-      // Tooltip permanece aberto
-    });
+  // Adicionar eventos aos labels
+  modalityLabels.forEach((label, index) => {
+    console.log(
+      `Configurando eventos para label ${index}: ${label.textContent.trim()}`
+    );
 
-    tooltip.addEventListener('mouseleave', () => {
-      closeCurrentTooltip();
-    });
+    label.addEventListener("mouseenter", (e) => {
+      const modalityName = label.textContent.trim();
+      console.log(`Mouse entrou em: ${modalityName}`);
 
-    // Auto-fechar após 8 segundos
-    setTimeout(() => {
-      if (currentTooltip === tooltip) {
-        closeCurrentTooltip();
+      // Cancelar timeout anterior
+      if (hoverTimeout) {
+        clearTimeout(hoverTimeout);
+        hoverTimeout = null;
       }
-    }, 8000);
-  }
 
-  // Função global para fechar tooltip
-  window.closeCurrentTooltip = function() {
-    if (currentTooltip && currentTooltip.parentNode) {
-      currentTooltip.style.animation = "tooltipSlideOut 0.3s ease";
-      setTimeout(() => {
-        if (currentTooltip && currentTooltip.parentNode) {
-          currentTooltip.remove();
-        }
-        currentTooltip = null;
+      // Criar tooltip com delay
+      hoverTimeout = setTimeout(() => {
+        createTooltip(modalityName, label);
       }, 300);
-    }
-  };
-});
+    });
 
-// Adicionar estilos para os tooltips das modalidades
-const modalityTooltipStyles = document.createElement("style");
-modalityTooltipStyles.textContent = `
-  .modality-tooltip {
+    label.addEventListener("mouseleave", () => {
+      console.log("Mouse saiu do label");
+
+      // Cancelar criação se ainda não foi criado
+      if (hoverTimeout) {
+        clearTimeout(hoverTimeout);
+        hoverTimeout = null;
+      }
+
+      // Fechar com delay para permitir mover para o tooltip
+      hoverTimeout = setTimeout(() => {
+        if (activeTooltip && !activeTooltip.matches(":hover")) {
+          closeTooltip();
+        }
+      }, 300);
+    });
+  });
+
+  // Fechar tooltip ao clicar fora
+  document.addEventListener("click", (e) => {
+    if (
+      activeTooltip &&
+      !activeTooltip.contains(e.target) &&
+      !e.target.closest(".modality-options")
+    ) {
+      console.log("Clique fora detectado");
+      closeTooltip();
+    }
+  });
+
+  // Fechar tooltip ao pressionar ESC
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && activeTooltip) {
+      console.log("ESC pressionado");
+      closeTooltip();
+    }
+  });
+
+  console.log("Sistema de tooltips inicializado com sucesso");
+}
+
+// ESTILOS SIMPLIFICADOS E FUNCIONAIS
+const tooltipStyles = document.createElement("style");
+tooltipStyles.textContent = `
+  .modality-tooltip-simple {
+    position: fixed;
+    background: white;
+    border: 2px solid #7c4dff;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    z-index: 9999;
+    max-width: 350px;
+    min-width: 300px;
     font-family: 'Open Sans', sans-serif;
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    transition: all 0.2s ease;
   }
-  
-  .tooltip-header {
+
+  .tooltip-header-simple {
     background: linear-gradient(135deg, #7c4dff, #a081ff);
     color: white;
     padding: 12px 15px;
     border-radius: 10px 10px 0 0;
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    gap: 10px;
   }
-  
-  .tooltip-icon {
+
+  .tooltip-icon-simple {
     font-size: 1.5em;
+    flex-shrink: 0;
   }
-  
-  .tooltip-close {
+
+  .tooltip-title-simple {
+    flex-grow: 1;
+    font-weight: 600;
+    font-size: 1.1em;
+  }
+
+  .tooltip-close-simple {
     background: none;
     border: none;
     color: white;
-    font-size: 1.5em;
+    font-size: 1.8em;
     cursor: pointer;
     padding: 0;
-    width: 25px;
-    height: 25px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background 0.3s ease;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    line-height: 1;
   }
-  
-  .tooltip-close:hover {
+
+  .tooltip-close-simple:hover {
     background: rgba(255,255,255,0.2);
+    transform: scale(1.1);
   }
-  
-  .tooltip-content {
+
+  .tooltip-close-simple:active {
+    transform: scale(0.95);
+    background: rgba(255,255,255,0.3);
+  }
+
+  .tooltip-content-simple {
     padding: 15px;
-    line-height: 1.5;
     color: #333;
     font-size: 0.9em;
   }
-  
-  .tooltip-content strong {
-    color: #7c4dff;
-    font-size: 1.1em;
+
+  .tooltip-item {
+    line-height: 1.6;
+    margin-bottom: 6px;
   }
-  
-  @keyframes tooltipSlideIn {
-    from {
-      opacity: 0;
-      transform: translateY(-15px) scale(0.9);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-    }
+
+  .tooltip-item:last-child {
+    margin-bottom: 0;
   }
-  
-  @keyframes tooltipSlideOut {
-    from {
-      opacity: 1;
-      transform: translateY(0) scale(1);
+
+  /* Efeitos hover nos labels das modalidades */
+  .modality-options label {
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .modality-options label:hover {
+    background-color: #f0f0ff;
+    border-color: #7c4dff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(124, 77, 255, 0.2);
+  }
+
+  .modality-options label:hover::after {
+    content: "ℹ️ Informações detalhadas";
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.7em;
+    white-space: nowrap;
+    z-index: 1000;
+    animation: fadeInUp 0.3s ease;
+  }
+
+  @keyframes fadeInUp {
+    from { 
+      opacity: 0; 
+      transform: translateX(-50%) translateY(10px);
     }
-    to {
-      opacity: 0;
-      transform: translateY(-15px) scale(0.9);
+    to { 
+      opacity: 1; 
+      transform: translateX(-50%) translateY(0);
     }
   }
 `;
-document.head.appendChild(modalityTooltipStyles);
+document.head.appendChild(tooltipStyles);
 
 // Sistema de validação em tempo real
 class FormValidation {
@@ -1048,12 +1182,12 @@ validationStyles.textContent = `
     from { opacity: 0; transform: translateY(-10px); }
     to { opacity: 1; transform: translateY(0); }
   }
-  
+
   @keyframes notificationSlideIn {
     from { opacity: 0; transform: translateX(100%); }
     to { opacity: 1; transform: translateX(0); }
   }
-  
+
   @keyframes notificationSlideOut {
     from { opacity: 1; transform: translateX(0); }
     to { opacity: 0; transform: translateX(100%); }
