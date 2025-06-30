@@ -10,6 +10,12 @@ body {
   overflow-x: hidden;
 }
 
+.uniunica-logo {
+  width: 120px;
+  height: auto;
+  margin-bottom: 10px;
+}
+
 /* Background transparente sobre image */
 .background-overlay {
   background: linear-gradient(135deg, #7c4dffdd 0%, #a081ffcc 100%);
