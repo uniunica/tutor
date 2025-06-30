@@ -7,13 +7,13 @@ class TutorialManager {
     this.steps = [
       {
         title: "Bem-vindo Parceiro(a)!",
-        text: "Esta é a página principal do processo seletivo. Aqui você encontra todas as informações importantes sobre o processo de matrícula dos cursos de graduação disponíveis.",
+        text: "Esta é a página principal do processo seletivo. Aqui você encontra informações introdutórias sobre o processo de matrícula dos cursos de graduação disponíveis.",
         target: ".card",
         position: "center",
       },
       {
         title: "Informações do Curso",
-        text: "Aqui você pode ver o tipo de curso, o processo seletivo atual e outras informações relevantes.",
+        text: "Aqui você pode ver o tipo de curso, o processo seletivo atual/semestre atual.",
         target: "#courseTitle",
         position: "right",
       },
@@ -352,7 +352,7 @@ class TutorialManager {
           <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; margin: 15px 0;">
             <p><strong>💡 Dicas importantes:</strong></p>
             <ul style="margin: 10px 0; padding-left: 20px;">
-              <li>Use as <strong>setas do teclado</strong> para navegar no tutorial</li>
+              <li>Use as <strong> setas do teclado</strong> para navegar no tutorial</li>
               <li>Pressione <strong>ESC</strong> para sair do tutorial</li>
               <li>As caixas de diálogo se posicionam automaticamente</li>
             </ul>
