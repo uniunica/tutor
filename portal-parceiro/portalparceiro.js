@@ -295,12 +295,12 @@ class PortalParceiroTutorialManager {
     // Destacar se for importante
     if (step.important) {
       tutorialBox.style.border = "3px solid #e53935";
+      tutorialBox.style.boxShadow = "0 0 20px rgba(229, 57, 53, 0.3)";
       document.querySelector(".tutorial-content h3").style.color = "#e53935";
-      document.querySelector(".tutorial-content h3::before").textContent = "⭐";
     } else {
       tutorialBox.style.border = "3px solid #002f5f";
+      tutorialBox.style.boxShadow = "0 8px 32px rgba(0, 0, 0, 0.3)";
       document.querySelector(".tutorial-content h3").style.color = "#002f5f";
-      document.querySelector(".tutorial-content h3::before").textContent = "🤝";
     }
 
     // Atualizar botões
@@ -326,33 +326,42 @@ class PortalParceiroTutorialManager {
       finishBtn.classList.add("hidden");
     }
 
-    // PRIMEIRO: Atualizar progresso
-    this.updateProgress();
-
-    // SEGUNDO: Destacar elemento
+    // PRIMEIRO: Destacar elemento
     this.highlightElement(step.target);
 
-    // TERCEIRO: Animar cursor
+    // SEGUNDO: Animar cursor
     this.animateCursor(step.target);
 
-    // QUARTO: Posicionar caixa do tutorial
+    // TERCEIRO: Posicionar caixa do tutorial próxima ao elemento
     setTimeout(() => {
       this.positionTutorialBox(step.target, step.position);
-    }, 200);
+    }, 100);
+
+    // QUARTO: Atualizar progresso
+    this.updateProgress();
 
     // Adicionar efeito hover
     this.addHoverEffect(step.target);
   }
 
-  positionTutorialBox(selector, position) {
-    const element = document.querySelector(selector);
-    const tutorialBox = document.querySelector(".tutorial-box");
+  // Função melhorada para posicionamento do tutorial box
+positionTutorialBox(selector, position) {
+  const element = document.querySelector(selector);
+  const tutorialBox = document.querySelector(".tutorial-box");
 
-    if (!element || !tutorialBox) {
-      console.error(`Elemento não encontrado: ${selector}`);
-      return;
-    }
+  if (!element || !tutorialBox) {
+    console.error(`Elemento não encontrado: ${selector}`);
+    return;
+  }
 
+  // Scroll suave para o elemento primeiro
+  element.scrollIntoView({
+    behavior: "smooth",
+    block: "center",
+    inline: "center",
+  });
+
+  setTimeout(() => {
     // Remover classes de posição anteriores
     tutorialBox.classList.remove(
       "position-top",
@@ -361,148 +370,211 @@ class PortalParceiroTutorialManager {
       "position-right"
     );
 
-    // Forçar visibilidade para cálculos
+    // Resetar posição
+    tutorialBox.style.position = "fixed";
     tutorialBox.style.visibility = "hidden";
     tutorialBox.style.display = "block";
-    tutorialBox.style.position = "fixed";
 
+    // Aguardar dois frames para garantir que o scroll terminou
     requestAnimationFrame(() => {
-      const elementRect = element.getBoundingClientRect();
-      const boxRect = tutorialBox.getBoundingClientRect();
-      const viewportWidth = window.innerWidth;
-      const viewportHeight = window.innerHeight;
+      requestAnimationFrame(() => {
+        const elementRect = element.getBoundingClientRect();
+        const boxRect = tutorialBox.getBoundingClientRect();
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
 
-      let top, left;
-      let finalPosition = position;
+        let top, left;
+        let finalPosition = position;
 
-      switch (position) {
-        case "top":
-          top = elementRect.top - boxRect.height - 20;
-          left = elementRect.left + elementRect.width / 2 - boxRect.width / 2;
-          break;
+        // Margem de segurança
+        const margin = 25;
+        const arrowSize = 15;
 
-        case "bottom":
-          top = elementRect.bottom + 20;
-          left = elementRect.left + elementRect.width / 2 - boxRect.width / 2;
-          break;
+        // Calcular posição baseada na preferência
+        switch (position) {
+          case "top":
+            top = elementRect.top - boxRect.height - arrowSize - margin;
+            left = elementRect.left + (elementRect.width / 2) - (boxRect.width / 2);
+            break;
 
-        case "left":
-          top = elementRect.top + elementRect.height / 2 - boxRect.height / 2;
-          left = elementRect.left - boxRect.width - 20;
-          break;
+          case "bottom":
+            top = elementRect.bottom + arrowSize + margin;
+            left = elementRect.left + (elementRect.width / 2) - (boxRect.width / 2);
+            break;
 
-        case "right":
-          top = elementRect.top + elementRect.height / 2 - boxRect.height / 2;
-          left = elementRect.right + 20;
-          break;
+          case "left":
+            top = elementRect.top + (elementRect.height / 2) - (boxRect.height / 2);
+            left = elementRect.left - boxRect.width - arrowSize - margin;
+            break;
 
-        default:
-          top = elementRect.bottom + 20;
-          left = elementRect.left + elementRect.width / 2 - boxRect.width / 2;
+          case "right":
+            top = elementRect.top + (elementRect.height / 2) - (boxRect.height / 2);
+            left = elementRect.right + arrowSize + margin;
+            break;
+
+          default:
+            top = elementRect.bottom + arrowSize + margin;
+            left = elementRect.left + (elementRect.width / 2) - (boxRect.width / 2);
+            finalPosition = "bottom";
+            break;
+        }
+
+        // Verificar limites horizontais
+        if (left < margin) {
+          left = margin;
+        } else if (left + boxRect.width > viewportWidth - margin) {
+          left = viewportWidth - boxRect.width - margin;
+        }
+
+        // Verificar limites verticais e ajustar posição se necessário
+        if (top < margin) {
+          // Se não cabe em cima, colocar embaixo
+          top = elementRect.bottom + arrowSize + margin;
           finalPosition = "bottom";
-          break;
-      }
+        } else if (top + boxRect.height > viewportHeight - margin) {
+          // Se não cabe embaixo, colocar em cima
+          top = elementRect.top - boxRect.height - arrowSize - margin;
+          finalPosition = "top";
+          
+          // Se ainda não cabe, usar posição lateral
+          if (top < margin) {
+            if (elementRect.left > viewportWidth / 2) {
+              // Colocar à esquerda
+              top = elementRect.top + (elementRect.height / 2) - (boxRect.height / 2);
+              left = elementRect.left - boxRect.width - arrowSize - margin;
+              finalPosition = "left";
+            } else {
+              // Colocar à direita
+              top = elementRect.top + (elementRect.height / 2) - (boxRect.height / 2);
+              left = elementRect.right + arrowSize + margin;
+              finalPosition = "right";
+            }
+          }
+        }
 
-      // Ajustar se sair da tela
-      if (left < 20) {
-        left = 20;
-      } else if (left + boxRect.width > viewportWidth - 20) {
-        left = viewportWidth - boxRect.width - 20;
-      }
+        // Garantir que não saia da tela (última verificação)
+        top = Math.max(margin, Math.min(top, viewportHeight - boxRect.height - margin));
+        left = Math.max(margin, Math.min(left, viewportWidth - boxRect.width - margin));
 
-      if (top < 20) {
-        top = elementRect.bottom + 20;
-        finalPosition = "bottom";
-      } else if (top + boxRect.height > viewportHeight - 20) {
-        top = elementRect.top - boxRect.height - 20;
-        finalPosition = "top";
-      }
+        // Aplicar posição final
+        tutorialBox.classList.add(`position-${finalPosition}`);
+        tutorialBox.style.top = `${Math.round(top)}px`;
+        tutorialBox.style.left = `${Math.round(left)}px`;
+        tutorialBox.style.visibility = "visible";
 
-      // Aplicar posição
-      tutorialBox.classList.add(`position-${finalPosition}`);
-      tutorialBox.style.top = `${Math.max(20, top)}px`;
-      tutorialBox.style.left = `${Math.max(20, left)}px`;
-      tutorialBox.style.visibility = "visible";
-
-      console.log(`Tutorial posicionado: ${finalPosition} em ${top}, ${left}`);
-    });
-  }
-
-  highlightElement(selector) {
-    const element = document.querySelector(selector);
-    const highlight = document.getElementById("highlight");
-
-    if (element) {
-      const rect = element.getBoundingClientRect();
-      highlight.style.top = rect.top - 8 + "px";
-      highlight.style.left = rect.left - 8 + "px";
-      highlight.style.width = rect.width + 16 + "px";
-      highlight.style.height = rect.height + 16 + "px";
-      highlight.classList.remove("hidden");
-
-      element.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-        inline: "center",
+        console.log(`Tutorial posicionado: ${finalPosition} em (${Math.round(top)}, ${Math.round(left)})`);
+        console.log(`Elemento alvo:`, elementRect);
       });
-    }
-  }
+    });
+  }, 400); // Tempo maior para garantir que o scroll termine
+}
 
-  animateCursor(selector) {
-    const element = document.querySelector(selector);
-    const cursor = document.getElementById("animatedCursor");
+// Função melhorada para highlight
+highlightElement(selector) {
+  const element = document.querySelector(selector);
+  const highlight = document.getElementById("highlight");
 
-    if (element) {
+  // Remover highlight anterior
+  highlight.classList.add("hidden");
+  highlight.classList.remove("highlight-pulse");
+
+  if (element) {
+    // Aguardar o scroll terminar
+    setTimeout(() => {
       const rect = element.getBoundingClientRect();
-      const centerX = rect.left + rect.width / 2;
-      const centerY = rect.top + rect.height / 2;
+      
+      // Aplicar highlight com posicionamento mais preciso
+      const highlightPadding = 8;
+      highlight.style.top = (rect.top - highlightPadding) + "px";
+      highlight.style.left = (rect.left - highlightPadding) + "px";
+      highlight.style.width = (rect.width + (highlightPadding * 2)) + "px";
+      highlight.style.height = (rect.height + (highlightPadding * 2)) + "px";
+      
+      // Mostrar highlight
+      highlight.classList.remove("hidden");
+      
+      // Adicionar animação de pulse após um pequeno delay
+      setTimeout(() => {
+        highlight.classList.add("highlight-pulse");
+      }, 100);
+
+      console.log(`Highlight aplicado em:`, rect);
+    }, 450); // Sincronizado com o scroll
+  }
+}
+
+// Função melhorada para cursor animado
+animateCursor(selector) {
+  const element = document.querySelector(selector);
+  const cursor = document.getElementById("animatedCursor");
+
+  if (element) {
+    setTimeout(() => {
+      const rect = element.getBoundingClientRect();
+      const centerX = rect.left + (rect.width / 2);
+      const centerY = rect.top + (rect.height / 2);
 
       cursor.style.left = centerX + "px";
       cursor.style.top = centerY + "px";
       cursor.classList.remove("hidden");
 
-      // Animação especial para Nova Matrícula
+      // Animação especial para elementos importantes
       if (selector === "#novaMatricula") {
         cursor.style.color = "#e53935";
-        cursor.style.fontSize = "32px";
+        cursor.style.fontSize = "36px";
+        cursor.style.animation = "cursorPulse 1.5s infinite";
+        cursor.style.filter = "drop-shadow(2px 2px 4px rgba(0,0,0,0.3))";
       } else {
         cursor.style.color = "#e53935";
-        cursor.style.fontSize = "28px";
+        cursor.style.fontSize = "30px";
+        cursor.style.animation = "cursorBounce 2s infinite";
+        cursor.style.filter = "drop-shadow(2px 2px 4px rgba(0,0,0,0.3))";
       }
-    }
+
+      console.log(`Cursor posicionado em: (${centerX}, ${centerY})`);
+    }, 500); // Sincronizado com highlight e posicionamento
   }
+}
 
-  addHoverEffect(selector) {
-    const previousElement = document.querySelector(".tutorial-highlight-hover");
-    if (previousElement) {
-      previousElement.classList.remove("tutorial-highlight-hover");
+// Função melhorada para atualizar progresso
+updateProgress() {
+  const progressItems = document.querySelectorAll(".progress-item");
+
+  progressItems.forEach((item, index) => {
+    const icon = item.querySelector("i");
+
+    // Remover todas as classes de estado
+    item.classList.remove("completed", "current");
+
+    if (index < this.currentStep) {
+      // Passos já completados
+      item.classList.add("completed");
+      icon.className = "fas fa-check-circle";
+      icon.style.color = "#28a745";
+    } else if (index === this.currentStep) {
+      // Passo atual
+      item.classList.add("current");
+      icon.className = "fas fa-circle-notch fa-spin";
+      icon.style.color = "#002f5f";
+    } else {
+      // Passos futuros
+      icon.className = "fas fa-circle";
+      icon.style.color = "#6c757d";
     }
+  });
 
-    const element = document.querySelector(selector);
-    if (element) {
-      element.classList.add("tutorial-highlight-hover");
-    }
-  }
-
-  updateProgress() {
-    const progressItems = document.querySelectorAll(".progress-item");
-
-    progressItems.forEach((item, index) => {
-      const icon = item.querySelector("i");
-
-      item.classList.remove("completed", "current");
-
-      if (index < this.currentStep) {
-        item.classList.add("completed");
-        icon.className = "fas fa-check-circle";
-      } else if (index === this.currentStep) {
-        item.classList.add("current");
-        icon.className = "fas fa-circle-notch";
-      } else {
-        icon.className = "fas fa-circle";
-      }
+  // Scroll suave para o item atual no painel de progresso
+  const currentItem = document.querySelector(`.progress-item[data-step="${this.currentStep + 1}"]`);
+  if (currentItem) {
+    currentItem.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+      inline: "nearest",
     });
   }
+
+  console.log(`Progresso atualizado: passo ${this.currentStep + 1} de ${this.totalSteps}`);
+}
 
   nextStep() {
     if (this.currentStep < this.totalSteps - 1) {
@@ -555,7 +627,7 @@ class PortalParceiroTutorialManager {
               <li>Seleção de instituições e cursos</li>
               <li>Navegação no menu lateral</li>
               <li>Filtros por modalidade e área</li>
-              <li><i class="fas fa-check-circle"></i> Novo: Seleção de cursos por modalidade e área</li>
+              <li>Seleção e gerenciamento de cursos</li>
             </ul>
           </div>
 
@@ -563,7 +635,7 @@ class PortalParceiroTutorialManager {
             <p><strong>💡 Navegação Aprimorada:</strong></p>
             <p>• Use as <strong>setas do teclado</strong> para navegar no tutorial<br>
             • Pressione <strong>ESC</strong> para sair do tutorial<br>
-            • As caixas se posicionam automaticamente próximas aos elementos</p>
+            • Os modais se posicionam automaticamente próximos aos elementos</p>
           </div>
 
           <div style="background: #fff3cd; padding: 15px; border-radius: 8px; margin: 15px 0;">
@@ -598,6 +670,18 @@ class PortalParceiroTutorialManager {
   restartTutorial() {
     this.hideProgressPanel();
     this.currentStep = 0;
+
+    // Limpar estados visuais
+    document.getElementById("tutorialOverlay").classList.add("hidden");
+    document.getElementById("highlight").classList.add("hidden");
+    document.getElementById("animatedCursor").classList.add("hidden");
+
+    // Remover efeitos hover
+    const element = document.querySelector(".tutorial-highlight-hover");
+    if (element) {
+      element.classList.remove("tutorial-highlight-hover");
+    }
+
     this.showWelcomeModal();
   }
 
