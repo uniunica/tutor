@@ -8,13 +8,13 @@ class InscricaoTutorialManager {
       {
         title: "Modalidades de Ingresso",
         text: "Existem 4 modalidades disponíveis para ingresso na graduação. Cada uma tem critérios específicos.",
-        tip: "Prova Agendada é a mais comum - redação online. ENEM para quem fez nos últimos 3 anos com média 450+.",
+        tip: "Prova Agendada: o aluno realizará uma redação on-line com um tema específico\nEnem: para o ingressante que realizou o exame nos últimos 3 anos e obteve uma média a partir de 450 pontos\nObtenção de Novo Título: quando o aluno já possui uma graduação.\nTransferência: para o aluno que já realiza o curso em outra instituição e quer concluir conosco.",
         target: "#modalitySection",
         position: "bottom",
       },
       {
         title: "Sistema de Abas",
-        text: "O formulário está dividido em duas abas: Dados do Candidato e Dados do Curso. Navegue entre elas conforme necessário.",
+        text: "O formulário está dividido em duas abas: Dados do Candidato e Dados do Curso. Após preencher os Dados do Candidato você deve direcionar ao Dados do Curso",
         tip: "Sempre preencha primeiro os dados do candidato antes de passar para os dados do curso.",
         target: "#tabsContainer",
         position: "bottom",
@@ -22,7 +22,7 @@ class InscricaoTutorialManager {
       {
         title: "Dados Pessoais Básicos",
         text: "Inicie coletando CPF, nome completo e sexo. Estes são os dados fundamentais para identificação do candidato.",
-        tip: "Sempre confirme a grafia correta do nome - erros podem causar problemas na matrícula.",
+        tip: "Sempre confirme a grafia correta do nome, email e número de telefone - erros podem causar problemas na matrícula.",
         target: "#cpfField",
         position: "right",
       },
@@ -51,7 +51,7 @@ class InscricaoTutorialManager {
       {
         title: "Seleção de Curso",
         text: "Agora vamos para a aba 'Dados do Curso'. Aqui o candidato escolhe o curso de interesse.",
-        tip: "Ajude o candidato a escolher o curso mais adequado ao seu perfil e objetivos profissionais.",
+        tip: "Ajude o candidato a escolher o curso mais adequado ao seu perfil e objetivos profissionais.\n Atenção! Sempre vincule ao seu polo ou unidade mais próxima do candidato.",
         target: "#tabCurso",
         position: "bottom",
         action: "switchTab",
@@ -59,7 +59,7 @@ class InscricaoTutorialManager {
       {
         title: "Finalização e Pagamento",
         text: "Após preencher todos os dados, clique em CONTINUAR. A taxa de matrícula é de até R$ 250,00.",
-        tip: "O pagamento da taxa de matrícula dá acesso ao portal e materiais didáticos. Valor pode ser alterado pela equipe.",
+        tip: "O pagamento da taxa de matrícula dá acesso ao portal e materiais didáticos. Se você negociou um valor diferente gentileza entrar em contato com seu consultor para solicitar a alteração do valor da taxa.",
         target: "#submitButton",
         position: "top",
       },
@@ -135,12 +135,32 @@ class InscricaoTutorialManager {
     });
   }
 
+  // NOVO: Bloquear scroll durante tutorial
+  blockScroll() {
+    document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${window.scrollY}px`;
+    document.body.style.width = '100%';
+  }
+
+  // NOVO: Desbloquear scroll
+  unblockScroll() {
+    const scrollY = document.body.style.top;
+    document.body.style.overflow = '';
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.width = '';
+    window.scrollTo(0, parseInt(scrollY || '0') * -1);
+  }
+
   showWelcomeModal() {
     document.getElementById("welcomeModal").style.display = "flex";
+    this.blockScroll(); // Bloquear scroll
   }
 
   hideWelcomeModal() {
     document.getElementById("welcomeModal").style.display = "none";
+    // Não desbloquear scroll aqui pois o tutorial vai começar
   }
 
   startTutorial() {
@@ -149,6 +169,7 @@ class InscricaoTutorialManager {
     this.currentStep = 0;
     this.showProgressPanel();
     this.showStep();
+    // Scroll continua bloqueado durante o tutorial
   }
 
   showStep() {
@@ -353,12 +374,12 @@ class InscricaoTutorialManager {
       highlight.style.height = rect.height + 16 + "px";
       highlight.classList.remove("hidden");
 
-      // Scroll suave para o elemento
-      element.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-        inline: "center",
-      });
+      // Não usar scroll durante tutorial - elemento já está visível
+      // element.scrollIntoView({
+      //   behavior: "smooth",
+      //   block: "center",
+      //   inline: "center",
+      // });
     }
   }
 
@@ -489,6 +510,9 @@ class InscricaoTutorialManager {
       element.classList.remove("tutorial-highlight-hover");
     }
 
+    // IMPORTANTE: Desbloquear scroll quando finalizar tutorial
+    this.unblockScroll();
+
     // Mostrar mensagem de conclusão
     this.showCompletionMessage();
   }
@@ -507,7 +531,7 @@ class InscricaoTutorialManager {
           <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; margin: 15px 0;">
             <p><strong>💡 Dicas importantes:</strong></p>
             <ul style="margin: 10px 0; padding-left: 20px;">
-              <li>Use as <strong>setas do teclado</strong> para navegar no tutorial</li>
+              <li>Use as <strong> setas do teclado</strong> para navegar no tutorial</li>
               <li>Pressione <strong>ESC</strong> para sair do tutorial</li>
               <li>As caixas de diálogo se posicionam automaticamente</li>
             </ul>
@@ -517,11 +541,11 @@ class InscricaoTutorialManager {
             <li><i class="fas fa-exclamation-triangle" style="color: #ff6b35;"></i> <strong>SEMPRE</strong> preencha o campo "Indicação" com seu nome</li>
             <li><i class="fas fa-user-check"></i> Colete todos os dados do candidato com cuidado</li>
             <li><i class="fas fa-envelope"></i> Confirme e-mail e telefone para comunicações</li>
-            <li><i class="fas fa-money-bill-wave"></i> Taxa de matrícula: até R$ 250,00</li>
+            <li><i class="fas fa-money-bill-wave"></i> Taxa de matrícula:  R$ 250,00 (podendo ser alteração pelo seu consultor)</li>
           </ul>
           <div class="info-box">
             <i class="fas fa-lightbulb"></i>
-            <strong>Dica:</strong> Quanto mais completos os dados, mais rápida será a matrícula!
+            <strong>Dica:</strong> Quanto mais completos os dados, mais rápida será a matrícula, e menos propício a causar estresses futuros!
           </div>
         </div>
         <div class="modal-footer">
@@ -601,98 +625,112 @@ document.addEventListener("DOMContentLoaded", () => {
   new InscricaoTutorialManager();
 });
 
-// Resto do código permanece o mesmo...
-// (Todas as outras funções: modalidades, validação, etc.)
-
-// Adicionar informações detalhadas sobre modalidades
+// SISTEMA CORRIGIDO DE INFORMAÇÕES DAS MODALIDADES
 document.addEventListener("DOMContentLoaded", () => {
   const modalityLabels = document.querySelectorAll(".modality-options label");
+  let currentTooltip = null; // Controlar tooltip ativo
 
   modalityLabels.forEach((label) => {
-    label.addEventListener("click", (e) => {
+    // Usar mouseenter em vez de click para evitar múltiplas aberturas
+    label.addEventListener("mouseenter", (e) => {
       const input = label.querySelector('input[type="radio"]');
       if (input) {
-        showModalityInfo(input.parentElement.textContent.trim());
+        const modalityText = label.textContent.trim();
+        showModalityInfo(modalityText, e.currentTarget);
       }
     });
+
+    // Fechar tooltip ao sair do elemento
+    label.addEventListener("mouseleave", () => {
+      setTimeout(() => {
+        if (currentTooltip && !currentTooltip.matches(':hover')) {
+          closeCurrentTooltip();
+        }
+      }, 100);
+    });
   });
-});
 
-function showModalityInfo(modality) {
-  let info = "";
-  let icon = "";
+  function showModalityInfo(modality, targetElement) {
+    // Fechar tooltip anterior se existir
+    closeCurrentTooltip();
 
-  switch (modality) {
-    case "Prova Agendada":
-      icon = "📝";
-      info = `
-        <strong>Prova Agendada:</strong><br>
-        • Redação online com tema específico<br>
-        • Modalidade mais comum<br>
-        • Agendamento flexível<br>
-        • Duração: 2 horas
-      `;
-      break;
-    case "ENEM":
-      icon = "🎓";
-      info = `
-        <strong>ENEM:</strong><br>
-        • Para quem fez o exame nos últimos 3 anos<br>
-        • Média mínima: 450 pontos<br>
-        • Não precisa fazer nova prova<br>
-        • Apresentar certificado
-      `;
-      break;
-    case "Novo Título":
-      icon = "🎯";
-      info = `
-        <strong>Novo Título:</strong><br>
-        • Para quem já possui graduação<br>
-        • Processo simplificado<br>
-        • Apresentação de diploma<br>
-        • Análise curricular
-      `;
-      break;
-    case "Transferência":
-      icon = "🔄";
-      info = `
-        <strong>Transferência:</strong><br>
-        • Já estuda o curso em outra instituição<br>
-        • Quer concluir na Uniúnica<br>
-        • Análise de disciplinas cursadas<br>
-        • Aproveitamento de créditos
-      `;
-      break;
-  }
+    let info = "";
+    let icon = "";
 
-  const tooltip = document.createElement("div");
-  tooltip.className = "modality-tooltip";
-  tooltip.innerHTML = `
-    <div class="tooltip-header">
-      <span class="tooltip-icon">${icon}</span>
-      <button class="tooltip-close" onclick="this.closest('.modality-tooltip').remove()">×</button>
-    </div>
-    <div class="tooltip-content">
-      ${info}
-    </div>
-  `;
+    switch (modality) {
+      case "Prova Agendada":
+        icon = "📝";
+        info = `
+          <strong>Prova Agendada:</strong><br>
+          • Redação online com tema específico<br>
+          • Modalidade mais comum e flexível<br>
+          • Agendamento conforme disponibilidade<br>
+          • Duração: até 2 horas<br>
+          • Resultado em até 48 horas
+        `;
+        break;
+      case "ENEM":
+        icon = "🎓";
+        info = `
+          <strong>ENEM:</strong><br>
+          • Para quem fez o exame nos últimos 3 anos<br>
+          • Média mínima: 450 pontos<br>
+          • Não precisa fazer nova prova<br>
+          • Apresentar certificado ou boletim<br>
+          • Processo mais rápido
+        `;
+        break;
+      case "Novo Título":
+        icon = "🎯";
+        info = `
+          <strong>Novo Título:</strong><br>
+          • Para quem já possui graduação completa<br>
+          • Processo simplificado sem prova<br>
+          • Apresentação de diploma registrado<br>
+          • Análise curricular prévia<br>
+          • Segunda graduação
+        `;
+        break;
+      case "Transferência":
+        icon = "🔄";
+        info = `
+          <strong>Transferência:</strong><br>
+          • Já estuda o curso em outra instituição<br>
+          • Quer concluir na UniÚnica<br>
+          • Análise de disciplinas já cursadas<br>
+          • Aproveitamento de créditos<br>
+          • Histórico escolar obrigatório
+        `;
+        break;
+    }
 
-  tooltip.style.cssText = `
-    position: fixed;
-    background: white;
-    border: 2px solid #7c4dff;
-    border-radius: 12px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-    z-index: 1001;
-    max-width: 320px;
-    animation: tooltipSlideIn 0.3s ease;
-  `;
+    const tooltip = document.createElement("div");
+    tooltip.className = "modality-tooltip";
+    tooltip.innerHTML = `
+      <div class="tooltip-header">
+        <span class="tooltip-icon">${icon}</span>
+        <button class="tooltip-close" onclick="closeCurrentTooltip()">×</button>
+      </div>
+      <div class="tooltip-content">
+        ${info}
+      </div>
+    `;
 
-  const clickedLabel = event.target.closest("label");
-  if (clickedLabel) {
-    const rect = clickedLabel.getBoundingClientRect();
+    tooltip.style.cssText = `
+      position: fixed;
+      background: white;
+      border: 2px solid #7c4dff;
+      border-radius: 12px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+      z-index: 1001;
+      max-width: 320px;
+      animation: tooltipSlideIn 0.3s ease;
+    `;
+
+    // Posicionar tooltip
+    const rect = targetElement.getBoundingClientRect();
     const tooltipWidth = 320;
-    const tooltipHeight = 150;
+    const tooltipHeight = 180;
 
     let left = rect.left + rect.width / 2 - tooltipWidth / 2;
     let top = rect.bottom + 15;
@@ -707,17 +745,41 @@ function showModalityInfo(modality) {
 
     tooltip.style.left = `${left}px`;
     tooltip.style.top = `${top}px`;
+
+    // Manter referência do tooltip ativo
+    currentTooltip = tooltip;
+    document.body.appendChild(tooltip);
+
+    // Adicionar evento para manter tooltip aberto quando mouse está sobre ele
+    tooltip.addEventListener('mouseenter', () => {
+      // Tooltip permanece aberto
+    });
+
+    tooltip.addEventListener('mouseleave', () => {
+      closeCurrentTooltip();
+    });
+
+    // Auto-fechar após 8 segundos
+    setTimeout(() => {
+      if (currentTooltip === tooltip) {
+        closeCurrentTooltip();
+      }
+    }, 8000);
   }
 
-  document.body.appendChild(tooltip);
-
-  setTimeout(() => {
-    if (tooltip.parentNode) {
-      tooltip.style.animation = "tooltipSlideOut 0.3s ease";
-      setTimeout(() => tooltip.remove(), 300);
+  // Função global para fechar tooltip
+  window.closeCurrentTooltip = function() {
+    if (currentTooltip && currentTooltip.parentNode) {
+      currentTooltip.style.animation = "tooltipSlideOut 0.3s ease";
+      setTimeout(() => {
+        if (currentTooltip && currentTooltip.parentNode) {
+          currentTooltip.remove();
+        }
+        currentTooltip = null;
+      }, 300);
     }
-  }, 8000);
-}
+  };
+});
 
 // Adicionar estilos para os tooltips das modalidades
 const modalityTooltipStyles = document.createElement("style");
