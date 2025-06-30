@@ -9,14 +9,14 @@ class CentralCandidatoTutorialManager {
       {
         title: "Acesso à Central",
         text: "Para acessar a Central do Candidato, é necessário informar CPF e data de nascimento. Estes dados foram fornecidos durante a inscrição.",
-        tip: "Oriente o candidato a usar exatamente os mesmos dados informados na inscrição.",
+        tip: "Fique atento sempre a colocar o CPF e a data de nascimento correta no ato da matrícula para não ocorrer problema no acesso a central do candidato.",
         target: "#loginForm",
         position: "bottom",
       },
       {
         title: "Dados Pessoais",
         text: "Aqui o candidato pode visualizar todos os dados pessoais informados durante a inscrição. Verifique se estão corretos.",
-        tip: "Se houver algum erro, oriente o candidato a entrar em contato com o suporte para correção.",
+        tip: "Se houver algum erro, gentileza entrar em contato com o seu consultor para realizar a correção.",
         target: "#candidateDataBox",
         position: "right",
       },
@@ -483,7 +483,7 @@ class CentralCandidatoTutorialManager {
               <li>Verificar dados pessoais</li>
               <li>Acompanhar informações do curso</li>
               <li>Monitorar status de documentos</li>
-              <li>Fazer upload de arquivos</li>
+              <li>Fazer upload de arquivos para o processo seletivo</li>
             </ul>
           </div>
 
@@ -496,7 +496,7 @@ class CentralCandidatoTutorialManager {
 
           <div class="info-box">
             <i class="fas fa-star"></i>
-            <strong>Dica Final:</strong> A Central do Candidato é a ferramenta mais importante para acompanhamento!
+            <strong>Dica Final:</strong> A Central do Candidato é a ferramenta mais importante para acompanhamento do processo seletivo!
           </div>
 
           <p><strong>Você completou todo o treinamento do sistema!</strong></p>
