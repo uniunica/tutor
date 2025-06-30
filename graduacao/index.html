@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tutorial - Processo Seletivo Uniúnica</title>
+    <link rel="stylesheet" href="style.css" />
+    <!-- Ícones: -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
+    <!-- Google Fonts: -->
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+    />
+  </head>
+  <body>
+    <!-- Modal de Boas-vindas -->
+    <div id="welcomeModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <i class="fas fa-graduation-cap"></i>
+          <h2>Bem-vindo ao Tutorial Interativo!</h2>
+        </div>
+        <div class="modal-body">
+          <p>
+            Este é um <strong>site espelho</strong> criado especialmente para
+            ensinar nossos parceiros como realizar matrículas de graduação.
+          </p>
+          <p>
+            Você será guiado passo a passo através de um tutorial interativo
+            com:
+          </p>
+          <ul>
+            <li>
+              <i class="fas fa-mouse-pointer"></i> Cursor guiado interativo
+            </li>
+            <li>
+              <i class="fas fa-check-circle"></i> Checkins para próximas etapas
+            </li>
+            <li><i class="fas fa-info-circle"></i> Explicações detalhadas</li>
+            <li><i class="fas fa-hands-helping"></i> Dicas práticas</li>
+          </ul>
+          <div
+            style="
+              background: #e3f2fd;
+              padding: 15px;
+              border-radius: 8px;
+              margin: 15px 0;
+              border-left: 4px solid #2196f3;
+            "
+          >
+            <p><strong>💡 Navegação:</strong></p>
+            <p>
+              • Use as <strong>setas do teclado</strong> ou botões para
+              navegar<br />
+              • Pressione <strong>ESC</strong> para sair do tutorial<br />
+              • As caixas se posicionam automaticamente próximas aos elementos
+            </p>
+          </div>
+          <p><strong>Pronto para começar?</strong></p>
+        </div>
+        <div class="modal-footer">
+          <button id="startTutorial" class="btn btn-primary">
+            <i class="fas fa-play"></i> Iniciar Tutorial
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Overlay do Tutorial -->
+    <div id="tutorialOverlay" class="tutorial-overlay hidden">
+      <div class="tutorial-box">
+        <div class="tutorial-content">
+          <h3 id="tutorialTitle">Título do Passo</h3>
+          <p id="tutorialText">Descrição do passo atual</p>
+          <div class="tutorial-progress">
+            <span id="tutorialStep">1</span> de
+            <span id="tutorialTotal">5</span>
+          </div>
+        </div>
+        <div class="tutorial-actions">
+          <button id="prevStep" class="btn btn-secondary" disabled>
+            <i class="fas fa-arrow-left"></i> Anterior
+          </button>
+          <button id="nextStep" class="btn btn-primary">
+            Próximo <i class="fas fa-arrow-right"></i>
+          </button>
+          <button id="finishTutorial" class="btn btn-success hidden">
+            <i class="fas fa-check"></i> Finalizar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cursor Animado -->
+    <div id="animatedCursor" class="animated-cursor hidden">
+      <i class="fas fa-mouse-pointer"></i>
+    </div>
+
+    <!-- Highlight para elementos -->
+    <div id="highlight" class="highlight hidden"></div>
+
+    <!-- Painel de Progresso -->
+    <div id="progressPanel" class="progress-panel hidden">
+      <h4><i class="fas fa-tasks"></i> Seu Progresso</h4>
+      <div class="progress-items">
+        <div class="progress-item" data-step="1">
+          <i class="fas fa-circle"></i>
+          <span>Conhecer a interface</span>
+        </div>
+        <div class="progress-item" data-step="2">
+          <i class="fas fa-circle"></i>
+          <span>Entender informações do curso</span>
+        </div>
+        <div class="progress-item" data-step="3">
+          <i class="fas fa-circle"></i>
+          <span>Verificar período de inscrição</span>
+        </div>
+        <div class="progress-item" data-step="4">
+          <i class="fas fa-circle"></i>
+          <span>Acessar Central do Candidato</span>
+        </div>
+        <div class="progress-item" data-step="5">
+          <i class="fas fa-circle"></i>
+          <span>Realizar inscrição</span>
+        </div>
+      </div>
+    </div>
+
+    <header class="main-header">
+      <div class="header-content">
+        <h1>Processo Seletivo</h1>
+        <p class="university-name">
+          ESTE É UM SITE ESPELHO, POR AQUI VOCÊ VAI APRENDER A REALIZAR AS
+          MATRÍCULAS DE GRADUAÇÃO
+        </p>
+        <img
+          src="images/uniunica-logo.png"
+          alt="Logo Uniúnica"
+          class="uniunica-logo"
+        />
+      </div>
+    </header>
+
+    <main class="main-content">
+      <div class="card">
+        <div class="card-left">
+          <h2 id="courseTitle">CURSOS EAD - Processo Seletivo II 2025/2</h2>
+          <p class="course-type" id="courseType">ÚNICA EAD</p>
+          <div class="enrollment-info" id="enrollmentInfo">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Inscrições: 23/06/2025 00:00:00 a 31/12/2025 23:59:59</span>
+          </div>
+          <div class="buttons">
+            <button class="btn btn-primary" id="candidateCenter">
+              <i class="fas fa-user-graduate"></i> Central do Candidato
+            </button>
+            <button class="btn btn-secondary" id="enrollButton">
+              <i class="fas fa-pencil-alt"></i> Fazer Inscrição
+            </button>
+          </div>
+        </div>
+        <div class="card-right">
+          <img
+            src="images/card-image.jpeg"
+            alt="Lâmpada com chapéu de formatura"
+            class="card-image"
+          />
+        </div>
+      </div>
+    </main>
+
+    <footer class="main-footer">
+      <img
+        src="images/pincel-atomico-logo.webp"
+        alt="Logo Pincel Atômico"
+        class="pincel-logo"
+      />
+    </footer>
+
+    <!-- Botão para reiniciar tutorial -->
+    <button id="restartTutorial" class="restart-tutorial-btn">
+      <i class="fas fa-redo"></i> Reiniciar Tutorial
+    </button>
+
+    <script src="script.js"></script>
+  </body>
+</html>

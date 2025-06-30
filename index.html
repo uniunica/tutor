@@ -3,189 +3,754 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tutorial - Processo Seletivo Uniúnica</title>
-    <link rel="stylesheet" href="style.css" />
-    <!-- Ícones: -->
+    <title>Tutor Interativo - Sistema de Treinamento</title>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
     />
-    <!-- Google Fonts: -->
     <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap"
     />
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      /* Partículas de fundo */
+      .particles {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        pointer-events: none;
+      }
+
+      .particle {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        animation: float 6s ease-in-out infinite;
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0px) rotate(0deg);
+        }
+        50% {
+          transform: translateY(-20px) rotate(180deg);
+        }
+      }
+
+      /* Container principal */
+      .container {
+        position: relative;
+        z-index: 2;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+      }
+
+      /* Header */
+      .header {
+        text-align: center;
+        margin-bottom: 50px;
+        animation: fadeInDown 1s ease;
+      }
+
+      .logo {
+        width: 120px;
+        height: 120px;
+        background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 30px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        animation: pulse 2s infinite;
+      }
+
+      .logo i {
+        font-size: 3.5em;
+        color: white;
+      }
+
+      .main-title {
+        font-size: 3.2em;
+        font-weight: 700;
+        color: white;
+        margin-bottom: 15px;
+        text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
+
+      .subtitle {
+        font-size: 1.3em;
+        color: rgba(255, 255, 255, 0.9);
+        font-weight: 300;
+        max-width: 600px;
+        margin: 0 auto;
+        line-height: 1.6;
+      }
+
+      /* Cards de opções */
+      .options-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 40px;
+        max-width: 1000px;
+        width: 100%;
+        animation: fadeInUp 1s ease 0.3s both;
+      }
+
+      .option-card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        padding: 40px 30px;
+        text-align: center;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .option-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.4),
+          transparent
+        );
+        transition: left 0.5s;
+      }
+
+      .option-card:hover::before {
+        left: 100%;
+      }
+
+      .option-card:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.15);
+      }
+
+      .card-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 25px;
+        font-size: 2.2em;
+        color: white;
+        transition: transform 0.3s ease;
+      }
+
+      .graduacao .card-icon {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+      }
+
+      .pos-graduacao .card-icon {
+        background: linear-gradient(135deg, #f093fb, #f5576c);
+      }
+
+      .option-card:hover .card-icon {
+        transform: scale(1.1) rotate(5deg);
+      }
+
+      .card-title {
+        font-size: 1.8em;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 15px;
+      }
+
+      .card-description {
+        font-size: 1.1em;
+        color: #7f8c8d;
+        line-height: 1.6;
+        margin-bottom: 25px;
+      }
+
+      .card-features {
+        list-style: none;
+        margin-bottom: 30px;
+      }
+
+      .card-features li {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+        font-size: 0.95em;
+        color: #34495e;
+      }
+
+      .card-features i {
+        margin-right: 12px;
+        color: #27ae60;
+        font-size: 1.1em;
+      }
+
+      .card-button {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        border-radius: 50px;
+        font-size: 1.1em;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        width: 100%;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .pos-graduacao .card-button {
+        background: linear-gradient(135deg, #f093fb, #f5576c);
+      }
+
+      .card-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      }
+
+      .card-button:active {
+        transform: translateY(0);
+      }
+
+      /* Footer */
+      .footer {
+        margin-top: 60px;
+        text-align: center;
+        animation: fadeIn 1s ease 0.6s both;
+      }
+
+      .footer-text {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 0.95em;
+        margin-bottom: 20px;
+      }
+
+      .social-links {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+      }
+
+      .social-link {
+        width: 50px;
+        height: 50px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+      }
+
+      .social-link:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-3px);
+      }
+
+      /* Animações */
+      @keyframes fadeInDown {
+        from {
+          opacity: 0;
+          transform: translateY(-30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+      }
+
+      /* Modal de loading */
+      .loading-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+      }
+
+      .loading-modal.active {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .loading-content {
+        background: white;
+        padding: 40px;
+        border-radius: 20px;
+        text-align: center;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      }
+
+      .loading-spinner {
+        width: 60px;
+        height: 60px;
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #667eea;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 20px;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .loading-text {
+        font-size: 1.2em;
+        color: #2c3e50;
+        font-weight: 500;
+      }
+
+      /* Responsividade */
+      @media (max-width: 768px) {
+        .main-title {
+          font-size: 2.5em;
+        }
+
+        .subtitle {
+          font-size: 1.1em;
+        }
+
+        .options-container {
+          grid-template-columns: 1fr;
+          gap: 30px;
+          max-width: 500px;
+        }
+
+        .option-card {
+          padding: 30px 25px;
+        }
+
+        .card-title {
+          font-size: 1.5em;
+        }
+
+        .card-description {
+          font-size: 1em;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .container {
+          padding: 15px;
+        }
+
+        .main-title {
+          font-size: 2em;
+        }
+
+        .subtitle {
+          font-size: 1em;
+        }
+
+        .option-card {
+          padding: 25px 20px;
+        }
+
+        .logo {
+          width: 100px;
+          height: 100px;
+        }
+
+        .logo i {
+          font-size: 3em;
+        }
+      }
+
+      /* Efeito de digitação */
+      .typing-effect {
+        border-right: 2px solid rgba(255, 255, 255, 0.8);
+        animation: blink 1s infinite;
+      }
+
+      @keyframes blink {
+        0%,
+        50% {
+          border-color: rgba(255, 255, 255, 0.8);
+        }
+        51%,
+        100% {
+          border-color: transparent;
+        }
+      }
+    </style>
   </head>
   <body>
-    <!-- Modal de Boas-vindas -->
-    <div id="welcomeModal" class="modal">
-      <div class="modal-content">
-        <div class="modal-header">
+    <!-- Partículas de fundo -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Modal de loading -->
+    <div class="loading-modal" id="loadingModal">
+      <div class="loading-content">
+        <div class="loading-spinner"></div>
+        <div class="loading-text" id="loadingText">Carregando tutorial...</div>
+      </div>
+    </div>
+
+    <div class="container">
+      <!-- Header -->
+      <header class="header">
+        <div class="logo">
           <i class="fas fa-graduation-cap"></i>
-          <h2>Bem-vindo ao Tutorial Interativo!</h2>
         </div>
-        <div class="modal-body">
-          <p>
-            Este é um <strong>site espelho</strong> criado especialmente para
-            ensinar nossos parceiros como realizar matrículas de graduação.
-          </p>
-          <p>
-            Você será guiado passo a passo através de um tutorial interativo
-            com:
-          </p>
-          <ul>
-            <li>
-              <i class="fas fa-mouse-pointer"></i> Cursor guiado interativo
-            </li>
-            <li>
-              <i class="fas fa-check-circle"></i> Checkins para próximas etapas
-            </li>
-            <li><i class="fas fa-info-circle"></i> Explicações detalhadas</li>
-            <li><i class="fas fa-hands-helping"></i> Dicas práticas</li>
-          </ul>
-          <div
-            style="
-              background: #e3f2fd;
-              padding: 15px;
-              border-radius: 8px;
-              margin: 15px 0;
-              border-left: 4px solid #2196f3;
-            "
-          >
-            <p><strong>💡 Navegação:</strong></p>
-            <p>
-              • Use as <strong>setas do teclado</strong> ou botões para
-              navegar<br />
-              • Pressione <strong>ESC</strong> para sair do tutorial<br />
-              • As caixas se posicionam automaticamente próximas aos elementos
-            </p>
-          </div>
-          <p><strong>Pronto para começar?</strong></p>
-        </div>
-        <div class="modal-footer">
-          <button id="startTutorial" class="btn btn-primary">
-            <i class="fas fa-play"></i> Iniciar Tutorial
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Overlay do Tutorial -->
-    <div id="tutorialOverlay" class="tutorial-overlay hidden">
-      <div class="tutorial-box">
-        <div class="tutorial-content">
-          <h3 id="tutorialTitle">Título do Passo</h3>
-          <p id="tutorialText">Descrição do passo atual</p>
-          <div class="tutorial-progress">
-            <span id="tutorialStep">1</span> de
-            <span id="tutorialTotal">5</span>
-          </div>
-        </div>
-        <div class="tutorial-actions">
-          <button id="prevStep" class="btn btn-secondary" disabled>
-            <i class="fas fa-arrow-left"></i> Anterior
-          </button>
-          <button id="nextStep" class="btn btn-primary">
-            Próximo <i class="fas fa-arrow-right"></i>
-          </button>
-          <button id="finishTutorial" class="btn btn-success hidden">
-            <i class="fas fa-check"></i> Finalizar
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Cursor Animado -->
-    <div id="animatedCursor" class="animated-cursor hidden">
-      <i class="fas fa-mouse-pointer"></i>
-    </div>
-
-    <!-- Highlight para elementos -->
-    <div id="highlight" class="highlight hidden"></div>
-
-    <!-- Painel de Progresso -->
-    <div id="progressPanel" class="progress-panel hidden">
-      <h4><i class="fas fa-tasks"></i> Seu Progresso</h4>
-      <div class="progress-items">
-        <div class="progress-item" data-step="1">
-          <i class="fas fa-circle"></i>
-          <span>Conhecer a interface</span>
-        </div>
-        <div class="progress-item" data-step="2">
-          <i class="fas fa-circle"></i>
-          <span>Entender informações do curso</span>
-        </div>
-        <div class="progress-item" data-step="3">
-          <i class="fas fa-circle"></i>
-          <span>Verificar período de inscrição</span>
-        </div>
-        <div class="progress-item" data-step="4">
-          <i class="fas fa-circle"></i>
-          <span>Acessar Central do Candidato</span>
-        </div>
-        <div class="progress-item" data-step="5">
-          <i class="fas fa-circle"></i>
-          <span>Realizar inscrição</span>
-        </div>
-      </div>
-    </div>
-
-    <header class="main-header">
-      <div class="header-content">
-        <h1>Processo Seletivo</h1>
-        <p class="university-name">
-          ESTE É UM SITE ESPELHO, POR AQUI VOCÊ VAI APRENDER A REALIZAR AS
-          MATRÍCULAS DE GRADUAÇÃO
+        <h1 class="main-title">
+          Bem-vindo ao
+          <span class="typing-effect" id="typingText">Tutor Interativo</span>
+        </h1>
+        <p class="subtitle">
+          Sistema completo de treinamento para parceiros. Aprenda de forma
+          prática e interativa como realizar matrículas e utilizar todas as
+          ferramentas disponíveis.
         </p>
-        <img
-          src="images/uniunica-logo.png"
-          alt="Logo Uniúnica"
-          class="uniunica-logo"
-        />
-      </div>
-    </header>
+      </header>
 
-    <main class="main-content">
-      <div class="card">
-        <div class="card-left">
-          <h2 id="courseTitle">CURSOS EAD - Processo Seletivo II 2025/2</h2>
-          <p class="course-type" id="courseType">ÚNICA EAD</p>
-          <div class="enrollment-info" id="enrollmentInfo">
-            <i class="fas fa-calendar-alt"></i>
-            <span>Inscrições: 23/06/2025 00:00:00 a 31/12/2025 23:59:59</span>
+      <!-- Opções principais -->
+      <main class="options-container">
+        <!-- Opção Graduação -->
+        <div class="option-card graduacao" onclick="navigateToGraduacao()">
+          <div class="card-icon">
+            <i class="fas fa-university"></i>
           </div>
-          <div class="buttons">
-            <button class="btn btn-primary" id="candidateCenter">
-              <i class="fas fa-user-graduate"></i> Central do Candidato
-            </button>
-            <button class="btn btn-secondary" id="enrollButton">
-              <i class="fas fa-pencil-alt"></i> Fazer Inscrição
-            </button>
+          <h2 class="card-title">Matrícula de Graduação</h2>
+          <p class="card-description">
+            Aprenda o processo completo de matrícula para cursos de graduação,
+            desde o preenchimento do formulário até a finalização.
+          </p>
+          <ul class="card-features">
+            <li><i class="fas fa-check"></i> Preenchimento de formulários</li>
+            <li><i class="fas fa-check"></i> Validação de dados</li>
+            <li><i class="fas fa-check"></i> Processo de inscrição</li>
+            <li><i class="fas fa-check"></i> Central do candidato</li>
+            <li><i class="fas fa-check"></i> Upload de documentos</li>
+          </ul>
+          <button class="card-button">
+            <i class="fas fa-play"></i> Iniciar Treinamento
+          </button>
+        </div>
+
+        <!-- Opção Pós-Graduação -->
+        <div
+          class="option-card pos-graduacao"
+          onclick="navigateToPortalParceiro()"
+        >
+          <div class="card-icon">
+            <i class="fas fa-briefcase"></i>
           </div>
+          <h2 class="card-title">Portal do Parceiro</h2>
+          <p class="card-description">
+            Domine o Portal do Parceiro para pós-graduação, segunda graduação,
+            EJA, aperfeiçoamento e cursos de extensão.
+          </p>
+          <ul class="card-features">
+            <li><i class="fas fa-check"></i> Navegação no portal</li>
+            <li><i class="fas fa-check"></i> Seleção de cursos</li>
+            <li><i class="fas fa-check"></i> Gestão de matrículas</li>
+            <li><i class="fas fa-check"></i> Sistema de vendas</li>
+            <li><i class="fas fa-check"></i> Relatórios e comissões</li>
+          </ul>
+          <button class="card-button">
+            <i class="fas fa-rocket"></i> Acessar Portal
+          </button>
         </div>
-        <div class="card-right">
-          <img
-            src="images/card-image.jpeg"
-            alt="Lâmpada com chapéu de formatura"
-            class="card-image"
-          />
+      </main>
+
+      <!-- Footer -->
+      <footer class="footer">
+        <p class="footer-text">
+          © 2024 Sistema de Treinamento - Desenvolvido para capacitação de
+          parceiros
+        </p>
+        <div class="social-links">
+          <a href="#" class="social-link" title="Suporte">
+            <i class="fas fa-headset"></i>
+          </a>
+          <a href="#" class="social-link" title="Documentação">
+            <i class="fas fa-book"></i>
+          </a>
+          <a href="#" class="social-link" title="Vídeos">
+            <i class="fas fa-play-circle"></i>
+          </a>
+          <a href="#" class="social-link" title="FAQ">
+            <i class="fas fa-question-circle"></i>
+          </a>
         </div>
-      </div>
-    </main>
+      </footer>
+    </div>
 
-    <footer class="main-footer">
-      <img
-        src="images/pincel-atomico-logo.webp"
-        alt="Logo Pincel Atômico"
-        class="pincel-logo"
-      />
-    </footer>
+    <script>
+      // Efeito de digitação
+      function typeWriter(element, text, speed = 100) {
+        let i = 0;
+        element.textContent = "";
 
-    <!-- Botão para reiniciar tutorial -->
-    <button id="restartTutorial" class="restart-tutorial-btn">
-      <i class="fas fa-redo"></i> Reiniciar Tutorial
-    </button>
+        function type() {
+          if (i < text.length) {
+            element.textContent += text.charAt(i);
+            i++;
+            setTimeout(type, speed);
+          } else {
+            // Manter o cursor piscando
+            element.classList.add("typing-effect");
+          }
+        }
+        type();
+      }
 
-    <script src="script.js"></script>
+      // Criar partículas de fundo
+      function createParticles() {
+        const particlesContainer = document.getElementById("particles");
+        const particleCount = 50;
+
+        for (let i = 0; i < particleCount; i++) {
+          const particle = document.createElement("div");
+          particle.className = "particle";
+
+          // Tamanho aleatório
+          const size = Math.random() * 6 + 2;
+          particle.style.width = size + "px";
+          particle.style.height = size + "px";
+
+          // Posição aleatória
+          particle.style.left = Math.random() * 100 + "%";
+          particle.style.top = Math.random() * 100 + "%";
+
+          // Duração de animação aleatória
+          particle.style.animationDuration = Math.random() * 3 + 3 + "s";
+          particle.style.animationDelay = Math.random() * 2 + "s";
+
+          particlesContainer.appendChild(particle);
+        }
+      }
+
+      // Mostrar modal de loading
+      function showLoading(text) {
+        const modal = document.getElementById("loadingModal");
+        const loadingText = document.getElementById("loadingText");
+        loadingText.textContent = text;
+        modal.classList.add("active");
+      }
+
+      // Esconder modal de loading
+      function hideLoading() {
+        const modal = document.getElementById("loadingModal");
+        modal.classList.remove("active");
+      }
+
+      // Navegação para graduação
+      function navigateToGraduacao() {
+        showLoading("Carregando tutorial de graduação...");
+
+        // Simular carregamento
+        setTimeout(() => {
+          window.location.href = "graduacao/index.html";
+        }, 1500);
+      }
+
+      // Navegação para portal do parceiro
+      function navigateToPortalParceiro() {
+        showLoading("Carregando Portal do Parceiro...");
+
+        // Simular carregamento
+        setTimeout(() => {
+          window.location.href = "portal-parceiro/portalparceiro.html";
+        }, 1500);
+      }
+
+      // Efeitos de hover nos cards
+      function addCardEffects() {
+        const cards = document.querySelectorAll(".option-card");
+
+        cards.forEach((card) => {
+          card.addEventListener("mouseenter", function () {
+            this.style.transform = "translateY(-10px) scale(1.02)";
+          });
+
+          card.addEventListener("mouseleave", function () {
+            this.style.transform = "translateY(0) scale(1)";
+          });
+        });
+      }
+
+      // Animação de entrada dos elementos
+      function animateElements() {
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.style.opacity = "1";
+              entry.target.style.transform = "translateY(0)";
+            }
+          });
+        });
+
+        const elements = document.querySelectorAll(".option-card");
+        elements.forEach((el) => {
+          el.style.opacity = "0";
+          el.style.transform = "translateY(30px)";
+          el.style.transition = "all 0.6s ease";
+          observer.observe(el);
+        });
+      }
+
+      // Efeito parallax nas partículas
+      function addParallaxEffect() {
+        window.addEventListener("mousemove", (e) => {
+          const particles = document.querySelectorAll(".particle");
+          const x = e.clientX / window.innerWidth;
+          const y = e.clientY / window.innerHeight;
+
+          particles.forEach((particle, index) => {
+            const speed = ((index % 5) + 1) * 0.5;
+            const xPos = (x - 0.5) * speed;
+            const yPos = (y - 0.5) * speed;
+
+            particle.style.transform = `translate(${xPos}px, ${yPos}px)`;
+          });
+        });
+      }
+
+      // Inicialização
+      document.addEventListener("DOMContentLoaded", function () {
+        // Criar partículas
+        createParticles();
+
+        // Iniciar efeito de digitação
+        setTimeout(() => {
+          const typingElement = document.getElementById("typingText");
+          typeWriter(typingElement, "Tutor Interativo", 150);
+        }, 1000);
+
+        // Adicionar efeitos
+        addCardEffects();
+        animateElements();
+        addParallaxEffect();
+
+        // Adicionar evento de teclado para navegação
+        document.addEventListener("keydown", function (e) {
+          if (e.key === "1") {
+            navigateToGraduacao();
+          } else if (e.key === "2") {
+            navigateToPortalParceiro();
+          }
+        });
+      });
+
+      // Efeito de clique nas redes sociais
+      document.querySelectorAll(".social-link").forEach((link) => {
+        link.addEventListener("click", function (e) {
+          e.preventDefault();
+
+          // Efeito de ripple
+          const ripple = document.createElement("div");
+          ripple.style.cssText = `
+                    position: absolute;
+                    border-radius: 50%;
+                    background: rgba(255, 255, 255, 0.6);
+                    transform: scale(0);
+                    animation: ripple 0.6s linear;
+                    pointer-events: none;
+                `;
+
+          const rect = this.getBoundingClientRect();
+          const size = Math.max(rect.width, rect.height);
+          ripple.style.width = ripple.style.height = size + "px";
+          ripple.style.left = e.clientX - rect.left - size / 2 + "px";
+          ripple.style.top = e.clientY - rect.top - size / 2 + "px";
+
+          this.appendChild(ripple);
+
+          setTimeout(() => {
+            ripple.remove();
+          }, 600);
+        });
+      });
+
+      // Adicionar estilo para animação de ripple
+      const style = document.createElement("style");
+      style.textContent = `
+            @keyframes ripple {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+        `;
+      document.head.appendChild(style);
+    </script>
   </body>
 </html>
