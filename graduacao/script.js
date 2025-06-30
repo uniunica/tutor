@@ -3,6 +3,7 @@ class TutorialManager {
     this.currentStep = 0;
     this.totalSteps = 5;
     this.isActive = false;
+    this.tutorialCompleted = false;
 
     this.steps = [
       {
@@ -105,8 +106,12 @@ class TutorialManager {
     this.hideWelcomeModal();
     this.isActive = true;
     this.currentStep = 0;
+    this.tutorialCompleted = false;
     this.showProgressPanel();
     this.showStep();
+
+    // Remover animação do botão se estiver ativa
+    this.deactivateEnrollButtonPulse();
   }
 
   showStep() {
@@ -323,6 +328,7 @@ class TutorialManager {
 
   finishTutorial() {
     this.isActive = false;
+    this.tutorialCompleted = true;
     document.getElementById("tutorialOverlay").classList.add("hidden");
     document.getElementById("highlight").classList.add("hidden");
     document.getElementById("animatedCursor").classList.add("hidden");
@@ -335,6 +341,52 @@ class TutorialManager {
 
     // Mostrar mensagem de conclusão
     this.showCompletionMessage();
+
+    // Ativar animação do botão após 3 segundos
+    setTimeout(() => {
+      this.activateEnrollButtonPulse();
+    }, 3000);
+  }
+
+  // Nova função para ativar a animação do botão
+  activateEnrollButtonPulse() {
+    const enrollButton = document.getElementById("enrollButton");
+    if (enrollButton && this.tutorialCompleted) {
+      enrollButton.classList.add("btn-pulse-active");
+
+      // Adicionar tooltip
+      const tooltip = document.createElement("div");
+      tooltip.className = "btn-pulse-tooltip";
+      tooltip.textContent = "👇 Clique aqui para fazer sua inscrição!";
+      enrollButton.style.position = "relative";
+      enrollButton.appendChild(tooltip);
+
+      // Remover animação após 30 segundos ou quando clicado
+      const removeAnimation = () => {
+        enrollButton.classList.remove("btn-pulse-active");
+        if (tooltip.parentNode) {
+          tooltip.remove();
+        }
+        enrollButton.removeEventListener("click", removeAnimation);
+      };
+
+      enrollButton.addEventListener("click", removeAnimation);
+
+      // Auto-remover após 60 segundos
+      setTimeout(removeAnimation, 60000);
+    }
+  }
+
+  // Nova função para desativar a animação do botão
+  deactivateEnrollButtonPulse() {
+    const enrollButton = document.getElementById("enrollButton");
+    if (enrollButton) {
+      enrollButton.classList.remove("btn-pulse-active");
+      const tooltip = enrollButton.querySelector(".btn-pulse-tooltip");
+      if (tooltip) {
+        tooltip.remove();
+      }
+    }
   }
 
   showCompletionMessage() {
@@ -356,6 +408,10 @@ class TutorialManager {
               <li>Pressione <strong>ESC</strong> para sair do tutorial</li>
               <li>As caixas de diálogo se posicionam automaticamente</li>
             </ul>
+          </div>
+          <div style="background: #fff3cd; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #ffc107;">
+            <p><strong>🎯 Próximo passo:</strong></p>
+            <p>Em alguns segundos, o botão <strong>"Fazer Inscrição"</strong> começará a piscar para indicar que você deve clicar nele!</p>
           </div>
           <p><strong>Próximos passos:</strong></p>
           <ul>
@@ -383,6 +439,8 @@ class TutorialManager {
   }
 
   restartTutorial() {
+    this.tutorialCompleted = false;
+    this.deactivateEnrollButtonPulse();
     this.hideProgressPanel();
     this.showWelcomeModal();
   }
