@@ -221,10 +221,11 @@ body::before {
 .modal-content {
   background: white;
   border-radius: 15px;
-  max-width: 500px;
+  max-width: 1000px;
   width: 90%;
   max-height: 80vh;
   overflow-y: auto;
+  -webkit-animation: slideIn 0.4s ease;
   animation: slideIn 0.4s ease;
 }
 
