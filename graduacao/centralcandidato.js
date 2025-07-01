@@ -1,3 +1,328 @@
+// ===== SISTEMA DE NARRAÇÃO DE VOZ =====
+class VoiceNarrator {
+  constructor() {
+    this.synth = window.speechSynthesis;
+    this.currentUtterance = null;
+    this.isPlaying = false;
+    this.isPaused = false;
+    this.voices = [];
+    this.settings = {
+      voice: null,
+      rate: 1,
+      pitch: 1,
+      volume: 0.8,
+    };
+
+    // Textos de narração para cada passo do tutorial
+    this.stepNarrations = {
+      welcome:
+        "Bem-vindo à Central do Candidato! Aqui você aprenderá como navegar nesta ferramenta essencial. Você vai aprender a fazer login na central, visualizar dados pessoais dos candidatos, conferir informações do curso, acompanhar envio de documentos, e verificar status da inscrição. IMPORTANTE: Esta é a área mais importante para o candidato acompanhar seu processo!",
+
+      step0:
+        "Para acessar a Central do Candidato, é necessário informar CPF e data de nascimento. Estes dados foram fornecidos durante a inscrição. Fique atento sempre a colocar o CPF e a data de nascimento correta no ato da matrícula para não ocorrer problema no acesso a central do candidato.",
+
+      step1:
+        "Aqui o candidato pode visualizar todos os dados pessoais informados durante a inscrição. Verifique se estão corretos. Se houver algum erro, gentileza entrar em contato com o seu consultor para realizar a correção.",
+
+      step2:
+        "Esta seção mostra o curso escolhido, modalidade e polo de estudo. Informações importantes para confirmação. Essas informações são fundamentais para o candidato confirmar sua escolha antes de prosseguir.",
+
+      step3:
+        "Aqui o candidato acompanha o envio e análise de documentos necessários para o processo seletivo. Status 'Aguardando Envio' significa que o candidato ainda precisa enviar os documentos.",
+
+      step4:
+        "Área para envio de documentos. O candidato pode fazer upload dos arquivos necessários diretamente pelo sistema. Aceita formatos: PDF, JPG, PNG, DOC, DOCX. Tamanho máximo por arquivo: 5MB.",
+
+      completion:
+        "Parabéns! Você dominou a Central do Candidato! Agora você sabe como orientar candidatos sobre como fazer login na central, verificar dados pessoais, acompanhar informações do curso, monitorar status de documentos, e fazer upload de arquivos para o processo seletivo. Use as setas do teclado para navegar no tutorial, pressione ESC para sair, e as caixas se posicionam automaticamente próximas aos elementos. Pratique orientando candidatos sobre o acesso, ajude no envio correto de documentos, acompanhe o status dos processos seletivos, e oriente sobre prazos e procedimentos. A Central do Candidato é a ferramenta mais importante para acompanhamento do processo seletivo!",
+    };
+
+    this.init();
+  }
+
+  init() {
+    this.loadVoices();
+    this.bindEvents();
+    this.setupVoiceControls();
+  }
+
+  loadVoices() {
+    const loadVoicesInterval = setInterval(() => {
+      this.voices = this.synth.getVoices();
+
+      if (this.voices.length > 0) {
+        clearInterval(loadVoicesInterval);
+        this.populateVoiceSelect();
+        this.selectBestPortugueseVoice();
+      }
+    }, 100);
+  }
+
+  populateVoiceSelect() {
+    const voiceSelect = document.getElementById("voiceSelect");
+    if (!voiceSelect) return;
+
+    voiceSelect.innerHTML = "";
+
+    // Filtrar vozes em português primeiro
+    const portugueseVoices = this.voices.filter(
+      (voice) =>
+        voice.lang.includes("pt") ||
+        voice.name.toLowerCase().includes("portuguese")
+    );
+
+    // Se não houver vozes em português, usar todas
+    const voicesToShow =
+      portugueseVoices.length > 0 ? portugueseVoices : this.voices;
+
+    voicesToShow.forEach((voice, index) => {
+      const option = document.createElement("option");
+      option.value = this.voices.indexOf(voice);
+      option.textContent = `${voice.name} (${voice.lang})`;
+      voiceSelect.appendChild(option);
+    });
+  }
+
+  selectBestPortugueseVoice() {
+    // Tentar encontrar a melhor voz em português
+    const portugueseVoice = this.voices.find(
+      (voice) =>
+        voice.lang.includes("pt-BR") ||
+        voice.lang.includes("pt") ||
+        voice.name.toLowerCase().includes("portuguese")
+    );
+
+    if (portugueseVoice) {
+      this.settings.voice = portugueseVoice;
+      const voiceIndex = this.voices.indexOf(portugueseVoice);
+      const voiceSelect = document.getElementById("voiceSelect");
+      if (voiceSelect) voiceSelect.value = voiceIndex;
+    } else {
+      // Usar a primeira voz disponível
+      this.settings.voice = this.voices[0];
+    }
+  }
+
+  bindEvents() {
+    // Controles de voz
+    const playBtn = document.getElementById("playVoiceBtn");
+    const pauseBtn = document.getElementById("pauseVoiceBtn");
+    const stopBtn = document.getElementById("stopVoiceBtn");
+    const settingsBtn = document.getElementById("settingsBtn");
+
+    if (playBtn)
+      playBtn.addEventListener("click", () => this.togglePlayPause());
+    if (pauseBtn)
+      pauseBtn.addEventListener("click", () => this.pauseNarration());
+    if (stopBtn) stopBtn.addEventListener("click", () => this.stopNarration());
+    if (settingsBtn)
+      settingsBtn.addEventListener("click", () => this.toggleSettings());
+
+    // Configurações
+    const voiceSelect = document.getElementById("voiceSelect");
+    const speedRange = document.getElementById("speedRange");
+    const pitchRange = document.getElementById("pitchRange");
+    const volumeRange = document.getElementById("volumeRange");
+
+    if (voiceSelect) {
+      voiceSelect.addEventListener("change", (e) => {
+        this.settings.voice = this.voices[e.target.value];
+      });
+    }
+
+    if (speedRange) {
+      speedRange.addEventListener("input", (e) => {
+        this.settings.rate = parseFloat(e.target.value);
+        document.getElementById(
+          "speedDisplay"
+        ).textContent = `${e.target.value}x`;
+      });
+    }
+
+    if (pitchRange) {
+      pitchRange.addEventListener("input", (e) => {
+        this.settings.pitch = parseFloat(e.target.value);
+        document.getElementById(
+          "pitchDisplay"
+        ).textContent = `${e.target.value}x`;
+      });
+    }
+
+    if (volumeRange) {
+      volumeRange.addEventListener("input", (e) => {
+        this.settings.volume = parseFloat(e.target.value);
+        document.getElementById("volumeDisplay").textContent = `${Math.round(
+          e.target.value * 100
+        )}%`;
+      });
+    }
+
+    // Fechar configurações ao clicar fora
+    document.addEventListener("click", (e) => {
+      const settings = document.getElementById("voiceSettings");
+      const settingsBtn = document.getElementById("settingsBtn");
+
+      if (
+        settings &&
+        settingsBtn &&
+        !settings.contains(e.target) &&
+        !settingsBtn.contains(e.target)
+      ) {
+        settings.classList.remove("active");
+      }
+    });
+  }
+
+  setupVoiceControls() {
+    // Mostrar controles após um delay
+    setTimeout(() => {
+      const voiceControls = document.getElementById("voiceControls");
+      if (voiceControls) {
+        voiceControls.classList.add("active");
+      }
+    }, 1000);
+  }
+
+  speak(text, onEnd = null) {
+    if (this.synth.speaking) {
+      this.synth.cancel();
+    }
+
+    this.currentUtterance = new SpeechSynthesisUtterance(text);
+    this.currentUtterance.voice = this.settings.voice;
+    this.currentUtterance.rate = this.settings.rate;
+    this.currentUtterance.pitch = this.settings.pitch;
+    this.currentUtterance.volume = this.settings.volume;
+
+    this.currentUtterance.onstart = () => {
+      this.isPlaying = true;
+      this.isPaused = false;
+      this.showVoiceIndicator();
+      this.updatePlayButton();
+    };
+
+    this.currentUtterance.onend = () => {
+      this.isPlaying = false;
+      this.isPaused = false;
+      this.hideVoiceIndicator();
+      this.updatePlayButton();
+      if (onEnd) onEnd();
+    };
+
+    this.currentUtterance.onerror = () => {
+      this.isPlaying = false;
+      this.isPaused = false;
+      this.hideVoiceIndicator();
+      this.updatePlayButton();
+    };
+
+    this.synth.speak(this.currentUtterance);
+  }
+
+  togglePlayPause() {
+    if (this.isPaused && this.synth.paused) {
+      this.synth.resume();
+      this.isPaused = false;
+      this.isPlaying = true;
+      this.showVoiceIndicator();
+    } else if (this.isPlaying && this.synth.speaking) {
+      this.synth.pause();
+      this.isPaused = true;
+      this.isPlaying = false;
+      this.hideVoiceIndicator();
+    } else {
+      // Reproduzir narração do passo atual
+      this.narrateCurrentStep();
+    }
+    this.updatePlayButton();
+  }
+
+  pauseNarration() {
+    if (this.isPlaying && this.synth.speaking) {
+      this.synth.pause();
+      this.isPaused = true;
+      this.isPlaying = false;
+      this.hideVoiceIndicator();
+      this.updatePlayButton();
+    }
+  }
+
+  stopNarration() {
+    if (this.synth.speaking) {
+      this.synth.cancel();
+    }
+    this.isPlaying = false;
+    this.isPaused = false;
+    this.hideVoiceIndicator();
+    this.updatePlayButton();
+  }
+
+  toggleSettings() {
+    const settings = document.getElementById("voiceSettings");
+    if (settings) {
+      settings.classList.toggle("active");
+    }
+  }
+
+  showVoiceIndicator() {
+    const indicator = document.getElementById("voiceIndicator");
+    if (indicator) {
+      indicator.classList.add("active");
+    }
+  }
+
+  hideVoiceIndicator() {
+    const indicator = document.getElementById("voiceIndicator");
+    if (indicator) {
+      indicator.classList.remove("active");
+    }
+  }
+
+  updatePlayButton() {
+    const playBtn = document.getElementById("playVoiceBtn");
+    if (!playBtn) return;
+
+    const playIcon = playBtn.querySelector("i");
+
+    if (this.isPlaying) {
+      playBtn.classList.add("active");
+      playIcon.className = "fas fa-pause";
+      playBtn.title = "Pausar narração";
+    } else {
+      playBtn.classList.remove("active");
+      playIcon.className = "fas fa-play";
+      playBtn.title = "Reproduzir narração";
+    }
+  }
+
+  // Método para narrar passo específico
+  narrateStep(stepKey) {
+    if (this.stepNarrations[stepKey]) {
+      this.speak(this.stepNarrations[stepKey]);
+    }
+  }
+
+  // Método para narrar o passo atual do tutorial
+  narrateCurrentStep() {
+    if (window.tutorialManager) {
+      const currentStep = window.tutorialManager.currentStep;
+      const stepKey = `step${currentStep}`;
+      this.narrateStep(stepKey);
+    }
+  }
+
+  // Método para narrar boas-vindas
+  narrateWelcome() {
+    this.narrateStep("welcome");
+  }
+
+  // Método para narrar conclusão
+  narrateCompletion() {
+    this.narrateStep("completion");
+  }
+}
+
+// ===== TUTORIAL MANAGER COM INTEGRAÇÃO DE VOZ =====
 class CentralCandidatoTutorialManager {
   constructor() {
     this.currentStep = 0;
@@ -246,6 +571,13 @@ class CentralCandidatoTutorialManager {
   showWelcomeModal() {
     document.getElementById("welcomeModal").style.display = "flex";
     this.blockScroll();
+
+    // Narrar boas-vindas após um delay
+    setTimeout(() => {
+      if (window.voiceNarrator) {
+        window.voiceNarrator.narrateWelcome();
+      }
+    }, 1500);
   }
 
   hideWelcomeModal() {
@@ -259,6 +591,14 @@ class CentralCandidatoTutorialManager {
     this.currentStep = 0;
     this.showProgressPanel();
     this.showStep();
+
+    // Parar narração de boas-vindas e iniciar narração do primeiro passo
+    if (window.voiceNarrator) {
+      window.voiceNarrator.stopNarration();
+      setTimeout(() => {
+        window.voiceNarrator.narrateCurrentStep();
+      }, 1000);
+    }
   }
 
   showStep() {
@@ -363,6 +703,16 @@ class CentralCandidatoTutorialManager {
         this.addHoverEffect(step.target);
       },
       this.currentStep === 1 ? 2500 : 1200
+    );
+
+    // SÉTIMO: Narrar o passo atual após todos os ajustes
+    setTimeout(
+      () => {
+        if (window.voiceNarrator && this.isActive) {
+          window.voiceNarrator.narrateCurrentStep();
+        }
+      },
+      this.currentStep === 1 ? 3000 : 1500
     );
   }
 
@@ -676,6 +1026,14 @@ class CentralCandidatoTutorialManager {
     // IMPORTANTE: Desbloquear scroll quando finalizar tutorial
     this.unblockScroll();
 
+    // Parar narração atual e narrar conclusão
+    if (window.voiceNarrator) {
+      window.voiceNarrator.stopNarration();
+      setTimeout(() => {
+        window.voiceNarrator.narrateCompletion();
+      }, 500);
+    }
+
     this.showCompletionMessage();
   }
 
@@ -799,6 +1157,11 @@ class CentralCandidatoTutorialManager {
     this.showAlert("Logout realizado com sucesso!", "info");
     this.showLoginScreen();
     this.isLoggedIn = false;
+
+    // Parar narração se estiver ativa
+    if (window.voiceNarrator) {
+      window.voiceNarrator.stopNarration();
+    }
   }
 
   showLoginScreen() {
@@ -881,6 +1244,12 @@ class CentralCandidatoTutorialManager {
     this.hideProgressPanel();
     this.showLoginScreen();
     this.isLoggedIn = false;
+
+    // Parar narração atual
+    if (window.voiceNarrator) {
+      window.voiceNarrator.stopNarration();
+    }
+
     this.showWelcomeModal();
   }
 
@@ -893,12 +1262,16 @@ class CentralCandidatoTutorialManager {
   }
 }
 
-// Inicializar quando a página carregar
+// ===== INICIALIZAÇÃO =====
 document.addEventListener("DOMContentLoaded", () => {
-  new CentralCandidatoTutorialManager();
+  // Inicializar sistema de voz
+  window.voiceNarrator = new VoiceNarrator();
+
+  // Inicializar tutorial manager
+  window.tutorialManager = new CentralCandidatoTutorialManager();
 });
 
-// Adicionar estilos para animações de alerta (versão expandida)
+// ===== ESTILOS ADICIONAIS =====
 const alertStyles = document.createElement("style");
 alertStyles.textContent = `
   @keyframes slideInRight {
@@ -944,27 +1317,22 @@ alertStyles.textContent = `
     height: 0;
     border-left: 10px solid transparent;
     border-right: 10px solid transparent;
-    border-top: 10px solid #7c4dff;
+    border-top: 10px solid #6e00a8;
   }
 
   /* Melhorar visibilidade do tutorial box no upload */
   .tutorial-box.position-top {
-    box-shadow: 0 -4px 20px rgba(124, 77, 255, 0.3);
+    box-shadow: 0 -4px 20px rgba(110, 0, 168, 0.3);
   }
 
   .tutorial-box.position-center {
-    box-shadow: 0 8px 30px rgba(124, 77, 255, 0.4);
-    border: 3px solid #7c4dff;
+    box-shadow: 0 8px 30px rgba(110, 0, 168, 0.4);
+    border: 3px solid #6e00a8;
   }
 `;
 document.head.appendChild(alertStyles);
 
-// Resto das classes permanecem iguais (FormValidator, ContextualTips, etc.)
-// ... [resto do código permanece igual]
-// Resto das classes permanecem iguais...
-// (FormValidator, ContextualTips, DataSimulator, etc.)
-
-// Funcionalidades adicionais para melhorar a experiência
+// ===== FUNCIONALIDADES ADICIONAIS =====
 document.addEventListener("DOMContentLoaded", () => {
   // Adicionar efeitos visuais nos campos de input
   const inputs = document.querySelectorAll(
@@ -997,7 +1365,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-// Sistema de validação aprimorado
+// ===== SISTEMA DE VALIDAÇÃO =====
 class FormValidator {
   constructor() {
     this.rules = {
@@ -1059,10 +1427,7 @@ class FormValidator {
   }
 }
 
-// Inicializar validador
-const formValidator = new FormValidator();
-
-// Sistema de dicas contextuais
+// ===== SISTEMA DE DICAS CONTEXTUAIS =====
 class ContextualTips {
   constructor() {
     this.tips = {
@@ -1127,12 +1492,7 @@ class ContextualTips {
   }
 }
 
-// Inicializar sistema de dicas
-document.addEventListener("DOMContentLoaded", () => {
-  new ContextualTips();
-});
-
-// Sistema de simulação de dados realistas
+// ===== SISTEMA DE SIMULAÇÃO DE DADOS =====
 class DataSimulator {
   constructor() {
     this.candidateData = {
@@ -1197,93 +1557,25 @@ class DataSimulator {
   }
 }
 
-// Sistema de notificações em tempo real
-class RealTimeNotifications {
-  constructor() {
-    this.notifications = [
-      {
-        type: "info",
-        message: "Novo documento disponível para download",
-        delay: 5000,
-      },
-      {
-        type: "success",
-        message: "Documento aprovado pela análise",
-        delay: 10000,
-      },
-      {
-        type: "warning",
-        message: "Prazo para envio de documentos: 5 dias",
-        delay: 15000,
-      },
-    ];
+// ===== INICIALIZAÇÃO DOS SISTEMAS AUXILIARES =====
+document.addEventListener("DOMContentLoaded", () => {
+  const formValidator = new FormValidator();
+  new ContextualTips();
 
-    this.init();
-  }
+  // Inicializar simulador de dados
+  const dataSimulator = new DataSimulator();
 
-  init() {
-    // Simular notificações apenas se estiver na tela da central
-    setTimeout(() => {
-      if (
-        !document.getElementById("centralScreen").classList.contains("hidden")
-      ) {
-        this.startNotifications();
-      }
-    }, 3000);
-  }
+  // Atualizar dados após login simulado
+  setTimeout(() => {
+    if (
+      !document.getElementById("centralScreen").classList.contains("hidden")
+    ) {
+      dataSimulator.updateCandidateData();
+    }
+  }, 2000);
+});
 
-  startNotifications() {
-    this.notifications.forEach((notification, index) => {
-      setTimeout(() => {
-        this.showNotification(notification);
-      }, notification.delay + index * 2000);
-    });
-  }
-
-  showNotification(notification) {
-    const notifDiv = document.createElement("div");
-    notifDiv.style.cssText = `
-      position: fixed;
-      top: ${20 + document.querySelectorAll(".notification").length * 70}px;
-      right: 20px;
-      background: white;
-      border-left: 4px solid #6e00a8;
-      padding: 15px;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      max-width: 300px;
-      z-index: 1001;
-      animation: slideInRight 0.3s ease;
-    `;
-
-    notifDiv.className = "notification";
-    notifDiv.innerHTML = `
-      <div style="display: flex; align-items: center; gap: 10px;">
-        <i class="fas fa-bell" style="color: #6e00a8;"></i>
-        <span style="flex: 1; font-size: 0.9em;">${notification.message}</span>
-        <button onclick="this.closest('.notification').remove()" style="
-          background: none;
-          border: none;
-          font-size: 1.2em;
-          cursor: pointer;
-          opacity: 0.7;
-        ">&times;</button>
-      </div>
-    `;
-
-    document.body.appendChild(notifDiv);
-
-    // Auto-remover após 8 segundos
-    setTimeout(() => {
-      if (notifDiv.parentNode) {
-        notifDiv.style.animation = "slideOutRight 0.3s ease";
-        setTimeout(() => notifDiv.remove(), 300);
-      }
-    }, 8000);
-  }
-}
-
-// Funcionalidades de acessibilidade
+// ===== RECURSOS DE ACESSIBILIDADE =====
 class AccessibilityFeatures {
   constructor() {
     this.init();
@@ -1300,7 +1592,7 @@ class AccessibilityFeatures {
       // ESC para fechar modais
       if (e.key === "Escape") {
         const modal = document.querySelector(".modal");
-        if (modal) {
+        if (modal && !window.tutorialManager?.isActive) {
           modal.style.display = "none";
         }
       }
@@ -1379,100 +1671,18 @@ document.addEventListener("DOMContentLoaded", () => {
   new AccessibilityFeatures();
 });
 
-// Sistema de analytics simulado para acompanhar uso do tutorial
-class TutorialAnalytics {
-  constructor() {
-    this.events = [];
-    this.startTime = Date.now();
-  }
-
-  trackEvent(eventName, data = {}) {
-    this.events.push({
-      event: eventName,
-      timestamp: Date.now(),
-      data: data,
-    });
-
-    console.log(`📊 Analytics: ${eventName}`, data);
-  }
-
-  trackTutorialCompletion(timeSpent, stepsCompleted) {
-    this.trackEvent("tutorial_completed", {
-      timeSpent: timeSpent,
-      stepsCompleted: stepsCompleted,
-      completionRate: (stepsCompleted / 5) * 100,
-    });
-  }
-
-  trackUserInteraction(element, action) {
-    this.trackEvent("user_interaction", {
-      element: element,
-      action: action,
-    });
-  }
-
-  generateReport() {
-    const totalTime = Date.now() - this.startTime;
-    const report = {
-      totalEvents: this.events.length,
-      sessionDuration: totalTime,
-      events: this.events,
-    };
-
-    console.log("📈 Tutorial Analytics Report:", report);
-    return report;
-  }
-}
-
-// Inicializar analytics
-const analytics = new TutorialAnalytics();
-
-// Integração com o sistema de tutorial existente
-document.addEventListener("DOMContentLoaded", () => {
-  // Rastrear início do tutorial
-  const originalStartTutorial =
-    CentralCandidatoTutorialManager.prototype.startTutorial;
-  CentralCandidatoTutorialManager.prototype.startTutorial = function () {
-    analytics.trackEvent("tutorial_started");
-    originalStartTutorial.call(this);
-  };
-
-  // Rastrear conclusão do tutorial
-  const originalFinishTutorial =
-    CentralCandidatoTutorialManager.prototype.finishTutorial;
-  CentralCandidatoTutorialManager.prototype.finishTutorial = function () {
-    analytics.trackTutorialCompletion(
-      Date.now() - analytics.startTime,
-      this.totalSteps
-    );
-    originalFinishTutorial.call(this);
-  };
-});
-
 // Função para demonstrar funcionalidades avançadas
 function demonstrateAdvancedFeatures() {
-  console.log("🚀 Funcionalidades Avançadas Ativadas:");
+  console.log("🚀 Central do Candidato - Funcionalidades Ativadas:");
+  console.log("✅ Sistema de narração de voz integrado");
+  console.log("✅ Tutorial guiado interativo");
   console.log("✅ Sistema de validação de formulários");
   console.log("✅ Dicas contextuais");
   console.log("✅ Simulação de dados realistas");
-  console.log("✅ Notificações em tempo real");
   console.log("✅ Recursos de acessibilidade");
-  console.log("✅ Analytics de tutorial");
   console.log("✅ Scroll inteligente durante tutorial");
   console.log("✅ Posicionamento automático de elementos");
-
-  // Inicializar simulador de dados e notificações
-  const dataSimulator = new DataSimulator();
-  const notifications = new RealTimeNotifications();
-
-  // Atualizar dados após login simulado
-  setTimeout(() => {
-    if (
-      !document.getElementById("centralScreen").classList.contains("hidden")
-    ) {
-      dataSimulator.updateCandidateData();
-    }
-  }, 2000);
+  console.log("✅ Controles de voz com configurações avançadas");
 }
 
 // Executar demonstração
