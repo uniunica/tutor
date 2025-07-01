@@ -1,3 +1,328 @@
+// ===== SISTEMA DE NARRAÇÃO DE VOZ =====
+class VoiceNarrator {
+  constructor() {
+    this.synth = window.speechSynthesis;
+    this.currentUtterance = null;
+    this.isPlaying = false;
+    this.isPaused = false;
+    this.voices = [];
+    this.settings = {
+      voice: null,
+      rate: 1,
+      pitch: 1,
+      volume: 0.8,
+    };
+
+    // Textos de narração para cada passo do tutorial
+    this.stepNarrations = {
+      welcome:
+        "Bem-vindo ao tutorial interativo de graduação! Este é um site espelho criado especialmente para ensinar nossos parceiros como realizar matrículas de graduação. Você será guiado passo a passo através de um tutorial interativo com cursor guiado, explicações detalhadas e dicas práticas. Use as setas do teclado ou botões para navegar, e pressione ESC para sair do tutorial. Pronto para começar?",
+
+      step0:
+        "Bem-vindo, parceiro! Esta é a página principal do processo seletivo. Aqui você encontra informações introdutórias sobre o processo de matrícula dos cursos de graduação disponíveis. Esta interface é similar ao site real que você usará para fazer as matrículas.",
+
+      step1:
+        "Aqui você pode ver o tipo de curso e o processo seletivo atual do semestre. Note que está escrito 'CURSOS EAD - Processo Seletivo II 2025/2' e 'ÚNICA EAD'. Essas informações são importantes para identificar qual modalidade e instituição você está matriculando o aluno.",
+
+      step2:
+        "Esta seção mostra o período exato em que as inscrições estão abertas. Sempre verifique estas datas! No exemplo, as inscrições vão de 23 de junho de 2025 às 00:00 até 31 de dezembro de 2025 às 23:59. É fundamental verificar se o período está ativo antes de tentar fazer uma matrícula.",
+
+      step3:
+        "Use este botão para acessar informações da central do candidato, acompanhar status de inscrições e muito mais. A Central do Candidato é onde o aluno pode verificar o andamento de sua inscrição, fazer upload de documentos e acompanhar todo o processo seletivo.",
+
+      step4:
+        "Este é o botão principal! Clique aqui para iniciar uma nova inscrição no processo seletivo. Este botão te levará para o formulário de matrícula onde você preencherá todos os dados do aluno. Vamos experimentar clicar nele!",
+
+      completion:
+        "Parabéns! Você concluiu o tutorial com sucesso! Agora você já sabe como navegar pela página inicial de inscrições. Lembre-se: use as setas do teclado para navegar no tutorial, pressione ESC para sair, e as caixas de diálogo se posicionam automaticamente. Em alguns segundos, o botão 'Fazer Inscrição' começará a piscar para indicar que você deve clicar nele! Os próximos passos são: acessar a Central do Candidato, clicar em 'Fazer Inscrição' para realizar uma matrícula, e sempre verificar os prazos de inscrição.",
+    };
+
+    this.init();
+  }
+
+  init() {
+    this.loadVoices();
+    this.bindEvents();
+    this.setupVoiceControls();
+  }
+
+  loadVoices() {
+    const loadVoicesInterval = setInterval(() => {
+      this.voices = this.synth.getVoices();
+
+      if (this.voices.length > 0) {
+        clearInterval(loadVoicesInterval);
+        this.populateVoiceSelect();
+        this.selectBestPortugueseVoice();
+      }
+    }, 100);
+  }
+
+  populateVoiceSelect() {
+    const voiceSelect = document.getElementById("voiceSelect");
+    if (!voiceSelect) return;
+
+    voiceSelect.innerHTML = "";
+
+    // Filtrar vozes em português primeiro
+    const portugueseVoices = this.voices.filter(
+      (voice) =>
+        voice.lang.includes("pt") ||
+        voice.name.toLowerCase().includes("portuguese")
+    );
+
+    // Se não houver vozes em português, usar todas
+    const voicesToShow =
+      portugueseVoices.length > 0 ? portugueseVoices : this.voices;
+
+    voicesToShow.forEach((voice, index) => {
+      const option = document.createElement("option");
+      option.value = this.voices.indexOf(voice);
+      option.textContent = `${voice.name} (${voice.lang})`;
+      voiceSelect.appendChild(option);
+    });
+  }
+
+  selectBestPortugueseVoice() {
+    // Tentar encontrar a melhor voz em português
+    const portugueseVoice = this.voices.find(
+      (voice) =>
+        voice.lang.includes("pt-BR") ||
+        voice.lang.includes("pt") ||
+        voice.name.toLowerCase().includes("portuguese")
+    );
+
+    if (portugueseVoice) {
+      this.settings.voice = portugueseVoice;
+      const voiceIndex = this.voices.indexOf(portugueseVoice);
+      const voiceSelect = document.getElementById("voiceSelect");
+      if (voiceSelect) voiceSelect.value = voiceIndex;
+    } else {
+      // Usar a primeira voz disponível
+      this.settings.voice = this.voices[0];
+    }
+  }
+
+  bindEvents() {
+    // Controles de voz
+    const playBtn = document.getElementById("playVoiceBtn");
+    const pauseBtn = document.getElementById("pauseVoiceBtn");
+    const stopBtn = document.getElementById("stopVoiceBtn");
+    const settingsBtn = document.getElementById("settingsBtn");
+
+    if (playBtn)
+      playBtn.addEventListener("click", () => this.togglePlayPause());
+    if (pauseBtn)
+      pauseBtn.addEventListener("click", () => this.pauseNarration());
+    if (stopBtn) stopBtn.addEventListener("click", () => this.stopNarration());
+    if (settingsBtn)
+      settingsBtn.addEventListener("click", () => this.toggleSettings());
+
+    // Configurações
+    const voiceSelect = document.getElementById("voiceSelect");
+    const speedRange = document.getElementById("speedRange");
+    const pitchRange = document.getElementById("pitchRange");
+    const volumeRange = document.getElementById("volumeRange");
+
+    if (voiceSelect) {
+      voiceSelect.addEventListener("change", (e) => {
+        this.settings.voice = this.voices[e.target.value];
+      });
+    }
+
+    if (speedRange) {
+      speedRange.addEventListener("input", (e) => {
+        this.settings.rate = parseFloat(e.target.value);
+        document.getElementById(
+          "speedDisplay"
+        ).textContent = `${e.target.value}x`;
+      });
+    }
+
+    if (pitchRange) {
+      pitchRange.addEventListener("input", (e) => {
+        this.settings.pitch = parseFloat(e.target.value);
+        document.getElementById(
+          "pitchDisplay"
+        ).textContent = `${e.target.value}x`;
+      });
+    }
+
+    if (volumeRange) {
+      volumeRange.addEventListener("input", (e) => {
+        this.settings.volume = parseFloat(e.target.value);
+        document.getElementById("volumeDisplay").textContent = `${Math.round(
+          e.target.value * 100
+        )}%`;
+      });
+    }
+
+    // Fechar configurações ao clicar fora
+    document.addEventListener("click", (e) => {
+      const settings = document.getElementById("voiceSettings");
+      const settingsBtn = document.getElementById("settingsBtn");
+
+      if (
+        settings &&
+        settingsBtn &&
+        !settings.contains(e.target) &&
+        !settingsBtn.contains(e.target)
+      ) {
+        settings.classList.remove("active");
+      }
+    });
+  }
+
+  setupVoiceControls() {
+    // Mostrar controles após um delay
+    setTimeout(() => {
+      const voiceControls = document.getElementById("voiceControls");
+      if (voiceControls) {
+        voiceControls.classList.add("active");
+      }
+    }, 1000);
+  }
+
+  speak(text, onEnd = null) {
+    if (this.synth.speaking) {
+      this.synth.cancel();
+    }
+
+    this.currentUtterance = new SpeechSynthesisUtterance(text);
+    this.currentUtterance.voice = this.settings.voice;
+    this.currentUtterance.rate = this.settings.rate;
+    this.currentUtterance.pitch = this.settings.pitch;
+    this.currentUtterance.volume = this.settings.volume;
+
+    this.currentUtterance.onstart = () => {
+      this.isPlaying = true;
+      this.isPaused = false;
+      this.showVoiceIndicator();
+      this.updatePlayButton();
+    };
+
+    this.currentUtterance.onend = () => {
+      this.isPlaying = false;
+      this.isPaused = false;
+      this.hideVoiceIndicator();
+      this.updatePlayButton();
+      if (onEnd) onEnd();
+    };
+
+    this.currentUtterance.onerror = () => {
+      this.isPlaying = false;
+      this.isPaused = false;
+      this.hideVoiceIndicator();
+      this.updatePlayButton();
+    };
+
+    this.synth.speak(this.currentUtterance);
+  }
+
+  togglePlayPause() {
+    if (this.isPaused && this.synth.paused) {
+      this.synth.resume();
+      this.isPaused = false;
+      this.isPlaying = true;
+      this.showVoiceIndicator();
+    } else if (this.isPlaying && this.synth.speaking) {
+      this.synth.pause();
+      this.isPaused = true;
+      this.isPlaying = false;
+      this.hideVoiceIndicator();
+    } else {
+      // Reproduzir narração do passo atual
+      this.narrateCurrentStep();
+    }
+    this.updatePlayButton();
+  }
+
+  pauseNarration() {
+    if (this.isPlaying && this.synth.speaking) {
+      this.synth.pause();
+      this.isPaused = true;
+      this.isPlaying = false;
+      this.hideVoiceIndicator();
+      this.updatePlayButton();
+    }
+  }
+
+  stopNarration() {
+    if (this.synth.speaking) {
+      this.synth.cancel();
+    }
+    this.isPlaying = false;
+    this.isPaused = false;
+    this.hideVoiceIndicator();
+    this.updatePlayButton();
+  }
+
+  toggleSettings() {
+    const settings = document.getElementById("voiceSettings");
+    if (settings) {
+      settings.classList.toggle("active");
+    }
+  }
+
+  showVoiceIndicator() {
+    const indicator = document.getElementById("voiceIndicator");
+    if (indicator) {
+      indicator.classList.add("active");
+    }
+  }
+
+  hideVoiceIndicator() {
+    const indicator = document.getElementById("voiceIndicator");
+    if (indicator) {
+      indicator.classList.remove("active");
+    }
+  }
+
+  updatePlayButton() {
+    const playBtn = document.getElementById("playVoiceBtn");
+    if (!playBtn) return;
+
+    const playIcon = playBtn.querySelector("i");
+
+    if (this.isPlaying) {
+      playBtn.classList.add("active");
+      playIcon.className = "fas fa-pause";
+      playBtn.title = "Pausar narração";
+    } else {
+      playBtn.classList.remove("active");
+      playIcon.className = "fas fa-play";
+      playBtn.title = "Reproduzir narração";
+    }
+  }
+
+  // Método para narrar passo específico
+  narrateStep(stepKey) {
+    if (this.stepNarrations[stepKey]) {
+      this.speak(this.stepNarrations[stepKey]);
+    }
+  }
+
+  // Método para narrar o passo atual do tutorial
+  narrateCurrentStep() {
+    if (window.tutorialManager) {
+      const currentStep = window.tutorialManager.currentStep;
+      const stepKey = `step${currentStep}`;
+      this.narrateStep(stepKey);
+    }
+  }
+
+  // Método para narrar boas-vindas
+  narrateWelcome() {
+    this.narrateStep("welcome");
+  }
+
+  // Método para narrar conclusão
+  narrateCompletion() {
+    this.narrateStep("completion");
+  }
+}
+
+// ===== TUTORIAL MANAGER COM INTEGRAÇÃO DE VOZ =====
 class TutorialManager {
   constructor() {
     this.currentStep = 0;
@@ -96,6 +421,13 @@ class TutorialManager {
 
   showWelcomeModal() {
     document.getElementById("welcomeModal").style.display = "flex";
+
+    // Narrar boas-vindas após um delay
+    setTimeout(() => {
+      if (window.voiceNarrator) {
+        window.voiceNarrator.narrateWelcome();
+      }
+    }, 1500);
   }
 
   hideWelcomeModal() {
@@ -112,6 +444,14 @@ class TutorialManager {
 
     // Remover animação do botão se estiver ativa
     this.deactivateEnrollButtonPulse();
+
+    // Parar narração de boas-vindas e iniciar narração do primeiro passo
+    if (window.voiceNarrator) {
+      window.voiceNarrator.stopNarration();
+      setTimeout(() => {
+        window.voiceNarrator.narrateCurrentStep();
+      }, 1000);
+    }
   }
 
   showStep() {
@@ -153,6 +493,13 @@ class TutorialManager {
 
     // Adicionar efeito hover ao elemento destacado
     this.addHoverEffect(step.target);
+
+    // Narrar o passo atual após um pequeno delay
+    setTimeout(() => {
+      if (window.voiceNarrator && this.isActive) {
+        window.voiceNarrator.narrateCurrentStep();
+      }
+    }, 800);
   }
 
   positionTutorialBox(selector, position) {
@@ -339,6 +686,14 @@ class TutorialManager {
       element.classList.remove("tutorial-highlight-hover");
     }
 
+    // Parar narração atual e narrar conclusão
+    if (window.voiceNarrator) {
+      window.voiceNarrator.stopNarration();
+      setTimeout(() => {
+        window.voiceNarrator.narrateCompletion();
+      }, 500);
+    }
+
     // Mostrar mensagem de conclusão
     this.showCompletionMessage();
 
@@ -442,6 +797,12 @@ class TutorialManager {
     this.tutorialCompleted = false;
     this.deactivateEnrollButtonPulse();
     this.hideProgressPanel();
+
+    // Parar narração atual
+    if (window.voiceNarrator) {
+      window.voiceNarrator.stopNarration();
+    }
+
     this.showWelcomeModal();
   }
 
@@ -454,25 +815,37 @@ class TutorialManager {
   }
 }
 
-// Inicializar quando a página carregar
+// ===== INICIALIZAÇÃO =====
 document.addEventListener("DOMContentLoaded", () => {
-  new TutorialManager();
+  // Inicializar sistema de voz
+  window.voiceNarrator = new VoiceNarrator();
+
+  // Inicializar tutorial manager
+  window.tutorialManager = new TutorialManager();
 });
 
-// Adicionar funcionalidade aos botões principais
+// ===== FUNCIONALIDADES DOS BOTÕES PRINCIPAIS =====
 document.addEventListener("DOMContentLoaded", () => {
   // Redirecionar para Central do Candidato
   document.getElementById("candidateCenter").addEventListener("click", () => {
+    // Parar narração antes de navegar
+    if (window.voiceNarrator) {
+      window.voiceNarrator.stopNarration();
+    }
     window.location.href = "centralcandidato.html";
   });
 
   // Redirecionar para página de inscrição
   document.getElementById("enrollButton").addEventListener("click", () => {
+    // Parar narração antes de navegar
+    if (window.voiceNarrator) {
+      window.voiceNarrator.stopNarration();
+    }
     window.location.href = "inscricao.html";
   });
 });
 
-// Adicionar efeitos visuais extras
+// ===== EFEITOS VISUAIS EXTRAS =====
 document.addEventListener("DOMContentLoaded", () => {
   // Efeito parallax sutil no fundo
   window.addEventListener("scroll", () => {
