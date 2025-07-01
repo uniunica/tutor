@@ -10,11 +10,11 @@
     <meta
       property="og:title"
       content="Tutor Interativo - Sistema de Treinamento"
-      />
+    />
     <meta
       property="og:description"
       content="Sistema de treinamento para tutoriais interativos"
-      />
+    />
     <meta property="og:image" content="favicon.ico" />
     <meta property="og:url" content="https://uniunica.github.io/tutor/" />
     <meta property="og:type" content="website" />
@@ -380,6 +380,188 @@
         margin: 0 auto 20px;
       }
 
+      /* Controles de Voz */
+      .voice-controls {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1001;
+        display: flex;
+        gap: 10px;
+        background: rgba(255, 255, 255, 0.95);
+        padding: 15px;
+        border-radius: 50px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
+        animation: slideInFromRight 0.5s ease;
+      }
+
+      .voice-btn {
+        width: 50px;
+        height: 50px;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2em;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .voice-btn:hover {
+        transform: scale(1.1);
+      }
+
+      .voice-btn.active {
+        animation: pulse 1.5s infinite;
+      }
+
+      .play-btn {
+        background: linear-gradient(135deg, #4caf50, #45a049);
+        color: white;
+      }
+
+      .pause-btn {
+        background: linear-gradient(135deg, #ff9800, #f57c00);
+        color: white;
+      }
+
+      .stop-btn {
+        background: linear-gradient(135deg, #f44336, #d32f2f);
+        color: white;
+      }
+
+      .speed-btn {
+        background: linear-gradient(135deg, #2196f3, #1976d2);
+        color: white;
+        font-size: 0.9em;
+        font-weight: bold;
+      }
+
+      .voice-indicator {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: rgba(76, 175, 80, 0.9);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 25px;
+        font-size: 0.9em;
+        font-weight: 600;
+        z-index: 1002;
+        opacity: 0;
+        transform: translateX(100%);
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .voice-indicator.active {
+        opacity: 1;
+        transform: translateX(0);
+      }
+
+      .voice-indicator i {
+        animation: soundWave 1s infinite;
+      }
+
+      @keyframes slideInFromRight {
+        from {
+          opacity: 0;
+          transform: translateX(100%);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      @keyframes soundWave {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.2);
+        }
+      }
+
+      .voice-settings {
+        position: fixed;
+        bottom: 90px;
+        right: 20px;
+        background: rgba(255, 255, 255, 0.95);
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(20px);
+        transition: all 0.3s ease;
+        min-width: 250px;
+      }
+
+      .voice-settings.active {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+
+      .voice-setting-item {
+        margin-bottom: 15px;
+      }
+
+      .voice-setting-item label {
+        display: block;
+        font-size: 0.9em;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 5px;
+      }
+
+      .voice-setting-item select,
+      .voice-setting-item input[type="range"] {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 0.9em;
+      }
+
+      .voice-setting-item input[type="range"] {
+        padding: 0;
+        height: 6px;
+        background: #ddd;
+        outline: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+      }
+
+      .voice-setting-item input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 18px;
+        height: 18px;
+        background: #667eea;
+        border-radius: 50%;
+        cursor: pointer;
+      }
+
+      .speed-display {
+        font-size: 0.8em;
+        color: #666;
+        text-align: center;
+        margin-top: 5px;
+      }
+
       @keyframes spin {
         0% {
           transform: rotate(0deg);
@@ -490,7 +672,8 @@
             src="favicon.ico"
             alt="Logo UniUnica"
             width="100%"
-            height="100%">
+            height="100%"
+          />
           <!--<i class="fas fa-graduation-cap"></i>-->
         </div>
         <h1 class="main-title">
@@ -498,8 +681,8 @@
           <span class="typing-effect" id="typingText">Tutor Interativo</span>
         </h1>
         <p class="subtitle">
-          Aprenda de forma prática e interativa como realizar matrículas e utilizar todas as
-          ferramentas disponíveis.
+          Aprenda de forma prática e interativa como realizar matrículas e
+          utilizar todas as ferramentas disponíveis.
         </p>
       </header>
 
@@ -537,7 +720,8 @@
           </div>
           <h2 class="card-title">Portal do Parceiro</h2>
           <p class="card-description">
-             Domine o Portal do Parceiro e aprenda a fazer matrículas de pós-graduação, segunda graduação, disciplinas isoladas, e etc.
+            Domine o Portal do Parceiro e aprenda a fazer matrículas de
+            pós-graduação, segunda graduação, disciplinas isoladas, e etc.
           </p>
           <ul class="card-features">
             <li><i class="fas fa-check"></i> Navegação no portal</li>
@@ -555,27 +739,406 @@
       <!-- Footer -->
       <footer class="footer">
         <p class="footer-text">
-          © 2025 Sistema de Treinamento - Desenvolvido pelo Setor de Expansão e Negócios
+          © 2025 Sistema de Treinamento - Desenvolvido pelo Setor de Expansão e
+          Negócios
         </p>
         <div class="social-links">
-          <a href="https://uniunica.github.io/lp/" class="social-link" title="Suporte">
+          <a
+            href="https://uniunica.github.io/lp/"
+            class="social-link"
+            title="Suporte"
+          >
             <i class="fas fa-headset"></i>
           </a>
-          <a href="https://drive.google.com/file/d/1ps7Gxbe_qRNuj-rDaKHQaPo_rVAajLh1/view?usp=sharing" class="social-link" title="Documentação">
+          <a
+            href="https://drive.google.com/file/d/1ps7Gxbe_qRNuj-rDaKHQaPo_rVAajLh1/view?usp=sharing"
+            class="social-link"
+            title="Documentação"
+          >
             <i class="fas fa-book"></i>
           </a>
-          <a href="https://drive.google.com/drive/folders/10ADA_pxqrtnUTv5uEdzh4uPBx4j0wDnJ" class="social-link" title="Vídeos">
+          <a
+            href="https://drive.google.com/drive/folders/10ADA_pxqrtnUTv5uEdzh4uPBx4j0wDnJ"
+            class="social-link"
+            title="Vídeos"
+          >
             <i class="fas fa-play-circle"></i>
           </a>
-          <a href="https://uniunica.github.io/lp/" class="social-link" title="FAQ">
+          <a
+            href="https://uniunica.github.io/lp/"
+            class="social-link"
+            title="FAQ"
+          >
             <i class="fas fa-question-circle"></i>
           </a>
         </div>
       </footer>
     </div>
 
+    <!-- Controles de Voz -->
+    <div class="voice-controls" id="voiceControls">
+      <button
+        class="voice-btn play-btn"
+        id="playVoiceBtn"
+        title="Reproduzir narração"
+      >
+        <i class="fas fa-play"></i>
+      </button>
+      <button
+        class="voice-btn pause-btn"
+        id="pauseVoiceBtn"
+        title="Pausar narração"
+      >
+        <i class="fas fa-pause"></i>
+      </button>
+      <button
+        class="voice-btn stop-btn"
+        id="stopVoiceBtn"
+        title="Parar narração"
+      >
+        <i class="fas fa-stop"></i>
+      </button>
+      <button
+        class="voice-btn speed-btn"
+        id="speedBtn"
+        title="Configurações de voz"
+      >
+        <i class="fas fa-cog"></i>
+      </button>
+    </div>
+
+    <!-- Indicador de Voz Ativa -->
+    <div class="voice-indicator" id="voiceIndicator">
+      <i class="fas fa-volume-up"></i>
+      <span id="voiceStatus">Narrando...</span>
+    </div>
+
+    <!-- Configurações de Voz -->
+    <div class="voice-settings" id="voiceSettings">
+      <div class="voice-setting-item">
+        <label for="voiceSelect">Voz:</label>
+        <select id="voiceSelect"></select>
+      </div>
+      <div class="voice-setting-item">
+        <label for="speedRange">Velocidade:</label>
+        <input
+          type="range"
+          id="speedRange"
+          min="0.5"
+          max="2"
+          step="0.1"
+          value="1"
+        />
+        <div class="speed-display" id="speedDisplay">1.0x</div>
+      </div>
+      <div class="voice-setting-item">
+        <label for="pitchRange">Tom:</label>
+        <input
+          type="range"
+          id="pitchRange"
+          min="0.5"
+          max="2"
+          step="0.1"
+          value="1"
+        />
+        <div class="speed-display" id="pitchDisplay">1.0x</div>
+      </div>
+      <div class="voice-setting-item">
+        <label for="volumeRange">Volume:</label>
+        <input
+          type="range"
+          id="volumeRange"
+          min="0"
+          max="1"
+          step="0.1"
+          value="0.8"
+        />
+        <div class="speed-display" id="volumeDisplay">80%</div>
+      </div>
+    </div>
+
     <script>
-      // Efeito de digitação
+      // Sistema de Narração de Voz
+      class VoiceNarrator {
+        constructor() {
+          this.synth = window.speechSynthesis;
+          this.currentUtterance = null;
+          this.isPlaying = false;
+          this.isPaused = false;
+          this.voices = [];
+          this.settings = {
+            voice: null,
+            rate: 1,
+            pitch: 1,
+            volume: 0.8,
+          };
+
+          this.narrationTexts = {
+            welcome:
+              "Bem-vindo ao Tutor Interativo! Aqui você aprenderá de forma prática e interativa como realizar matrículas e utilizar todas as ferramentas disponíveis.",
+            graduacao:
+              "A opção de Matrícula de Graduação te ensina o processo completo de matrícula para cursos de graduação, incluindo preenchimento de formulários, validação de dados, processo de inscrição, central do candidato e upload de documentos.",
+            portalParceiro:
+              "O Portal do Parceiro te permite dominar o sistema de vendas, aprendendo a fazer matrículas de pós-graduação, segunda graduação e disciplinas isoladas. Inclui navegação no portal, seleção de cursos, gestão de matrículas, sistema de vendas e relatórios de comissões.",
+            instructions:
+              "Use os controles de voz no canto inferior direito para reproduzir, pausar ou parar a narração. Você pode ajustar a velocidade, tom e volume nas configurações. Pressione 1 para acessar Graduação ou 2 para o Portal do Parceiro.",
+          };
+
+          this.init();
+        }
+
+        init() {
+          this.loadVoices();
+          this.bindEvents();
+          this.setupVoiceControls();
+
+          // Aguardar um pouco e iniciar narração automática
+          setTimeout(() => {
+            this.startWelcomeNarration();
+          }, 2000);
+        }
+
+        loadVoices() {
+          const loadVoicesInterval = setInterval(() => {
+            this.voices = this.synth.getVoices();
+
+            if (this.voices.length > 0) {
+              clearInterval(loadVoicesInterval);
+              this.populateVoiceSelect();
+              this.selectBestPortugueseVoice();
+            }
+          }, 100);
+        }
+
+        populateVoiceSelect() {
+          const voiceSelect = document.getElementById("voiceSelect");
+          voiceSelect.innerHTML = "";
+
+          // Filtrar vozes em português primeiro
+          const portugueseVoices = this.voices.filter(
+            (voice) =>
+              voice.lang.includes("pt") ||
+              voice.name.toLowerCase().includes("portuguese")
+          );
+
+          // Se não houver vozes em português, usar todas
+          const voicesToShow =
+            portugueseVoices.length > 0 ? portugueseVoices : this.voices;
+
+          voicesToShow.forEach((voice, index) => {
+            const option = document.createElement("option");
+            option.value = index;
+            option.textContent = `${voice.name} (${voice.lang})`;
+            voiceSelect.appendChild(option);
+          });
+        }
+
+        selectBestPortugueseVoice() {
+          // Tentar encontrar a melhor voz em português
+          const portugueseVoice = this.voices.find(
+            (voice) =>
+              voice.lang.includes("pt-BR") ||
+              voice.lang.includes("pt") ||
+              voice.name.toLowerCase().includes("portuguese")
+          );
+
+          if (portugueseVoice) {
+            this.settings.voice = portugueseVoice;
+            const voiceIndex = this.voices.indexOf(portugueseVoice);
+            document.getElementById("voiceSelect").value = voiceIndex;
+          } else {
+            // Usar a primeira voz disponível
+            this.settings.voice = this.voices[0];
+          }
+        }
+
+        bindEvents() {
+          // Controles de voz
+          document
+            .getElementById("playVoiceBtn")
+            .addEventListener("click", () => {
+              this.playCurrentNarration();
+            });
+
+          document
+            .getElementById("pauseVoiceBtn")
+            .addEventListener("click", () => {
+              this.pauseNarration();
+            });
+
+          document
+            .getElementById("stopVoiceBtn")
+            .addEventListener("click", () => {
+              this.stopNarration();
+            });
+
+          document.getElementById("speedBtn").addEventListener("click", () => {
+            this.toggleSettings();
+          });
+
+          // Configurações
+          document
+            .getElementById("voiceSelect")
+            .addEventListener("change", (e) => {
+              this.settings.voice = this.voices[e.target.value];
+            });
+
+          document
+            .getElementById("speedRange")
+            .addEventListener("input", (e) => {
+              this.settings.rate = parseFloat(e.target.value);
+              document.getElementById(
+                "speedDisplay"
+              ).textContent = `${e.target.value}x`;
+            });
+
+          document
+            .getElementById("pitchRange")
+            .addEventListener("input", (e) => {
+              this.settings.pitch = parseFloat(e.target.value);
+              document.getElementById(
+                "pitchDisplay"
+              ).textContent = `${e.target.value}x`;
+            });
+
+          document
+            .getElementById("volumeRange")
+            .addEventListener("input", (e) => {
+              this.settings.volume = parseFloat(e.target.value);
+              document.getElementById(
+                "volumeDisplay"
+              ).textContent = `${Math.round(e.target.value * 100)}%`;
+            });
+
+          // Fechar configurações ao clicar fora
+          document.addEventListener("click", (e) => {
+            const settings = document.getElementById("voiceSettings");
+            const speedBtn = document.getElementById("speedBtn");
+
+            if (!settings.contains(e.target) && !speedBtn.contains(e.target)) {
+              settings.classList.remove("active");
+            }
+          });
+        }
+
+        setupVoiceControls() {
+          // Mostrar controles após um delay
+          setTimeout(() => {
+            document.getElementById("voiceControls").style.opacity = "1";
+          }, 1000);
+        }
+
+        speak(text, onEnd = null) {
+          if (this.synth.speaking) {
+            this.synth.cancel();
+          }
+
+          this.currentUtterance = new SpeechSynthesisUtterance(text);
+          this.currentUtterance.voice = this.settings.voice;
+          this.currentUtterance.rate = this.settings.rate;
+          this.currentUtterance.pitch = this.settings.pitch;
+          this.currentUtterance.volume = this.settings.volume;
+
+          this.currentUtterance.onstart = () => {
+            this.isPlaying = true;
+            this.isPaused = false;
+            this.showVoiceIndicator();
+            this.updatePlayButton();
+          };
+
+          this.currentUtterance.onend = () => {
+            this.isPlaying = false;
+            this.isPaused = false;
+            this.hideVoiceIndicator();
+            this.updatePlayButton();
+            if (onEnd) onEnd();
+          };
+
+          this.currentUtterance.onerror = () => {
+            this.isPlaying = false;
+            this.isPaused = false;
+            this.hideVoiceIndicator();
+            this.updatePlayButton();
+          };
+
+          this.synth.speak(this.currentUtterance);
+        }
+
+        startWelcomeNarration() {
+          const welcomeText = `${this.narrationTexts.welcome} ${this.narrationTexts.graduacao} ${this.narrationTexts.portalParceiro} ${this.narrationTexts.instructions}`;
+          this.speak(welcomeText);
+        }
+
+        playCurrentNarration() {
+          if (this.isPaused && this.synth.paused) {
+            this.synth.resume();
+            this.isPaused = false;
+            this.isPlaying = true;
+            this.showVoiceIndicator();
+          } else if (!this.isPlaying) {
+            this.startWelcomeNarration();
+          }
+          this.updatePlayButton();
+        }
+
+        pauseNarration() {
+          if (this.isPlaying && this.synth.speaking) {
+            this.synth.pause();
+            this.isPaused = true;
+            this.isPlaying = false;
+            this.hideVoiceIndicator();
+            this.updatePlayButton();
+          }
+        }
+
+        stopNarration() {
+          if (this.synth.speaking) {
+            this.synth.cancel();
+          }
+          this.isPlaying = false;
+          this.isPaused = false;
+          this.hideVoiceIndicator();
+          this.updatePlayButton();
+        }
+
+        toggleSettings() {
+          const settings = document.getElementById("voiceSettings");
+          settings.classList.toggle("active");
+        }
+
+        showVoiceIndicator() {
+          document.getElementById("voiceIndicator").classList.add("active");
+        }
+
+        hideVoiceIndicator() {
+          document.getElementById("voiceIndicator").classList.remove("active");
+        }
+
+        updatePlayButton() {
+          const playBtn = document.getElementById("playVoiceBtn");
+          const playIcon = playBtn.querySelector("i");
+
+          if (this.isPlaying) {
+            playBtn.classList.add("active");
+            playIcon.className = "fas fa-play";
+          } else if (this.isPaused) {
+            playBtn.classList.remove("active");
+            playIcon.className = "fas fa-play";
+          } else {
+            playBtn.classList.remove("active");
+            playIcon.className = "fas fa-play";
+          }
+        }
+
+        // Método para narrar texto específico
+        narrateText(key) {
+          if (this.narrationTexts[key]) {
+            this.speak(this.narrationTexts[key]);
+          }
+        }
+      }
+
+      // Resto do código JavaScript original...
       function typeWriter(element, text, speed = 100) {
         let i = 0;
         element.textContent = "";
@@ -586,14 +1149,12 @@
             i++;
             setTimeout(type, speed);
           } else {
-            // Manter o cursor piscando
             element.classList.add("typing-effect");
           }
         }
         type();
       }
 
-      // Criar partículas de fundo
       function createParticles() {
         const particlesContainer = document.getElementById("particles");
         const particleCount = 50;
@@ -602,16 +1163,13 @@
           const particle = document.createElement("div");
           particle.className = "particle";
 
-          // Tamanho aleatório
           const size = Math.random() * 6 + 2;
           particle.style.width = size + "px";
           particle.style.height = size + "px";
 
-          // Posição aleatória
           particle.style.left = Math.random() * 100 + "%";
           particle.style.top = Math.random() * 100 + "%";
 
-          // Duração de animação aleatória
           particle.style.animationDuration = Math.random() * 3 + 3 + "s";
           particle.style.animationDelay = Math.random() * 2 + "s";
 
@@ -619,7 +1177,6 @@
         }
       }
 
-      // Mostrar modal de loading
       function showLoading(text) {
         const modal = document.getElementById("loadingModal");
         const loadingText = document.getElementById("loadingText");
@@ -627,39 +1184,52 @@
         modal.classList.add("active");
       }
 
-      // Esconder modal de loading
       function hideLoading() {
         const modal = document.getElementById("loadingModal");
         modal.classList.remove("active");
       }
 
-      // Navegação para graduação
       function navigateToGraduacao() {
-        showLoading("Carregando tutorial de graduação...");
+        // Parar narração antes de navegar
+        if (window.voiceNarrator) {
+          window.voiceNarrator.stopNarration();
+        }
 
-        // Simular carregamento
+        showLoading("Carregando tutorial de graduação...");
         setTimeout(() => {
           window.location.href = "graduacao/index.html";
         }, 1500);
       }
 
-      // Navegação para portal do parceiro
       function navigateToPortalParceiro() {
-        showLoading("Carregando Portal do Parceiro...");
+        // Parar narração antes de navegar
+        if (window.voiceNarrator) {
+          window.voiceNarrator.stopNarration();
+        }
 
-        // Simular carregamento
+        showLoading("Carregando Portal do Parceiro...");
         setTimeout(() => {
           window.location.href = "portal-parceiro/portalparceiro.html";
         }, 1500);
       }
 
-      // Efeitos de hover nos cards
       function addCardEffects() {
         const cards = document.querySelectorAll(".option-card");
 
-        cards.forEach((card) => {
+        cards.forEach((card, index) => {
           card.addEventListener("mouseenter", function () {
             this.style.transform = "translateY(-10px) scale(1.02)";
+
+            // Narrar descrição do card ao passar o mouse
+            if (window.voiceNarrator && !window.voiceNarrator.isPlaying) {
+              const cardType = index === 0 ? "graduacao" : "portalParceiro";
+              setTimeout(() => {
+                if (this.matches(":hover")) {
+                  // Verificar se ainda está com hover
+                  window.voiceNarrator.narrateText(cardType);
+                }
+              }, 500);
+            }
           });
 
           card.addEventListener("mouseleave", function () {
@@ -668,7 +1238,6 @@
         });
       }
 
-      // Animação de entrada dos elementos
       function animateElements() {
         const observer = new IntersectionObserver((entries) => {
           entries.forEach((entry) => {
@@ -688,7 +1257,6 @@
         });
       }
 
-      // Efeito parallax nas partículas
       function addParallaxEffect() {
         window.addEventListener("mousemove", (e) => {
           const particles = document.querySelectorAll(".particle");
@@ -707,26 +1275,35 @@
 
       // Inicialização
       document.addEventListener("DOMContentLoaded", function () {
-        // Criar partículas
+        // Inicializar sistema de voz
+        window.voiceNarrator = new VoiceNarrator();
+
         createParticles();
 
-        // Iniciar efeito de digitação
         setTimeout(() => {
           const typingElement = document.getElementById("typingText");
           typeWriter(typingElement, "Tutor Interativo", 150);
         }, 1000);
 
-        // Adicionar efeitos
         addCardEffects();
         animateElements();
         addParallaxEffect();
 
-        // Adicionar evento de teclado para navegação
+        // Navegação por teclado
         document.addEventListener("keydown", function (e) {
           if (e.key === "1") {
             navigateToGraduacao();
           } else if (e.key === "2") {
             navigateToPortalParceiro();
+          } else if (e.key === " " || e.key === "Spacebar") {
+            e.preventDefault();
+            if (window.voiceNarrator.isPlaying) {
+              window.voiceNarrator.pauseNarration();
+            } else {
+              window.voiceNarrator.playCurrentNarration();
+            }
+          } else if (e.key === "Escape") {
+            window.voiceNarrator.stopNarration();
           }
         });
       });
@@ -736,16 +1313,15 @@
         link.addEventListener("click", function (e) {
           e.preventDefault();
 
-          // Efeito de ripple
           const ripple = document.createElement("div");
           ripple.style.cssText = `
-                    position: absolute;
-                    border-radius: 50%;
-                    background: rgba(255, 255, 255, 0.6);
-                    transform: scale(0);
-                    animation: ripple 0.6s linear;
-                    pointer-events: none;
-                `;
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.6);
+      transform: scale(0);
+      animation: ripple 0.6s linear;
+      pointer-events: none;
+    `;
 
           const rect = this.getBoundingClientRect();
           const size = Math.max(rect.width, rect.height);
@@ -764,13 +1340,13 @@
       // Adicionar estilo para animação de ripple
       const style = document.createElement("style");
       style.textContent = `
-            @keyframes ripple {
-                to {
-                    transform: scale(4);
-                    opacity: 0;
-                }
-            }
-        `;
+  @keyframes ripple {
+    to {
+      transform: scale(4);
+      opacity: 0;
+    }
+  }
+`;
       document.head.appendChild(style);
     </script>
   </body>
