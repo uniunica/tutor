@@ -1,3 +1,337 @@
+// ===== SISTEMA DE NARRAÇÃO DE VOZ =====
+class VoiceNarrator {
+  constructor() {
+    this.synth = window.speechSynthesis;
+    this.currentUtterance = null;
+    this.isPlaying = false;
+    this.isPaused = false;
+    this.voices = [];
+    this.settings = {
+      voice: null,
+      rate: 1,
+      pitch: 1,
+      volume: 0.8,
+    };
+
+    // Textos de narração para cada passo do tutorial
+    this.stepNarrations = {
+      welcome:
+        "Bem-vindo ao tutorial de matrícula de graduação! Agora você aprenderá como preencher o formulário de inscrição de graduação de forma eficiente. Este tutorial cobrirá modalidades de ingresso disponíveis, preenchimento dos dados do candidato, seleção de curso e unidade, dicas importantes para parceiros, e informações sobre pagamento. Use as setas do teclado ou botões para navegar, pressione ESC para sair do tutorial, e as caixas se posicionam automaticamente próximas aos elementos. Clique nas modalidades para ver informações detalhadas. IMPORTANTE: Sempre insira seu nome no campo 'Indicação' para vincular a venda!",
+
+      step0:
+        "Existem 4 modalidades disponíveis para ingresso na graduação. Cada uma tem critérios específicos. Prova Agendada: o aluno realizará uma redação on-line com um tema específico. ENEM: para o ingressante que realizou o exame nos últimos 3 anos e obteve uma média a partir de 450 pontos. Obtenção de Novo Título: quando o aluno já possui uma graduação. Transferência: para o aluno que já realiza o curso em outra instituição e quer concluir conosco.",
+
+      step1:
+        "O formulário está dividido em duas abas: Dados do Candidato e Dados do Curso. Após preencher os Dados do Candidato você deve direcionar ao Dados do Curso. Sempre preencha primeiro os dados do candidato antes de passar para os dados do curso.",
+
+      step2:
+        "Inicie coletando CPF, nome completo e sexo. Estes são os dados fundamentais para identificação do candidato. Sempre confirme a grafia correta do nome, email e número de telefone - erros podem causar problemas na matrícula.",
+
+      step3:
+        "E-mail e celular são essenciais para comunicação. O candidato receberá confirmações e informações importantes. Verifique se o e-mail está correto - todas as comunicações oficiais serão enviadas para ele.",
+
+      step4:
+        "ATENÇÃO! Campo Indicação é MUITO IMPORTANTE! SEMPRE insira seu nome no campo 'Indicação' para que a venda seja vinculada a você como parceiro. Este campo é OBRIGATÓRIO para receber sua comissão! Nunca esqueça de preenchê-lo.",
+
+      step5:
+        "Colete todas as informações de endereço. O CEP ajuda a preencher automaticamente cidade e estado. Endereço completo é necessário para emissão de documentos e correspondências oficiais.",
+
+      step6:
+        "Agora vamos para a aba 'Dados do Curso'. Aqui o candidato escolhe o curso de interesse. Ajude o candidato a escolher o curso mais adequado ao seu perfil e objetivos profissionais. Atenção! Sempre vincule ao seu polo ou unidade mais próxima do candidato.",
+
+      step7:
+        "Após preencher todos os dados, clique em CONTINUAR. A taxa de matrícula é de até R$ 250,00. O pagamento da taxa de matrícula dá acesso ao portal e materiais didáticos. Se você negociou um valor diferente gentileza entrar em contato com seu consultor para solicitar a alteração do valor da taxa.",
+
+      completion:
+        "Parabéns! Você aprendeu como preencher o formulário de inscrição! Use as setas do teclado para navegar no tutorial, pressione ESC para sair, e as caixas de diálogo se posicionam automaticamente. Pontos importantes para lembrar: SEMPRE preencha o campo 'Indicação' com seu nome, colete todos os dados do candidato com cuidado, confirme e-mail e telefone para comunicações, e a taxa de matrícula é de R$ 250,00 podendo ser alterada pelo seu consultor. Quanto mais completos os dados, mais rápida será a matrícula, e menos propício a causar estresses futuros!",
+    };
+
+    this.init();
+  }
+
+  init() {
+    this.loadVoices();
+    this.bindEvents();
+    this.setupVoiceControls();
+  }
+
+  loadVoices() {
+    const loadVoicesInterval = setInterval(() => {
+      this.voices = this.synth.getVoices();
+
+      if (this.voices.length > 0) {
+        clearInterval(loadVoicesInterval);
+        this.populateVoiceSelect();
+        this.selectBestPortugueseVoice();
+      }
+    }, 100);
+  }
+
+  populateVoiceSelect() {
+    const voiceSelect = document.getElementById("voiceSelect");
+    if (!voiceSelect) return;
+
+    voiceSelect.innerHTML = "";
+
+    // Filtrar vozes em português primeiro
+    const portugueseVoices = this.voices.filter(
+      (voice) =>
+        voice.lang.includes("pt") ||
+        voice.name.toLowerCase().includes("portuguese")
+    );
+
+    // Se não houver vozes em português, usar todas
+    const voicesToShow =
+      portugueseVoices.length > 0 ? portugueseVoices : this.voices;
+
+    voicesToShow.forEach((voice, index) => {
+      const option = document.createElement("option");
+      option.value = this.voices.indexOf(voice);
+      option.textContent = `${voice.name} (${voice.lang})`;
+      voiceSelect.appendChild(option);
+    });
+  }
+
+  selectBestPortugueseVoice() {
+    // Tentar encontrar a melhor voz em português
+    const portugueseVoice = this.voices.find(
+      (voice) =>
+        voice.lang.includes("pt-BR") ||
+        voice.lang.includes("pt") ||
+        voice.name.toLowerCase().includes("portuguese")
+    );
+
+    if (portugueseVoice) {
+      this.settings.voice = portugueseVoice;
+      const voiceIndex = this.voices.indexOf(portugueseVoice);
+      const voiceSelect = document.getElementById("voiceSelect");
+      if (voiceSelect) voiceSelect.value = voiceIndex;
+    } else {
+      // Usar a primeira voz disponível
+      this.settings.voice = this.voices[0];
+    }
+  }
+
+  bindEvents() {
+    // Controles de voz
+    const playBtn = document.getElementById("playVoiceBtn");
+    const pauseBtn = document.getElementById("pauseVoiceBtn");
+    const stopBtn = document.getElementById("stopVoiceBtn");
+    const settingsBtn = document.getElementById("settingsBtn");
+
+    if (playBtn)
+      playBtn.addEventListener("click", () => this.togglePlayPause());
+    if (pauseBtn)
+      pauseBtn.addEventListener("click", () => this.pauseNarration());
+    if (stopBtn) stopBtn.addEventListener("click", () => this.stopNarration());
+    if (settingsBtn)
+      settingsBtn.addEventListener("click", () => this.toggleSettings());
+
+    // Configurações
+    const voiceSelect = document.getElementById("voiceSelect");
+    const speedRange = document.getElementById("speedRange");
+    const pitchRange = document.getElementById("pitchRange");
+    const volumeRange = document.getElementById("volumeRange");
+
+    if (voiceSelect) {
+      voiceSelect.addEventListener("change", (e) => {
+        this.settings.voice = this.voices[e.target.value];
+      });
+    }
+
+    if (speedRange) {
+      speedRange.addEventListener("input", (e) => {
+        this.settings.rate = parseFloat(e.target.value);
+        document.getElementById(
+          "speedDisplay"
+        ).textContent = `${e.target.value}x`;
+      });
+    }
+
+    if (pitchRange) {
+      pitchRange.addEventListener("input", (e) => {
+        this.settings.pitch = parseFloat(e.target.value);
+        document.getElementById(
+          "pitchDisplay"
+        ).textContent = `${e.target.value}x`;
+      });
+    }
+
+    if (volumeRange) {
+      volumeRange.addEventListener("input", (e) => {
+        this.settings.volume = parseFloat(e.target.value);
+        document.getElementById("volumeDisplay").textContent = `${Math.round(
+          e.target.value * 100
+        )}%`;
+      });
+    }
+
+    // Fechar configurações ao clicar fora
+    document.addEventListener("click", (e) => {
+      const settings = document.getElementById("voiceSettings");
+      const settingsBtn = document.getElementById("settingsBtn");
+
+      if (
+        settings &&
+        settingsBtn &&
+        !settings.contains(e.target) &&
+        !settingsBtn.contains(e.target)
+      ) {
+        settings.classList.remove("active");
+      }
+    });
+  }
+
+  setupVoiceControls() {
+    // Mostrar controles após um delay
+    setTimeout(() => {
+      const voiceControls = document.getElementById("voiceControls");
+      if (voiceControls) {
+        voiceControls.classList.add("active");
+      }
+    }, 1000);
+  }
+
+  speak(text, onEnd = null) {
+    if (this.synth.speaking) {
+      this.synth.cancel();
+    }
+
+    this.currentUtterance = new SpeechSynthesisUtterance(text);
+    this.currentUtterance.voice = this.settings.voice;
+    this.currentUtterance.rate = this.settings.rate;
+    this.currentUtterance.pitch = this.settings.pitch;
+    this.currentUtterance.volume = this.settings.volume;
+
+    this.currentUtterance.onstart = () => {
+      this.isPlaying = true;
+      this.isPaused = false;
+      this.showVoiceIndicator();
+      this.updatePlayButton();
+    };
+
+    this.currentUtterance.onend = () => {
+      this.isPlaying = false;
+      this.isPaused = false;
+      this.hideVoiceIndicator();
+      this.updatePlayButton();
+      if (onEnd) onEnd();
+    };
+
+    this.currentUtterance.onerror = () => {
+      this.isPlaying = false;
+      this.isPaused = false;
+      this.hideVoiceIndicator();
+      this.updatePlayButton();
+    };
+
+    this.synth.speak(this.currentUtterance);
+  }
+
+  togglePlayPause() {
+    if (this.isPaused && this.synth.paused) {
+      this.synth.resume();
+      this.isPaused = false;
+      this.isPlaying = true;
+      this.showVoiceIndicator();
+    } else if (this.isPlaying && this.synth.speaking) {
+      this.synth.pause();
+      this.isPaused = true;
+      this.isPlaying = false;
+      this.hideVoiceIndicator();
+    } else {
+      // Reproduzir narração do passo atual
+      this.narrateCurrentStep();
+    }
+    this.updatePlayButton();
+  }
+
+  pauseNarration() {
+    if (this.isPlaying && this.synth.speaking) {
+      this.synth.pause();
+      this.isPaused = true;
+      this.isPlaying = false;
+      this.hideVoiceIndicator();
+      this.updatePlayButton();
+    }
+  }
+
+  stopNarration() {
+    if (this.synth.speaking) {
+      this.synth.cancel();
+    }
+    this.isPlaying = false;
+    this.isPaused = false;
+    this.hideVoiceIndicator();
+    this.updatePlayButton();
+  }
+
+  toggleSettings() {
+    const settings = document.getElementById("voiceSettings");
+    if (settings) {
+      settings.classList.toggle("active");
+    }
+  }
+
+  showVoiceIndicator() {
+    const indicator = document.getElementById("voiceIndicator");
+    if (indicator) {
+      indicator.classList.add("active");
+    }
+  }
+
+  hideVoiceIndicator() {
+    const indicator = document.getElementById("voiceIndicator");
+    if (indicator) {
+      indicator.classList.remove("active");
+    }
+  }
+
+  updatePlayButton() {
+    const playBtn = document.getElementById("playVoiceBtn");
+    if (!playBtn) return;
+
+    const playIcon = playBtn.querySelector("i");
+
+    if (this.isPlaying) {
+      playBtn.classList.add("active");
+      playIcon.className = "fas fa-pause";
+      playBtn.title = "Pausar narração";
+    } else {
+      playBtn.classList.remove("active");
+      playIcon.className = "fas fa-play";
+      playBtn.title = "Reproduzir narração";
+    }
+  }
+
+  // Método para narrar passo específico
+  narrateStep(stepKey) {
+    if (this.stepNarrations[stepKey]) {
+      this.speak(this.stepNarrations[stepKey]);
+    }
+  }
+
+  // Método para narrar o passo atual do tutorial
+  narrateCurrentStep() {
+    if (window.tutorialManager) {
+      const currentStep = window.tutorialManager.currentStep;
+      const stepKey = `step${currentStep}`;
+      this.narrateStep(stepKey);
+    }
+  }
+
+  // Método para narrar boas-vindas
+  narrateWelcome() {
+    this.narrateStep("welcome");
+  }
+
+  // Método para narrar conclusão
+  narrateCompletion() {
+    this.narrateStep("completion");
+  }
+}
+
+// ===== TUTORIAL MANAGER COM INTEGRAÇÃO DE VOZ =====
 class InscricaoTutorialManager {
   constructor() {
     this.currentStep = 0;
@@ -156,6 +490,13 @@ class InscricaoTutorialManager {
   showWelcomeModal() {
     document.getElementById("welcomeModal").style.display = "flex";
     this.blockScroll(); // Bloquear scroll
+
+    // Narrar boas-vindas após um delay
+    setTimeout(() => {
+      if (window.voiceNarrator) {
+        window.voiceNarrator.narrateWelcome();
+      }
+    }, 1500);
   }
 
   hideWelcomeModal() {
@@ -170,6 +511,14 @@ class InscricaoTutorialManager {
     this.showProgressPanel();
     this.showStep();
     // Scroll continua bloqueado durante o tutorial
+
+    // Parar narração de boas-vindas e iniciar narração do primeiro passo
+    if (window.voiceNarrator) {
+      window.voiceNarrator.stopNarration();
+      setTimeout(() => {
+        window.voiceNarrator.narrateCurrentStep();
+      }, 1000);
+    }
   }
 
   showStep() {
@@ -258,6 +607,13 @@ class InscricaoTutorialManager {
 
     // Adicionar efeito hover ao elemento destacado
     this.addHoverEffect(step.target);
+
+    // Narrar o passo atual após um pequeno delay
+    setTimeout(() => {
+      if (window.voiceNarrator && this.isActive) {
+        window.voiceNarrator.narrateCurrentStep();
+      }
+    }, 800);
   }
 
   // FUNÇÃO CORRIGIDA DE POSICIONAMENTO
@@ -513,6 +869,14 @@ class InscricaoTutorialManager {
     // IMPORTANTE: Desbloquear scroll quando finalizar tutorial
     this.unblockScroll();
 
+    // Parar narração atual e narrar conclusão
+    if (window.voiceNarrator) {
+      window.voiceNarrator.stopNarration();
+      setTimeout(() => {
+        window.voiceNarrator.narrateCompletion();
+      }, 500);
+    }
+
     // Mostrar mensagem de conclusão
     this.showCompletionMessage();
   }
@@ -544,7 +908,7 @@ class InscricaoTutorialManager {
             <li><i class="fas fa-money-bill-wave"></i> Taxa de matrícula:  R$ 250,00 (podendo ser alteração pelo seu consultor)</li>
           </ul>
           <div class="info-box">
-            <i class="fas fa-lightbulb"></i>
+                      <i class="fas fa-lightbulb"></i>
             <strong>Dica:</strong> Quanto mais completos os dados, mais rápida será a matrícula, e menos propício a causar estresses futuros!
           </div>
         </div>
@@ -607,6 +971,12 @@ class InscricaoTutorialManager {
     // Voltar para aba de dados do candidato
     document.getElementById("tabCandidato").click();
     this.currentStep = 0;
+
+    // Parar narração atual
+    if (window.voiceNarrator) {
+      window.voiceNarrator.stopNarration();
+    }
+
     this.showWelcomeModal();
   }
 
@@ -619,13 +989,40 @@ class InscricaoTutorialManager {
   }
 }
 
-// Inicializar quando a página carregar
+// ===== INICIALIZAÇÃO =====
 document.addEventListener("DOMContentLoaded", () => {
   console.log("Inicializando Tutorial Manager");
-  new InscricaoTutorialManager();
+
+  // Inicializar sistema de voz
+  window.voiceNarrator = new VoiceNarrator();
+
+  // Inicializar tutorial manager
+  window.tutorialManager = new InscricaoTutorialManager();
 });
 
-// SISTEMA SIMPLIFICADO E FUNCIONAL DE TOOLTIPS DAS MODALIDADES
+// ===== SISTEMA DE ABAS =====
+document.addEventListener("DOMContentLoaded", () => {
+  const tabCandidato = document.getElementById("tabCandidato");
+  const tabCurso = document.getElementById("tabCurso");
+  const contentCandidato = document.getElementById("contentCandidato");
+  const contentCurso = document.getElementById("contentCurso");
+
+  tabCandidato.addEventListener("click", () => {
+    tabCandidato.classList.add("active");
+    tabCurso.classList.remove("active");
+    contentCandidato.style.display = "block";
+    contentCurso.style.display = "none";
+  });
+
+  tabCurso.addEventListener("click", () => {
+    tabCurso.classList.add("active");
+    tabCandidato.classList.remove("active");
+    contentCurso.style.display = "block";
+    contentCandidato.style.display = "none";
+  });
+});
+
+// ===== SISTEMA SIMPLIFICADO E FUNCIONAL DE TOOLTIPS DAS MODALIDADES =====
 document.addEventListener("DOMContentLoaded", () => {
   console.log("Inicializando sistema de tooltips das modalidades");
 
@@ -868,7 +1265,7 @@ function initModalityTooltips() {
   console.log("Sistema de tooltips inicializado com sucesso");
 }
 
-// ESTILOS SIMPLIFICADOS E FUNCIONAIS
+// ===== ESTILOS PARA TOOLTIPS =====
 const tooltipStyles = document.createElement("style");
 tooltipStyles.textContent = `
   .modality-tooltip-simple {
@@ -992,7 +1389,7 @@ tooltipStyles.textContent = `
 `;
 document.head.appendChild(tooltipStyles);
 
-// Sistema de validação em tempo real
+// ===== SISTEMA DE VALIDAÇÃO EM TEMPO REAL =====
 class FormValidation {
   constructor() {
     this.init();
@@ -1175,32 +1572,7 @@ class FormValidation {
   }
 }
 
-// Adicionar estilos para validação
-const validationStyles = document.createElement("style");
-validationStyles.textContent = `
-  @keyframes errorSlideIn {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  @keyframes notificationSlideIn {
-    from { opacity: 0; transform: translateX(100%); }
-    to { opacity: 1; transform: translateX(0); }
-  }
-
-  @keyframes notificationSlideOut {
-    from { opacity: 1; transform: translateX(0); }
-    to { opacity: 0; transform: translateX(100%); }
-  }
-`;
-document.head.appendChild(validationStyles);
-
-// Inicializar validação
-document.addEventListener("DOMContentLoaded", () => {
-  new FormValidation();
-});
-
-// Sistema de dicas contextuais para campos
+// ===== SISTEMA DE DICAS CONTEXTUAIS =====
 class ContextualHelp {
   constructor() {
     this.tips = {
@@ -1289,9 +1661,24 @@ class ContextualHelp {
   }
 }
 
-// Adicionar estilos para dicas contextuais
-const contextualHelpStyles = document.createElement("style");
-contextualHelpStyles.textContent = `
+// ===== ESTILOS ADICIONAIS =====
+const additionalStyles = document.createElement("style");
+additionalStyles.textContent = `
+  @keyframes errorSlideIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes notificationSlideIn {
+    from { opacity: 0; transform: translateX(100%); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  @keyframes notificationSlideOut {
+    from { opacity: 1; transform: translateX(0); }
+    to { opacity: 0; transform: translateX(100%); }
+  }
+
   @keyframes tipSlideIn {
     from { opacity: 0; transform: translateX(-10px) scale(0.9); }
     to { opacity: 1; transform: translateX(0) scale(1); }
@@ -1302,15 +1689,14 @@ contextualHelpStyles.textContent = `
     to { opacity: 0; transform: translateX(-10px) scale(0.9); }
   }
 `;
-document.head.appendChild(contextualHelpStyles);
+document.head.appendChild(additionalStyles);
 
-// Inicializar sistema de ajuda contextual
+// ===== INICIALIZAÇÃO DOS SISTEMAS =====
 document.addEventListener("DOMContentLoaded", () => {
+  new FormValidation();
   new ContextualHelp();
-});
 
-// Adicionar efeitos visuais aprimorados
-document.addEventListener("DOMContentLoaded", () => {
+  // Efeitos visuais aprimorados
   const formFields = document.querySelectorAll("input, select");
   formFields.forEach((field) => {
     field.addEventListener("focus", () => {
@@ -1340,7 +1726,14 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
+// ===== REDIRECIONAMENTO DO FORMULÁRIO =====
 document.getElementById("submitButton").addEventListener("click", function (e) {
   e.preventDefault(); // Previne o envio do formulário
+
+  // Parar narração antes de navegar
+  if (window.voiceNarrator) {
+    window.voiceNarrator.stopNarration();
+  }
+
   window.location.href = "centralcandidato.html"; // Redireciona para a página
 });
