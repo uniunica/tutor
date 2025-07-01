@@ -795,6 +795,7 @@ button.avancar:hover {
   border: 4px solid #e53935;
   border-radius: 12px;
   background: rgba(229, 57, 53, 0.08);
+  -webkit-backdrop-filter: blur(1px);
   backdrop-filter: blur(1px);
   z-index: 999;
   pointer-events: none;
@@ -1387,6 +1388,12 @@ button.avancar:hover {
   font-size: 0.9em;
   -webkit-animation: pulse 2s infinite;
   animation: pulse 2s infinite;
+}
+
+#noCoursesMessage {
+  text-align: center;
+  color: #555;
+  padding: 20px
 }
 
 /*Animação de pulso para o link do portal parceiro */

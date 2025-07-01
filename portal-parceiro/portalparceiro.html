@@ -26,7 +26,7 @@
             Para melhorar a usabilidade, abra em paralelo outra aba com o site real do portal do parceiro por aqui:
           </p>
           <p>
-            <a href="https://parceiros.institutoprominas.com.br/nova-matricula" target="_blank" id="link-portal-parceiro" noopener>
+            <a href="https://parceiros.institutoprominas.com.br/nova-matricula" target="_blank" id="link-portal-parceiro" rel="noopener">
               Clique aqui para abrir o Portal do Parceiro
             </a>
           </p>
@@ -320,11 +320,7 @@
             <div class="course-list" id="courseList">
               <!-- Cursos serão injetados aqui via JavaScript -->
             </div>
-            <div
-              id="noCoursesMessage"
-              class="hidden"
-              style="text-align: center; color: #555; padding: 20px"
-            >
+            <div id="noCoursesMessage" class="hidden">
               Nenhum curso encontrado para a seleção atual.
             </div>
           </div>
@@ -346,10 +342,10 @@
             </div>
 
             <div class="selected-courses-actions">
-              <button class="btn-clear-all" id="clearAllCourses">
+              <button class="btn-clear-all" id="clearAllCourses" type="button">
                 <i class="fas fa-trash"></i> Limpar Todos
               </button>
-              <button class="btn-proceed" id="proceedToEnrollment">
+              <button class="btn-proceed" id="proceedToEnrollment" type="button">
                 <i class="fas fa-arrow-right"></i> Prosseguir com Matrícula
               </button>
             </div>
