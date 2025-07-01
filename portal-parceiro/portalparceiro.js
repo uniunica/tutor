@@ -1,3 +1,361 @@
+// ===== SISTEMA DE NARRAÇÃO DE VOZ =====
+class VoiceNarrator {
+  constructor() {
+    this.synth = window.speechSynthesis;
+    this.currentUtterance = null;
+    this.isPlaying = false;
+    this.isPaused = false;
+    this.voices = [];
+    this.settings = {
+      voice: null,
+      rate: 1,
+      pitch: 1,
+      volume: 0.8,
+    };
+
+    // Textos de narração para cada passo do tutorial
+    this.stepNarrations = {
+      welcome:
+        "Vamos aprender a fazer matrículas no Portal do Parceiro! Para melhorar a usabilidade, abra em paralelo outra aba com o site real do portal do parceiro. Este tutorial irá te ensinar como usar todas as ferramentas disponíveis: processo de nova matrícula, link de matrícula personalizado, seleção de instituições, modalidades de ensino, áreas de curso disponíveis, e ferramentas do menu lateral. IMPORTANTE: Este portal é sua principal ferramenta de vendas e gestão, aqui você irá aprender a fazer inscrições de novos alunos nas modalidades de Pós-Graduação, Segunda Graduação, Disciplinas Isoladas entre outras!",
+
+      step0:
+        "Bem-vindo ao Portal do Parceiro! Esta é sua ferramenta principal para vendas e gestão. Vamos conhecer cada área. Este portal centraliza todas as funcionalidades que você precisa para ser um parceiro de sucesso.",
+
+      step1:
+        "Use este campo para pesquisar seus alunos por CPF ou nome. É fundamental para acompanhar matrículas existentes. Verifique se o aluno já possui matrícula antes de criar uma nova.",
+
+      step2:
+        "Este botão gera seu link personalizado de matrícula. Compartilhe com seus clientes para matrículas diretas. Cada parceiro tem um link único que garante a comissão das vendas realizadas.",
+
+      step3:
+        "Aqui você acessa notificações importantes e configurações da sua conta. Mantenha sempre as notificações ativadas para não perder oportunidades.",
+
+      step4:
+        "Sua área de perfil mostra seu status como parceiro autorizado e informações pessoais. O status 'Parceiro Autorizado' indica que você pode realizar vendas normalmente.",
+
+      step5:
+        "O botão principal para iniciar uma nova matrícula. Use sempre que um novo cliente quiser se inscrever. Pelo portal do parceiro você consegue realizar as matrículas das modalidades de Pós-Graduação, Aperfeiçoamento, Extensão, EJA e Segunda Graduação!",
+
+      step6:
+        "O menu lateral dá acesso a todas as ferramentas: relatórios, leads, treinamentos, suporte e muito mais. Explore cada seção sem medo para maximizar suas vendas e gestão de alunos.",
+
+      step7:
+        "Escolha entre 'Único curso' para uma matrícula simples ou 'Combo' para pacotes de cursos. Combos geralmente têm comissões mais altas - sempre ofereça quando possível.",
+
+      step8:
+        "Selecione a instituição desejada. Cada uma tem cursos e valores diferentes. UniÚnica: mais variedade de cursos e maior carga horária, Prominas: menos variedade, Conexão: cursos mais baratos.",
+
+      step9:
+        "Escolha a modalidade: Pós-Graduação, Aperfeiçoamento, Extensão ou Ensino Médio (EJA). Para matrícula de Segunda Graduação, selecione em INSTITUIÇÃO DE ENSINO a opção Centro Universitário Única e em MODALIDADE DE ENSINO cliquem em Cursos Pincel. Pós-graduação é a modalidade com maior demanda e melhores comissões.",
+
+      step10:
+        "Filtre por área de interesse do aluno para encontrar cursos mais rapidamente. Comece sempre perguntando a área de interesse do cliente para otimizar a busca.",
+
+      step11:
+        "Use este campo para digitar palavras-chave e refinar a busca, ou navegue pela lista de cursos disponíveis. O campo é útil para encontrar cursos específicos, ou você pode explorar as opções geradas abaixo.",
+
+      step12:
+        "Após selecionar a modalidade e área, os cursos disponíveis são listados aqui. Clique no '+' para adicionar o curso à matrícula. A lista de cursos é dinâmica e se atualiza com base nas suas seleções acima.",
+
+      step13:
+        "Aqui você visualiza todos os cursos selecionados, pode remover itens individuais ou limpar tudo. O valor total é calculado automaticamente. Use 'Prosseguir com Matrícula' quando o cliente confirmar todos os cursos desejados.",
+
+      step14:
+        "Aqui você define como será pago o valor da matrícula. Escolha o método, o valor, parcelas e a data de vencimento. O valor da matrícula é fixo e geralmente é pago à vista ou em poucas parcelas.",
+
+      step15:
+        "Configure o pagamento das mensalidades do curso. Defina o método de pagamento, o valor promocional e o vencimento da primeira mensalidade. Este é o valor total do curso, que pode ser parcelado em até 12 vezes.",
+
+      completion:
+        "Parabéns! Você dominou o processo de inscrição no Portal do Parceiro! Agora você sabe como matricular um novo candidato: sistema de busca de alunos, geração de link personalizado, processo de nova matrícula, seleção de instituições e cursos, navegação no menu lateral, filtros por modalidade e área, e seleção e gerenciamento de cursos. Use as setas do teclado para navegar no tutorial, pressione ESC para sair, e os modais se posicionam automaticamente próximos aos elementos. Explore o menu lateral para acessar relatórios, leads e treinamentos, use o link personalizado, pratique matrículas, e acompanhe notificações. O Portal do Parceiro é sua ferramenta de sucesso - use todas as funcionalidades, não tenha medo da tecnologia!",
+    };
+
+    this.init();
+  }
+
+  init() {
+    this.loadVoices();
+    this.bindEvents();
+    this.setupVoiceControls();
+  }
+
+  loadVoices() {
+    const loadVoicesInterval = setInterval(() => {
+      this.voices = this.synth.getVoices();
+
+      if (this.voices.length > 0) {
+        clearInterval(loadVoicesInterval);
+        this.populateVoiceSelect();
+        this.selectBestPortugueseVoice();
+      }
+    }, 100);
+  }
+
+  populateVoiceSelect() {
+    const voiceSelect = document.getElementById("voiceSelect");
+    if (!voiceSelect) return;
+
+    voiceSelect.innerHTML = "";
+
+    // Filtrar vozes em português primeiro
+    const portugueseVoices = this.voices.filter(
+      (voice) =>
+        voice.lang.includes("pt") ||
+        voice.name.toLowerCase().includes("portuguese")
+    );
+
+    // Se não houver vozes em português, usar todas
+    const voicesToShow =
+      portugueseVoices.length > 0 ? portugueseVoices : this.voices;
+
+    voicesToShow.forEach((voice, index) => {
+      const option = document.createElement("option");
+      option.value = this.voices.indexOf(voice);
+      option.textContent = `${voice.name} (${voice.lang})`;
+      voiceSelect.appendChild(option);
+    });
+  }
+
+  selectBestPortugueseVoice() {
+    // Tentar encontrar a melhor voz em português
+    const portugueseVoice = this.voices.find(
+      (voice) =>
+        voice.lang.includes("pt-BR") ||
+        voice.lang.includes("pt") ||
+        voice.name.toLowerCase().includes("portuguese")
+    );
+
+    if (portugueseVoice) {
+      this.settings.voice = portugueseVoice;
+      const voiceIndex = this.voices.indexOf(portugueseVoice);
+      const voiceSelect = document.getElementById("voiceSelect");
+      if (voiceSelect) voiceSelect.value = voiceIndex;
+    } else {
+      // Usar a primeira voz disponível
+      this.settings.voice = this.voices[0];
+    }
+  }
+
+  bindEvents() {
+    // Controles de voz
+    const playBtn = document.getElementById("playVoiceBtn");
+    const pauseBtn = document.getElementById("pauseVoiceBtn");
+    const stopBtn = document.getElementById("stopVoiceBtn");
+    const settingsBtn = document.getElementById("settingsBtn");
+
+    if (playBtn)
+      playBtn.addEventListener("click", () => this.togglePlayPause());
+    if (pauseBtn)
+      pauseBtn.addEventListener("click", () => this.pauseNarration());
+    if (stopBtn) stopBtn.addEventListener("click", () => this.stopNarration());
+    if (settingsBtn)
+      settingsBtn.addEventListener("click", () => this.toggleSettings());
+
+    // Configurações
+    const voiceSelect = document.getElementById("voiceSelect");
+    const speedRange = document.getElementById("speedRange");
+    const pitchRange = document.getElementById("pitchRange");
+    const volumeRange = document.getElementById("volumeRange");
+
+    if (voiceSelect) {
+      voiceSelect.addEventListener("change", (e) => {
+        this.settings.voice = this.voices[e.target.value];
+      });
+    }
+
+    if (speedRange) {
+      speedRange.addEventListener("input", (e) => {
+        this.settings.rate = parseFloat(e.target.value);
+        document.getElementById(
+          "speedDisplay"
+        ).textContent = `${e.target.value}x`;
+      });
+    }
+
+    if (pitchRange) {
+      pitchRange.addEventListener("input", (e) => {
+        this.settings.pitch = parseFloat(e.target.value);
+        document.getElementById(
+          "pitchDisplay"
+        ).textContent = `${e.target.value}x`;
+      });
+    }
+
+    if (volumeRange) {
+      volumeRange.addEventListener("input", (e) => {
+        this.settings.volume = parseFloat(e.target.value);
+        document.getElementById("volumeDisplay").textContent = `${Math.round(
+          e.target.value * 100
+        )}%`;
+      });
+    }
+
+    // Fechar configurações ao clicar fora
+    document.addEventListener("click", (e) => {
+      const settings = document.getElementById("voiceSettings");
+      const settingsBtn = document.getElementById("settingsBtn");
+
+      if (
+        settings &&
+        settingsBtn &&
+        !settings.contains(e.target) &&
+        !settingsBtn.contains(e.target)
+      ) {
+        settings.classList.remove("active");
+      }
+    });
+  }
+
+  setupVoiceControls() {
+    // Mostrar controles após um delay
+    setTimeout(() => {
+      const voiceControls = document.getElementById("voiceControls");
+      if (voiceControls) {
+        voiceControls.classList.add("active");
+      }
+    }, 1000);
+  }
+
+  speak(text, onEnd = null) {
+    if (this.synth.speaking) {
+      this.synth.cancel();
+    }
+
+    this.currentUtterance = new SpeechSynthesisUtterance(text);
+    this.currentUtterance.voice = this.settings.voice;
+    this.currentUtterance.rate = this.settings.rate;
+    this.currentUtterance.pitch = this.settings.pitch;
+    this.currentUtterance.volume = this.settings.volume;
+
+    this.currentUtterance.onstart = () => {
+      this.isPlaying = true;
+      this.isPaused = false;
+      this.showVoiceIndicator();
+      this.updatePlayButton();
+    };
+
+    this.currentUtterance.onend = () => {
+      this.isPlaying = false;
+      this.isPaused = false;
+      this.hideVoiceIndicator();
+      this.updatePlayButton();
+      if (onEnd) onEnd();
+    };
+
+    this.currentUtterance.onerror = () => {
+      this.isPlaying = false;
+      this.isPaused = false;
+      this.hideVoiceIndicator();
+      this.updatePlayButton();
+    };
+
+    this.synth.speak(this.currentUtterance);
+  }
+
+  togglePlayPause() {
+    if (this.isPaused && this.synth.paused) {
+      this.synth.resume();
+      this.isPaused = false;
+      this.isPlaying = true;
+      this.showVoiceIndicator();
+    } else if (this.isPlaying && this.synth.speaking) {
+      this.synth.pause();
+      this.isPaused = true;
+      this.isPlaying = false;
+      this.hideVoiceIndicator();
+    } else {
+      // Reproduzir narração do passo atual
+      this.narrateCurrentStep();
+    }
+    this.updatePlayButton();
+  }
+
+  pauseNarration() {
+    if (this.isPlaying && this.synth.speaking) {
+      this.synth.pause();
+      this.isPaused = true;
+      this.isPlaying = false;
+      this.hideVoiceIndicator();
+      this.updatePlayButton();
+    }
+  }
+
+  stopNarration() {
+    if (this.synth.speaking) {
+      this.synth.cancel();
+    }
+    this.isPlaying = false;
+    this.isPaused = false;
+    this.hideVoiceIndicator();
+    this.updatePlayButton();
+  }
+
+  toggleSettings() {
+    const settings = document.getElementById("voiceSettings");
+    if (settings) {
+      settings.classList.toggle("active");
+    }
+  }
+
+  showVoiceIndicator() {
+    const indicator = document.getElementById("voiceIndicator");
+    if (indicator) {
+      indicator.classList.add("active");
+    }
+  }
+
+  hideVoiceIndicator() {
+    const indicator = document.getElementById("voiceIndicator");
+    if (indicator) {
+      indicator.classList.remove("active");
+    }
+  }
+
+  updatePlayButton() {
+    const playBtn = document.getElementById("playVoiceBtn");
+    if (!playBtn) return;
+
+    const playIcon = playBtn.querySelector("i");
+
+    if (this.isPlaying) {
+      playBtn.classList.add("active");
+      playIcon.className = "fas fa-pause";
+      playBtn.title = "Pausar narração";
+    } else {
+      playBtn.classList.remove("active");
+      playIcon.className = "fas fa-play";
+      playBtn.title = "Reproduzir narração";
+    }
+  }
+
+  // Método para narrar passo específico
+  narrateStep(stepKey) {
+    if (this.stepNarrations[stepKey]) {
+      this.speak(this.stepNarrations[stepKey]);
+    }
+  }
+
+  // Método para narrar o passo atual do tutorial
+  narrateCurrentStep() {
+    if (window.portalTutorial) {
+      const currentStep = window.portalTutorial.currentStep;
+      const stepKey = `step${currentStep}`;
+      this.narrateStep(stepKey);
+    }
+  }
+
+  // Método para narrar boas-vindas
+  narrateWelcome() {
+    this.narrateStep("welcome");
+  }
+
+  // Método para narrar conclusão
+  narrateCompletion() {
+    this.narrateStep("completion");
+  }
+}
+
+// ===== TUTORIAL MANAGER COM INTEGRAÇÃO DE VOZ =====
 class PortalParceiroTutorialManager {
   constructor() {
     this.currentStep = 0;
@@ -295,6 +653,13 @@ class PortalParceiroTutorialManager {
 
   showWelcomeModal() {
     document.getElementById("welcomeModal").style.display = "flex";
+
+    // Narrar boas-vindas após um delay
+    setTimeout(() => {
+      if (window.voiceNarrator) {
+        window.voiceNarrator.narrateWelcome();
+      }
+    }, 1500);
   }
 
   hideWelcomeModal() {
@@ -307,6 +672,14 @@ class PortalParceiroTutorialManager {
     this.currentStep = 0;
     this.showProgressPanel();
     this.showStep();
+
+    // Parar narração de boas-vindas e iniciar narração do primeiro passo
+    if (window.voiceNarrator) {
+      window.voiceNarrator.stopNarration();
+      setTimeout(() => {
+        window.voiceNarrator.narrateCurrentStep();
+      }, 1000);
+    }
   }
 
   showStep() {
@@ -389,6 +762,13 @@ class PortalParceiroTutorialManager {
 
     // Adicionar efeito hover
     this.addHoverEffect(step.target);
+
+    // QUINTO: Narrar o passo atual após um pequeno delay
+    setTimeout(() => {
+      if (window.voiceNarrator && this.isActive) {
+        window.voiceNarrator.narrateCurrentStep();
+      }
+    }, 800);
   }
 
   // Função melhorada para posicionamento do tutorial box
@@ -672,6 +1052,14 @@ class PortalParceiroTutorialManager {
       element.classList.remove("tutorial-highlight-hover");
     }
 
+    // Parar narração atual e narrar conclusão
+    if (window.voiceNarrator) {
+      window.voiceNarrator.stopNarration();
+      setTimeout(() => {
+        window.voiceNarrator.narrateCompletion();
+      }, 500);
+    }
+
     this.showCompletionMessage();
   }
 
@@ -698,6 +1086,7 @@ class PortalParceiroTutorialManager {
               <li>Navegação no menu lateral</li>
               <li>Filtros por modalidade e área</li>
               <li>Seleção e gerenciamento de cursos</li>
+              <li>Configuração de pagamentos</li>
             </ul>
           </div>
 
@@ -712,7 +1101,7 @@ class PortalParceiroTutorialManager {
             <h4 style="margin: 0 0 10px 0; color: #f39c12;">🚀 Próximos Passos:</h4>
             <ul style="margin: 0; padding-left: 20px;">
               <li><strong>Explore o menu lateral</strong> - Acesse relatórios, leads e treinamentos</li>
-              <li><strong>Use o link personalizado</strong> - Explore a ferramenta</li>
+              <li><strong>Use o link personalizado</strong> - Compartilhe com clientes</li>
               <li><strong>Pratique matrículas</strong> - Quanto mais usar, melhor será</li>
               <li><strong>Acompanhe notificações</strong> - Fique sempre atualizado</li>
             </ul>
@@ -752,6 +1141,11 @@ class PortalParceiroTutorialManager {
       element.classList.remove("tutorial-highlight-hover");
     }
 
+    // Parar narração atual
+    if (window.voiceNarrator) {
+      window.voiceNarrator.stopNarration();
+    }
+
     this.showWelcomeModal();
   }
 
@@ -761,6 +1155,20 @@ class PortalParceiroTutorialManager {
 
   hideProgressPanel() {
     document.getElementById("progressPanel").classList.add("hidden");
+  }
+
+  addHoverEffect(selector) {
+    // Remover efeito anterior
+    const previousElement = document.querySelector(".tutorial-highlight-hover");
+    if (previousElement) {
+      previousElement.classList.remove("tutorial-highlight-hover");
+    }
+
+    // Adicionar ao elemento atual
+    const element = document.querySelector(selector);
+    if (element) {
+      element.classList.add("tutorial-highlight-hover");
+    }
   }
 
   // Funcionalidades simuladas do portal
@@ -1271,28 +1679,6 @@ class PortalAppLogic {
     }
   }
 
-  // NOVO: Confirmar matrícula
-  confirmEnrollment() {
-    if (window.portalTutorial) {
-      window.portalTutorial.showNotification(
-        "Matrícula confirmada! Redirecionando para pagamento...",
-        "success"
-      );
-    }
-
-    // Simular redirecionamento após 2 segundos
-    setTimeout(() => {
-      // Aqui você redirecionaria para a página de pagamento
-      console.log("Redirecionando para página de pagamento...");
-      if (window.portalTutorial) {
-        window.portalTutorial.showNotification(
-          "Redirecionando para pagamento...",
-          "info"
-        );
-      }
-    }, 2000);
-  }
-
   // NOVO: Atualizar display do carrinho
   updateCartDisplay() {
     if (!this.selectedCoursesSection) return;
@@ -1422,7 +1808,7 @@ class PortalAppLogic {
   }
 }
 
-// Sistema de validação e máscaras para formulários
+// ===== SISTEMAS AUXILIARES =====
 class PortalFormValidator {
   constructor() {
     this.init();
@@ -1712,7 +2098,7 @@ class ContextualHelp {
       font-size: 0.85em;
       z-index: 1003;
       max-width: 250px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
       pointer-events: none;
       animation: tooltipFadeIn 0.3s ease;
     `;
@@ -1778,12 +2164,39 @@ additionalStyles.textContent = `
       transform: scale(1);
     }
   }
+
+  @keyframes cursorPulse {
+    0%,
+    100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.2);
+    }
+  }
+
+  @keyframes cursorBounce {
+    0%,
+    20%,
+    50%,
+    80%,
+    100% {
+      transform: translateY(0);
+    }
+    40% {
+      transform: translateY(-10px);
+    }
+    60% {
+      transform: translateY(-5px);
+    }
+  }
 `;
 document.head.appendChild(additionalStyles);
 
 // Função para demonstrar funcionalidades avançadas
 function demonstrateAdvancedFeatures() {
   console.log("🚀 Portal do Parceiro - Funcionalidades Ativadas:");
+  console.log("✅ Sistema de narração de voz integrado");
   console.log("✅ Tutorial guiado interativo");
   console.log("✅ Sistema de validação de formulários");
   console.log("✅ Dicas contextuais");
@@ -1793,6 +2206,7 @@ function demonstrateAdvancedFeatures() {
   console.log("✅ Navegação por teclado");
   console.log("✅ Posicionamento inteligente de modais");
   console.log("✅ Seleção dinâmica de cursos");
+  console.log("✅ Controles de voz com configurações avançadas");
 }
 
 // INICIALIZAÇÃO ÚNICA E CORRETA
@@ -1801,12 +2215,16 @@ window.portalTutorial = null;
 window.portalApp = null;
 window.portalValidator = null;
 window.contextualHelp = null;
+window.voiceNarrator = null;
 
 // Inicializar quando a página carregar - APENAS UMA VEZ
 document.addEventListener("DOMContentLoaded", () => {
   console.log("🚀 Inicializando Portal do Parceiro...");
 
-  // Inicializar todas as classes na ordem correta
+  // Inicializar sistema de voz primeiro
+  window.voiceNarrator = new VoiceNarrator();
+
+  // Inicializar todas as outras classes na ordem correta
   window.portalTutorial = new PortalParceiroTutorialManager();
   window.portalApp = new PortalAppLogic();
   window.portalValidator = new PortalFormValidator();
