@@ -15,7 +15,7 @@ class PortalParceiroTutorialManager {
       {
         title: "Sistema de Busca",
         text: "Use este campo para pesquisar seus alunos por CPF ou nome. É fundamental para acompanhar matrículas existentes.",
-        tip: "Sempre verifique se o aluno já possui matrícula antes de criar uma nova.",
+        tip: "Verifique se o aluno já possui matrícula antes de criar uma nova.",
         target: "#searchInput",
         position: "bottom",
       },
@@ -43,7 +43,7 @@ class PortalParceiroTutorialManager {
       {
         title: "Nova Matrícula",
         text: "O botão principal para iniciar uma nova matrícula. Use sempre que um novo cliente quiser se inscrever.",
-        tip: "Este é o botão mais importante - é por aqui que você gera suas vendas!",
+        tip: "Pelo portal do parceiro você consegue realizar as matrículas das modalidades de Pós-Graduação, Aperfeiçoamento, Extensão, EJA e Segunda Graduação!",
         target: "#novaMatricula",
         position: "right",
         important: true,
@@ -51,7 +51,7 @@ class PortalParceiroTutorialManager {
       {
         title: "Menu Lateral",
         text: "O menu lateral dá acesso a todas as ferramentas: relatórios, leads, treinamentos, suporte e muito mais.",
-        tip: "Explore cada seção para maximizar suas vendas e gestão de alunos.",
+        tip: "Explore cada seção sem medo para maximizar suas vendas e gestão de alunos.",
         target: "#sideMenu",
         position: "right",
       },
@@ -65,13 +65,13 @@ class PortalParceiroTutorialManager {
       {
         title: "Instituições de Ensino",
         text: "Selecione a instituição desejada. Cada uma tem cursos e valores diferentes.",
-        tip: "UniÚnica: graduação, Prominas: pós-graduação, Conexão: cursos técnicos.",
+        tip: "UniÚnica: mais variedade de cursos e maior carga horária, Prominas: menos variedade, Conexão: cursos mais baratos.",
         target: "#instituicoesSection",
         position: "top",
       },
       {
         title: "Modalidades de Ensino",
-        text: "Escolha a modalidade: Pós-Graduação, Aperfeiçoamento, Extensão ou Ensino Médio (EJA).",
+        text: "Escolha a modalidade: Pós-Graduação, Aperfeiçoamento, Extensão ou Ensino Médio (EJA). Para matrícula de Segunda Graduação, selecione em INSTITUIÇÃO DE ENSINO a opção Centro Universitário Única e em MODALIDADE DE ENSINO cliquem em Cursos Pincel",
         tip: "Pós-graduação é a modalidade com maior demanda e melhores comissões.",
         target: "#modalidadeSection",
         position: "top",
@@ -136,7 +136,7 @@ class PortalParceiroTutorialManager {
       // Adicione estes dois novos passos ao final do array this.steps
       {
         title: "Configuração de Pagamento da Matrícula",
-        text: "Aqui você define como será pago o valor da matrícula (ex: R$ 180,00). Escolha o método, o valor, parcelas e a data de vencimento.",
+        text: "Aqui você define como será pago o valor da matrícula. Escolha o método, o valor, parcelas e a data de vencimento.",
         tip: "O valor da matrícula é fixo e geralmente é pago à vista ou em poucas parcelas.",
         target: "#matriculaPaymentBox",
         position: "top",
@@ -1581,7 +1581,7 @@ class PortalFormValidator {
         <div class="modal-body">
           <p>✅ <strong>Todos os campos foram preenchidos corretamente!</strong></p>
           <p>Agora você pode prosseguir com a matrícula do aluno.</p>
-          
+
           <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; margin: 15px 0;">
             <h4 style="margin: 0 0 10px 0; color: #28a745;">📋 Próximos Passos:</h4>
             <ul style="margin: 0; padding-left: 20px;">
@@ -1745,7 +1745,7 @@ additionalStyles.textContent = `
       transform: translateY(0);
     }
   }
-  
+
   @keyframes notificationSlideIn {
     from {
       opacity: 0;
@@ -1756,7 +1756,7 @@ additionalStyles.textContent = `
       transform: translateX(0);
     }
   }
-  
+
   @keyframes notificationSlideOut {
     from {
       opacity: 1;
@@ -1767,7 +1767,7 @@ additionalStyles.textContent = `
       transform: translateX(100%);
     }
   }
-  
+
   @keyframes tooltipFadeIn {
     from {
       opacity: 0;
