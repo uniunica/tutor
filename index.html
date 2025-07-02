@@ -7,27 +7,21 @@
     <!-- Favicon -->
     <link rel="icon" href="favicon.ico" type="image/x-icon" />
     <!-- Meta Graph para compartilhamento no whatsapp -->
-    <meta
-      property="og:title"
-      content="Tutor Interativo - Sistema de Treinamento"
-    />
-    <meta
-      property="og:description"
-      content="Sistema de treinamento para tutoriais interativos"
-    />
+    <meta property="og:title" content="Tutor Interativo - Sistema de Treinamento"/>
+    <meta property="og:description" content="Sistema de treinamento para tutoriais interativos"/>
     <meta property="og:image" content="favicon.ico" />
     <meta property="og:url" content="https://uniunica.github.io/tutor/" />
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Tutor Interativo - Sistema de Treinamento" />
+    <meta property="og:locale" content="pt_BR" />
+    <!-- Meta Tags -->
     <meta name="author" content="Setor de Expansão e Negócios" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-
+    <meta name="description" content="Aprenda de forma prática e interativa como realizar matrículas e utilizar todas as ferramentas disponíveis." />
+    <meta name="keywords" content="tutor, interativo, treinamento, matrícula, graduação, pós-graduação, sistema de vendas, portal do parceiro" />
+    <!-- Links -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+    <!-- Estilo -->
     <style>
       * {
         margin: 0;
@@ -654,7 +648,6 @@
   <body>
     <!-- Partículas de fundo -->
     <div class="particles" id="particles"></div>
-
     <!-- Modal de loading -->
     <div class="loading-modal" id="loadingModal">
       <div class="loading-content">
@@ -662,18 +655,13 @@
         <div class="loading-text" id="loadingText">Carregando tutorial...</div>
       </div>
     </div>
-
+    <!-- Container principal -->
     <div class="container">
       <!-- Header -->
       <header class="header">
         <div class="logo">
           <!-- Imagem do logo da UniUnica -->
-          <img
-            src="favicon.ico"
-            alt="Logo UniUnica"
-            width="100%"
-            height="100%"
-          />
+          <img src="favicon.ico" alt="Logo UniUnica" width="100%" height="100%"/>
           <!--<i class="fas fa-graduation-cap"></i>-->
         </div>
         <h1 class="main-title">
@@ -685,7 +673,6 @@
           utilizar todas as ferramentas disponíveis.
         </p>
       </header>
-
       <!-- Opções principais -->
       <main class="options-container">
         <!-- Opção Graduação -->
@@ -709,12 +696,8 @@
             <i class="fas fa-play"></i> Iniciar Treinamento
           </button>
         </div>
-
         <!-- Opção Pós-Graduação -->
-        <div
-          class="option-card pos-graduacao"
-          onclick="navigateToPortalParceiro()"
-        >
+        <div class="option-card pos-graduacao" onclick="navigateToPortalParceiro()">
           <div class="card-icon">
             <i class="fas fa-briefcase"></i>
           </div>
@@ -735,7 +718,6 @@
           </button>
         </div>
       </main>
-
       <!-- Footer -->
       <footer class="footer">
         <p class="footer-text">
@@ -743,66 +725,35 @@
           Negócios
         </p>
         <div class="social-links">
-          <a
-            href="https://uniunica.github.io/lp/"
-            class="social-link"
-            title="Suporte"
-          >
+          <a href="https://uniunica.github.io/lp/" class="social-link" title="Suporte">
             <i class="fas fa-headset"></i>
           </a>
-          <a
-            href="https://drive.google.com/file/d/1ps7Gxbe_qRNuj-rDaKHQaPo_rVAajLh1/view?usp=sharing"
-            class="social-link"
-            title="Documentação"
-          >
+          <a href="https://drive.google.com/file/d/1ps7Gxbe_qRNuj-rDaKHQaPo_rVAajLh1/view?usp=sharing"
+            class="social-link" title="Documentação">
             <i class="fas fa-book"></i>
           </a>
-          <a
-            href="https://drive.google.com/drive/folders/10ADA_pxqrtnUTv5uEdzh4uPBx4j0wDnJ"
-            class="social-link"
-            title="Vídeos"
-          >
+          <a href="https://drive.google.com/drive/folders/10ADA_pxqrtnUTv5uEdzh4uPBx4j0wDnJ"
+            class="social-link" title="Vídeos">
             <i class="fas fa-play-circle"></i>
           </a>
-          <a
-            href="https://uniunica.github.io/lp/"
-            class="social-link"
-            title="FAQ"
-          >
+          <a href="https://uniunica.github.io/lp/" class="social-link" title="FAQ">
             <i class="fas fa-question-circle"></i>
           </a>
         </div>
       </footer>
     </div>
-
     <!-- Controles de Voz -->
     <div class="voice-controls" id="voiceControls">
-      <button
-        class="voice-btn play-btn"
-        id="playVoiceBtn"
-        title="Reproduzir narração"
-      >
+      <button class="voice-btn play-btn" id="playVoiceBtn" title="Reproduzir narração">
         <i class="fas fa-play"></i>
       </button>
-      <button
-        class="voice-btn pause-btn"
-        id="pauseVoiceBtn"
-        title="Pausar narração"
-      >
+      <button class="voice-btn pause-btn" id="pauseVoiceBtn" title="Pausar narração">
         <i class="fas fa-pause"></i>
       </button>
-      <button
-        class="voice-btn stop-btn"
-        id="stopVoiceBtn"
-        title="Parar narração"
-      >
+      <button class="voice-btn stop-btn" id="stopVoiceBtn" title="Parar narração">
         <i class="fas fa-stop"></i>
       </button>
-      <button
-        class="voice-btn speed-btn"
-        id="speedBtn"
-        title="Configurações de voz"
-      >
+      <button class="voice-btn speed-btn" id="speedBtn" title="Configurações de voz">
         <i class="fas fa-cog"></i>
       </button>
     </div>
@@ -821,38 +772,20 @@
       </div>
       <div class="voice-setting-item">
         <label for="speedRange">Velocidade:</label>
-        <input
-          type="range"
-          id="speedRange"
-          min="0.5"
-          max="2"
-          step="0.1"
-          value="1"
-        />
+        <input type="range" id="speedRange"
+          min="0.5" max="2" step="0.1" value="1"/>
         <div class="speed-display" id="speedDisplay">1.0x</div>
       </div>
       <div class="voice-setting-item">
         <label for="pitchRange">Tom:</label>
-        <input
-          type="range"
-          id="pitchRange"
-          min="0.5"
-          max="2"
-          step="0.1"
-          value="1"
-        />
+        <input type="range" id="pitchRange"
+          min="0.5" max="2" step="0.1" value="1"/>
         <div class="speed-display" id="pitchDisplay">1.0x</div>
       </div>
       <div class="voice-setting-item">
         <label for="volumeRange">Volume:</label>
-        <input
-          type="range"
-          id="volumeRange"
-          min="0"
-          max="1"
-          step="0.1"
-          value="0.8"
-        />
+        <input type="range" id="volumeRange"
+          min="0" max="1" step="0.1" value="0.8"/>
         <div class="speed-display" id="volumeDisplay">80%</div>
       </div>
     </div>
