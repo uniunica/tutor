@@ -1554,7 +1554,7 @@ class PortalAppLogic {
     }
   }
 
-  // NOVO: Adicionar curso ao carrinho
+  // Adicionar curso ao carrinho
   addCourseToCart(courseName, coursePrice) {
     // Verificar se o curso já está no carrinho
     if (this.selectedCourses.some((course) => course.name === courseName)) {
@@ -1588,7 +1588,7 @@ class PortalAppLogic {
     }
   }
 
-  // NOVO: Remover curso do carrinho
+  // Remover curso do carrinho
   removeCourseFromCart(courseId) {
     const courseIndex = this.selectedCourses.findIndex(
       (course) => course.id === courseId
@@ -1608,7 +1608,7 @@ class PortalAppLogic {
     }
   }
 
-  // NOVO: Limpar todos os cursos
+  // Limpar todos os cursos
   clearAllCourses() {
     if (this.selectedCourses.length === 0) {
       if (window.portalTutorial) {
@@ -1632,7 +1632,7 @@ class PortalAppLogic {
     }
   }
 
-  // NOVO: Prosseguir com matrícula
+  // Prosseguir com matrícula
   proceedToEnrollment() {
     if (this.selectedCourses.length === 0) {
       if (window.portalTutorial) {
@@ -1669,7 +1669,7 @@ class PortalAppLogic {
     }
   }
 
-  // NOVA: Função para atualizar valores de pagamento
+  // Função para atualizar valores de pagamento
   updatePaymentValues() {
     const totalValue = this.calculateTotal();
     const valorCursoInput = document.getElementById("valorCurso");
@@ -1679,7 +1679,7 @@ class PortalAppLogic {
     }
   }
 
-  // NOVO: Atualizar display do carrinho
+  // Atualizar display do carrinho
   updateCartDisplay() {
     if (!this.selectedCoursesSection) return;
 
@@ -1705,7 +1705,7 @@ class PortalAppLogic {
     }
   }
 
-  // NOVO: Renderizar cursos selecionados
+  // Renderizar cursos selecionados
   renderSelectedCourses() {
     if (!this.selectedCoursesList) return;
 
@@ -1759,7 +1759,7 @@ class PortalAppLogic {
     });
   }
 
-  // NOVO: Calcular total
+  // Calcular total
   calculateTotal() {
     return this.selectedCourses.reduce(
       (total, course) => total + course.price,
@@ -1767,7 +1767,7 @@ class PortalAppLogic {
     );
   }
 
-  // NOVO: Extrair duração do nome do curso
+  // Extrair duração do nome do curso
   extractDuration(courseName) {
     const match = courseName.match(/(\d+)H/);
     return match ? match[0] : "500H"; // Padrão
