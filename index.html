@@ -1248,13 +1248,13 @@
 
           const ripple = document.createElement("div");
           ripple.style.cssText = `
-      position: absolute;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.6);
-      transform: scale(0);
-      animation: ripple 0.6s linear;
-      pointer-events: none;
-    `;
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.6);
+            transform: scale(0);
+            animation: ripple 0.6s linear;
+            pointer-events: none;
+          `;
 
           const rect = this.getBoundingClientRect();
           const size = Math.max(rect.width, rect.height);
@@ -1273,13 +1273,13 @@
       // Adicionar estilo para animação de ripple
       const style = document.createElement("style");
       style.textContent = `
-  @keyframes ripple {
-    to {
-      transform: scale(4);
-      opacity: 0;
-    }
-  }
-`;
+        @keyframes ripple {
+          to {
+            transform: scale(4);
+            opacity: 0;
+          }
+        }
+      `;
       document.head.appendChild(style);
     </script>
   </body>
